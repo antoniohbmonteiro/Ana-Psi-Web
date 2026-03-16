@@ -1,21 +1,27 @@
+import Link from "next/link";
 import { Clock } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
+
+type Props = {
+  name: string;
+  time: string;
+  countdown: string;
+  href?: string;
+};
 
 export function NextPatientCard({
   name,
   time,
   countdown,
-}: {
-  name: string;
-  time: string;
-  countdown: string;
-}) {
-  return (
+  href,
+}: Props) {
+  const content = (
     <Card
-      className="rounded-xl p-0"
+      className="rounded-xl p-0 transition hover:shadow-md"
       style={{
-        background: "linear-gradient(to bottom right, rgba(182,166,202,0.05), transparent)",
+        background:
+          "linear-gradient(to bottom right, rgba(182,166,202,0.05), transparent)",
         borderColor: "rgba(182,166,202,0.20)",
       }}
     >
@@ -45,4 +51,10 @@ export function NextPatientCard({
       </CardContent>
     </Card>
   );
+
+  if (href) {
+    return <Link href={href}>{content}</Link>;
+  }
+
+  return content;
 }

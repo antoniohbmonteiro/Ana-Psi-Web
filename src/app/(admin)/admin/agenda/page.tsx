@@ -15,11 +15,11 @@ import {
   getTodaySessions,
   getWeekLabel,
 } from "@/features/agenda/utils";
-import { APP_TODAY } from "@/lib/app-context";
+import { getAppTodayDate } from "@/lib/app-date";
 
 export default function AgendaPage() {
-  const today = useMemo(() => new Date(`${APP_TODAY}T00:00:00`), []);
-  const [currentWeekStart, setCurrentWeekStart] = useState(getStartOfWeek(today));
+const today = useMemo(() => getAppTodayDate(), []);
+const [currentWeekStart, setCurrentWeekStart] = useState(getStartOfWeek(today));
 
   const weekDays = useMemo(
     () => Array.from({ length: 7 }).map((_, index) => addDays(currentWeekStart, index)),

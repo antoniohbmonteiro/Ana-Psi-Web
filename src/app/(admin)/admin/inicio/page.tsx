@@ -7,20 +7,13 @@ import { MetricCard } from "@/components/shared/metric-card";
 import { NextPatientCard } from "@/components/shared/next-patient-card";
 import { AlertsPanel } from "@/features/home/components/alerts-panel";
 import { QuickActionsPanel } from "@/features/home/components/quick-actions-panel";
-import {
-  getAppointmentsByDate,
-  getNewRequestsCount,
-  getNextAppointment,
-  getPendingPaymentsCount,
-  getTotalDurationByDate,
-} from "@/features/appointments/repository";
-import { APP_TODAY } from "@/lib/app-context";
+import { getAppTodayIso } from "@/lib/app-date";
 import { appointmentsService } from "@/features/appointments/service";
 
-
-const todayAppointments = appointmentsService.getAppointmentsByDate(APP_TODAY);
-const nextAppointment = appointmentsService.getNextAppointment(APP_TODAY);
-const totalDuration = appointmentsService.getTotalDurationByDate(APP_TODAY);
+const todayIso = getAppTodayIso();
+const todayAppointments = appointmentsService.getAppointmentsByDate(todayIso);
+const nextAppointment = appointmentsService.getNextAppointment(todayIso);
+const totalDuration = appointmentsService.getTotalDurationByDate(todayIso);
 
 export default function InicioPage() {
   return (

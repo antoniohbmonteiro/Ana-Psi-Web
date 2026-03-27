@@ -13,16 +13,7 @@ type LandingProcessProps = {
   process: LandingContent['process'];
 };
 
-type ProcessItem = {
-  number: string;
-  title: string;
-  description: string;
-  icon: keyof typeof processIcons;
-};
-
 export function LandingProcess({ process }: LandingProcessProps) {
-  const processItems = (process.items ?? []) as ProcessItem[];
-
   return (
     <section id="como-funciona" className={styles.section}>
       <div className={styles.container}>
@@ -33,7 +24,7 @@ export function LandingProcess({ process }: LandingProcessProps) {
         </div>
 
         <div className={styles.processGrid}>
-          {processItems.map((item, index) => {
+          {process.items.map((item, index) => {
             const Icon = processIcons[item.icon];
 
             return (

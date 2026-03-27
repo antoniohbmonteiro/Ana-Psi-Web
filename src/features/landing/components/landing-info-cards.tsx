@@ -13,21 +13,12 @@ type LandingInfoCardsProps = {
   infoCards: LandingContent['infoCards'];
 };
 
-type InfoCardItem = {
-  title: string;
-  value: string;
-  detail: string;
-  icon: keyof typeof infoIcons;
-};
-
 export function LandingInfoCards({ infoCards }: LandingInfoCardsProps) {
-  const items = (infoCards ?? []) as InfoCardItem[];
-
   return (
     <section className={styles.sectionSoft}>
       <div className={styles.container}>
         <div className={styles.infoGrid}>
-          {items.map((item, index) => {
+          {infoCards.map((item, index) => {
             const Icon = infoIcons[item.icon];
 
             return (

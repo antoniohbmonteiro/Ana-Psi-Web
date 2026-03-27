@@ -1,21 +1,15 @@
+import { useState } from 'react';
 import { Plus } from 'lucide-react';
 import type { LandingContent } from '@/features/landing/types/content';
 import styles from './landing-page.module.css';
 
 type LandingFaqProps = {
   faq: LandingContent['faq'];
-  openFaq: number | null;
   whatsappHref: string;
-  onToggleFaq: (index: number) => void;
 };
 
-type FaqItem = {
-  question: string;
-  answer: string;
-};
-
-export function LandingFaq({ faq, openFaq, whatsappHref, onToggleFaq }: LandingFaqProps) {
-  const items = (faq.items ?? []) as FaqItem[];
+export function LandingFaq({ faq, whatsappHref }: LandingFaqProps) {
+  const [openFaq, setOpenFaq] = useState<number | null>(0);
 
   return (
     <section id="faq" className={styles.section}>
@@ -28,7 +22,7 @@ export function LandingFaq({ faq, openFaq, whatsappHref, onToggleFaq }: LandingF
 
         <div className={styles.faqWrap}>
           <div className={styles.faqList}>
-            {items.map((item, index) => {
+            {faq.items.map((item, index) => {
               const isOpen = openFaq === index;
 
               return (
@@ -40,10 +34,13 @@ export function LandingFaq({ faq, openFaq, whatsappHref, onToggleFaq }: LandingF
                     type="button"
                     className={styles.faqTrigger}
                     aria-expanded={isOpen}
-                    onClick={() => onToggleFaq(index)}
+                    onClick={() => setOpenFaq(isOpen ? null : index)}
                   >
                     <span className={styles.faqQuestion}>{item.question}</span>
-                    <Plus className={`${styles.faqIcon} ${isOpen ? styles.faqIconOpen : ''}`} size={20} />
+                    <Plus
+                      className={`${styles.faqIcon} ${isOpen ? styles.faqIconOpen : ''}`}
+                      size={20}
+                    />
                   </button>
 
                   <div className={`${styles.faqAnswerWrap} ${isOpen ? styles.faqAnswerWrapOpen : ''}`}>

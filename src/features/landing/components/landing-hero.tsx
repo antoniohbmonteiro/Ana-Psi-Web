@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import { Fragment } from 'react';
 import { MessageCircle } from 'lucide-react';
 import type { LandingContent } from '@/features/landing/types/content';
 import styles from './landing-page.module.css';
@@ -7,15 +7,60 @@ type LandingHeroProps = {
   professionalDisplayName: string;
   hero: LandingContent['hero'];
   whatsappHref: string;
-  renderedHeroTitle: ReactNode;
 };
+
+function normalizeHeroWord(value: string) {
+  return value
+    .toLocaleLowerCase('pt-BR')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]/gi, '');
+}
+
+function renderHeroTitle(title: string, highlightWords: readonly string[]) {
+  const normalizedTitle = title.replace(/\\n/g, '\n');
+
+  const lines = normalizedTitle
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean);
+
+  const highlightSet = new Set(highlightWords.map(normalizeHeroWord));
+
+  return lines.map((line, lineIndex) => {
+    const tokens = line.split(/(\s+)/);
+
+    return (
+      <span key={`${line}-${lineIndex}`} className={styles.heroTitleLine}>
+        {tokens.map((token, tokenIndex) => {
+          if (/^\s+$/.test(token)) {
+            return <Fragment key={`${lineIndex}-space-${tokenIndex}`}>{token}</Fragment>;
+          }
+
+          const isHighlighted = highlightSet.has(normalizeHeroWord(token));
+
+          if (!isHighlighted) {
+            return <Fragment key={`${lineIndex}-token-${tokenIndex}`}>{token}</Fragment>;
+          }
+
+          return (
+            <span key={`${lineIndex}-highlight-${tokenIndex}`} className={styles.heroHighlight}>
+              {token}
+            </span>
+          );
+        })}
+      </span>
+    );
+  });
+}
 
 export function LandingHero({
   professionalDisplayName,
   hero,
   whatsappHref,
-  renderedHeroTitle,
 }: LandingHeroProps) {
+  const renderedHeroTitle = renderHeroTitle(hero.title, hero.highlightWords);
+
   return (
     <section className={styles.hero}>
       <div className={styles.container}>

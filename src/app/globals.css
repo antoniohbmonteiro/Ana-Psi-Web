@@ -123,6 +123,15 @@ body {
   font-family: inherit;
 }
 
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 3px solid #9333ea;
+  outline-offset: 3px;
+}
+
 @layer base {
   h1, h2, h3, p {
     margin: 0;

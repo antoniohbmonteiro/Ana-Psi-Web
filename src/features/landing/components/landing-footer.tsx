@@ -20,7 +20,7 @@ export function LandingFooter({
 
   return (
     <>
-      <footer className={styles.footer}>
+      <footer className={styles.footer} aria-label="Rodapé">
         <div className={styles.container}>
           <div className={styles.footerGrid}>
             <div className={styles.footerColumn}>
@@ -33,7 +33,7 @@ export function LandingFooter({
               <p className={styles.footerText}>{footer.description}</p>
             </div>
 
-            <div className={styles.footerColumn}>
+            <nav className={styles.footerColumn} aria-label="Links rápidos">
               <div className={styles.footerSectionTitle}>Links rápidos</div>
               <a href="#sobre" className={styles.footerLink}>
                 Sobre
@@ -44,13 +44,17 @@ export function LandingFooter({
               <a href="#faq" className={styles.footerLink}>
                 FAQ
               </a>
-            </div>
+            </nav>
 
             <div className={styles.footerColumn}>
               <div className={styles.footerSectionTitle}>Contato</div>
 
-              <a href={`mailto:${contact.email}`} className={styles.footerContact}>
-                <Mail size={16} /> {contact.email}
+              <a
+                href={`mailto:${contact.email}`}
+                className={styles.footerContact}
+                aria-label={`Enviar e-mail para ${contact.email}`}
+              >
+                <Mail size={16} aria-hidden="true" /> {contact.email}
               </a>
 
               <a
@@ -58,8 +62,9 @@ export function LandingFooter({
                 target="_blank"
                 rel="noreferrer"
                 className={styles.footerContact}
+                aria-label={`Abrir Instagram ${contact.instagram}`}
               >
-                <Instagram size={16} /> {contact.instagram}
+                <Instagram size={16} aria-hidden="true" /> {contact.instagram}
               </a>
 
               <a
@@ -67,12 +72,13 @@ export function LandingFooter({
                 target="_blank"
                 rel="noreferrer"
                 className={styles.footerContact}
+                aria-label="Abrir página com outros links"
               >
-                <Link2 size={16} /> Outros links
+                <Link2 size={16} aria-hidden="true" /> Outros links
               </a>
 
               <div className={styles.footerContact}>
-                <MapPin size={16} /> {footer.locationLabel}
+                <MapPin size={16} aria-hidden="true" /> {footer.locationLabel}
               </div>
             </div>
           </div>
@@ -83,10 +89,16 @@ export function LandingFooter({
         </div>
       </footer>
 
-      <a href={whatsappHref} target="_blank" rel="noreferrer" className={styles.floatButton}>
-        <MessageCircle size={20} />
+      <a
+        href={whatsappHref}
+        target="_blank"
+        rel="noreferrer"
+        className={styles.floatButton}
+        aria-label="Falar comigo no WhatsApp"
+      >
+        <MessageCircle size={20} aria-hidden="true" />
         <span>Fale comigo</span>
-        <span className={styles.floatDot} />
+        <span className={styles.floatDot} aria-hidden="true" />
       </a>
     </>
   );

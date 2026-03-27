@@ -68,7 +68,7 @@ export function LandingPage({ initialContent }: LandingPageProps) {
   if (loadState === 'loading' || !content) {
     return (
       <div className={styles.page}>
-        <main className={styles.section}>
+        <main className={styles.section} aria-busy="true" aria-live="polite">
           <div className={styles.container}>
             <div className={styles.sectionHeader}>
               <div className={styles.eyebrow}>Carregando</div>
@@ -84,7 +84,7 @@ export function LandingPage({ initialContent }: LandingPageProps) {
   if (loadState === 'error') {
     return (
       <div className={styles.page}>
-        <main className={styles.section}>
+        <main className={styles.section} role="alert" aria-live="assertive">
           <div className={styles.container}>
             <div className={styles.sectionHeader}>
               <div className={styles.eyebrow}>Erro ao carregar</div>
@@ -101,6 +101,31 @@ export function LandingPage({ initialContent }: LandingPageProps) {
 
   return (
     <div className={styles.page}>
+      <a
+        href="#conteudo-principal"
+        style={{
+          position: 'absolute',
+          left: '16px',
+          top: '-48px',
+          zIndex: 100,
+          padding: '10px 14px',
+          borderRadius: '12px',
+          background: '#ffffff',
+          color: '#0f172a',
+          textDecoration: 'none',
+          boxShadow: '0 8px 20px rgba(15, 23, 42, 0.12)',
+          transition: 'top 0.2s ease',
+        }}
+        onFocus={(event) => {
+          event.currentTarget.style.top = '16px';
+        }}
+        onBlur={(event) => {
+          event.currentTarget.style.top = '-48px';
+        }}
+      >
+        Pular para o conteúdo principal
+      </a>
+
       <LandingHeader
         brand={content.brand}
         menuOpen={menuOpen}
@@ -109,7 +134,7 @@ export function LandingPage({ initialContent }: LandingPageProps) {
         onCloseMenu={() => setMenuOpen(false)}
       />
 
-      <main id="top">
+      <main id="conteudo-principal">
         <LandingHero
           professionalDisplayName={content.professional.displayName}
           hero={content.hero}
@@ -131,7 +156,7 @@ export function LandingPage({ initialContent }: LandingPageProps) {
         <LandingFaq
           faq={content.faq}
           openFaq={openFaq}
-          onToggleFaq={(index) => setOpenFaq((current) => (current === index ? null : index))}
+          onToggleFaq={(index: number) => setOpenFaq((current) => (current === index ? null : index))}
           whatsappHref={whatsappHref}
         />
 
@@ -144,11 +169,6 @@ export function LandingPage({ initialContent }: LandingPageProps) {
         footer={content.footer}
         professional={content.professional}
       />
-
-      <a href={whatsappHref} target="_blank" rel="noreferrer" className={styles.floatButton}>
-        <span>Fale comigo</span>
-        <span className={styles.floatDot} />
-      </a>
     </div>
   );
 }

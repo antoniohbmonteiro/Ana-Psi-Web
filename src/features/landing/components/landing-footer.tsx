@@ -1,4 +1,4 @@
-import { Instagram, Mail, MapPin, MessageCircle } from 'lucide-react';
+import { Instagram, Link2, Mail, MapPin, MessageCircle } from 'lucide-react';
 import type { LandingContent } from '@/features/landing/types/content';
 import { buildWhatsappLink } from '@/features/landing/utils/build-whatsapp-link';
 import styles from './landing-page.module.css';
@@ -60,6 +60,15 @@ export function LandingFooter({
                 className={styles.footerContact}
               >
                 <Instagram size={16} /> {contact.instagram}
+              </a>
+
+              <a
+                href="https://linktr.ee/anapaulaboaventura.psi"
+                target="_blank"
+                rel="noreferrer"
+                className={styles.footerContact}
+              >
+                <Link2 size={16} /> Outros links
               </a>
 
               <div className={styles.footerContact}>

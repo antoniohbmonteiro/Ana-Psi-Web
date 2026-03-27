@@ -1,16 +1,20 @@
-import { useState } from 'react';
 import { Plus } from 'lucide-react';
 import type { LandingContent } from '@/features/landing/types/content';
 import styles from './landing-page.module.css';
 
 type LandingFaqProps = {
   faq: LandingContent['faq'];
+  openFaq: number | null;
+  onToggleFaq: (index: number) => void;
   whatsappHref: string;
 };
 
-export function LandingFaq({ faq, whatsappHref }: LandingFaqProps) {
-  const [openFaq, setOpenFaq] = useState<number | null>(0);
-
+export function LandingFaq({
+  faq,
+  openFaq,
+  onToggleFaq,
+  whatsappHref,
+}: LandingFaqProps) {
   return (
     <section id="faq" className={styles.section}>
       <div className={styles.container}>
@@ -34,7 +38,7 @@ export function LandingFaq({ faq, whatsappHref }: LandingFaqProps) {
                     type="button"
                     className={styles.faqTrigger}
                     aria-expanded={isOpen}
-                    onClick={() => setOpenFaq(isOpen ? null : index)}
+                    onClick={() => onToggleFaq(index)}
                   >
                     <span className={styles.faqQuestion}>{item.question}</span>
                     <Plus
@@ -43,7 +47,9 @@ export function LandingFaq({ faq, whatsappHref }: LandingFaqProps) {
                     />
                   </button>
 
-                  <div className={`${styles.faqAnswerWrap} ${isOpen ? styles.faqAnswerWrapOpen : ''}`}>
+                  <div
+                    className={`${styles.faqAnswerWrap} ${isOpen ? styles.faqAnswerWrapOpen : ''}`}
+                  >
                     <div className={styles.faqAnswer}>
                       <div className={styles.faqAnswerInner}>{item.answer}</div>
                     </div>

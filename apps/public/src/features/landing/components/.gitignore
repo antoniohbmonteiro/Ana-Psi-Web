@@ -1,4 +1,3 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 # dependencies
 /node_modules
 /.pnp
@@ -8,35 +7,48 @@
 !.yarn/plugins
 !.yarn/releases
 !.yarn/versions
-# testing
-/coverage
-# next.js
-/.next/
-/out/
-# production
+
+# next
+/.next
+/out
+
+# build
+/dist
 /build
-# misc
-.DS_Store
-*.pem
-# debug
+
+# logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-.pnpm-debug.log*
-# env files (can opt-in for committing if needed)
-.env*
-# vercel
-.vercel
+pnpm-debug.log*
+
+# env
+.env
+.env.*
+!.env.example
+
+# local config
+*.local
+
+# mac / windows
+.DS_Store
+Thumbs.db
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# coverage
+/coverage
+
 # firebase admin / service accounts
 service-account.json
 *.service-account.json
 firebase-admin-*.json
 google-service-account*.json
 *gcp-key*.json
-apps/*/.next
-apps/*/out
-apps/*/node_modules
-.workspace-migration-backup
+
+# misc secrets
+secrets/
+*.pem
+*.key

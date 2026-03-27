@@ -1,33 +1,17 @@
 {
   "name": "ana-psi-web",
-  "version": "0.1.0",
   "private": true,
+  "workspaces": [
+    "apps/public",
+    "apps/admin"
+  ],
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "build:hosting": "node scripts/build-hosting.mjs",
-    "start": "next start",
-    "lint": "eslint",
-    "deploy:hosting": "firebase deploy --only hosting",
-    "prepare:hosting": "node scripts/prepare-hosting.mjs"
-  },
-  "dependencies": {
-    "clsx": "^2.1.1",
-    "firebase": "^12.2.1",
-    "lucide-react": "^0.577.0",
-    "next": "16.1.6",
-    "react": "19.2.3",
-    "react-dom": "19.2.3",
-    "tailwind-merge": "^3.5.0"
-  },
-  "devDependencies": {
-    "@tailwindcss/postcss": "^4",
-    "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "eslint": "^9",
-    "eslint-config-next": "16.1.6",
-    "tailwindcss": "^4",
-    "typescript": "^5"
+    "dev:public": "npm run dev --workspace @ana-psi/public",
+    "dev:admin": "npm run dev --workspace @ana-psi/admin",
+    "build:public": "npm run build --workspace @ana-psi/public",
+    "build:admin": "npm run build --workspace @ana-psi/admin",
+    "lint:public": "npm run lint --workspace @ana-psi/public",
+    "lint:admin": "npm run lint --workspace @ana-psi/admin",
+    "deploy:public": "npm run deploy:hosting --workspace @ana-psi/public"
   }
 }

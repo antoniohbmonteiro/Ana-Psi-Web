@@ -101,7 +101,7 @@
   margin-top: 38px;
   margin-bottom: 32px;
   font-size: 62px;
-  line-height: 1.2;
+  line-height: 1.20;
   letter-spacing: -0.05em;
   font-weight: 600;
   color: #0f172a;
@@ -618,44 +618,29 @@
   .finalCtaCard {
     grid-template-columns: 1fr;
   }
-
-  .hero {
-    min-height: auto;
-    padding-bottom: 84px;
-  }
-
-  .heroGrid {
-    gap: 36px;
-  }
-
   .heroVisual {
     max-width: 640px;
-    margin: 0 auto;
   }
-
   .cardsGrid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
-
   .infoGrid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
-
   .footerGrid {
     grid-template-columns: 1fr 1fr;
   }
 }
-
 @media (max-width: 840px) {
   .headerInner {
     min-height: 68px;
-    gap: 16px;
   }
-
+  .sectionHeader {
+    margin-bottom: 48px;
+  }
   .nav {
     display: none;
   }
-
   .mobileMenuButton {
     display: inline-flex;
     align-items: center;
@@ -667,14 +652,12 @@
     background: #fff;
     color: #334155;
   }
-
   .mobileMenu {
     display: grid;
     gap: 10px;
     padding: 14px 0 18px;
     border-top: 1px solid #ece7f4;
   }
-
   .mobileMenu a {
     padding: 10px 0;
     color: #334155;
@@ -682,145 +665,184 @@
     font-size: 16px;
     line-height: 1.5;
   }
-
   .section,
   .sectionSoft {
     padding: 72px 0;
   }
-
   .hero {
     padding: 10px 0 72px;
+    min-height: auto;
   }
-
-  .heroGrid {
-    gap: 28px;
-  }
-
   .heroTitle,
   .sectionTitleLeft,
   .sectionTitleCenter {
     font-size: 42px;
   }
-
-  .heroDescription {
-    max-width: none;
-  }
-
   .finalCtaTitle {
     font-size: 28px;
   }
-
   .heroImageFrame {
     height: 520px;
   }
-
   .cardsGrid,
   .processGrid,
   .infoGrid,
   .footerGrid {
     grid-template-columns: 1fr;
   }
-
+  .cardsGrid,
+  .processGrid,
+  .infoGrid {
+    gap: 20px;
+  }
+  .faqTrigger {
+    padding: 22px 24px;
+  }
+  .faqAnswerInner {
+    padding: 0 24px 22px;
+  }
+  .footerGrid {
+    gap: 32px;
+  }
   .finalCtaVisual {
     min-height: 300px;
   }
-
   .finalCtaContent {
     padding: 28px 22px;
   }
 }
-
 @media (max-width: 560px) {
   .container {
     padding: 0 18px;
   }
-
   .brand {
     font-size: 18px;
   }
-
   .badge {
     font-size: 13px;
-    line-height: 1.35;
+    line-height: 1.45;
     padding: 10px 14px;
-    white-space: normal;
   }
-
+  .section,
+  .sectionSoft {
+    padding: 60px 0;
+  }
+  .finalCtaSection {
+    padding: 24px 0 60px;
+  }
+  .sectionHeader {
+    margin-bottom: 36px;
+  }
   .heroTitle,
   .sectionTitleLeft,
   .sectionTitleCenter {
     font-size: 34px;
-    line-height: 1.1;
+    line-height: 1.06;
   }
-
-  .heroTitle {
-    margin-top: 28px;
-    margin-bottom: 24px;
-  }
-
-  .heroTitleLine + .heroTitleLine {
-    margin-top: 4px;
-  }
-
   .finalCtaTitle {
     font-size: 28px;
     line-height: 1.12;
   }
-
   .heroDescription,
   .sectionLead,
   .finalCtaDescription,
   .aboutText p {
     font-size: 17px;
   }
-
   .primaryButton,
-  .secondaryButton,
-  .floatButton {
+  .secondaryButton {
     width: 100%;
     justify-content: center;
   }
-
   .heroImageFrame {
     height: 420px;
     border-radius: 24px;
   }
-
   .heroStat {
     position: static;
     margin-top: 16px;
-    max-width: none;
   }
-
+  .cardsGrid,
+  .processGrid,
+  .infoGrid,
+  .faqList {
+    gap: 14px;
+  }
   .card,
   .processCard,
   .infoCard {
-    padding-left: 20px;
-    padding-right: 20px;
+    padding: 22px 18px;
+    border-radius: 20px;
   }
-
+  .processTop {
+    gap: 16px;
+  }
+  .processNumber {
+    font-size: 42px;
+  }
+  .infoCard {
+    text-align: left;
+  }
   .faqTrigger {
-    padding-left: 20px;
-    padding-right: 20px;
+    padding: 20px 18px;
+    gap: 14px;
   }
-
+  .faqQuestion {
+    font-size: 16px;
+    line-height: 1.5;
+  }
   .faqAnswerInner {
-    padding-left: 20px;
-    padding-right: 20px;
+    padding: 0 18px 18px;
+    font-size: 15px;
+    line-height: 1.7;
   }
-
-  .finalCtaContent {
-    padding: 24px 20px;
+  .faqFooter {
+    margin-top: 28px;
   }
-
+  .footer {
+    padding: 44px 0 90px;
+  }
+  .footerGrid {
+    gap: 28px;
+  }
+  .footerText,
+  .footerLink,
+  .footerContact {
+    font-size: 15px;
+  }
+  .footerBottom {
+    margin-top: 28px;
+    padding-top: 18px;
+  }
   .finalCtaVisual {
     min-height: 220px;
   }
-
   .floatButton {
-    right: 18px;
-    left: 18px;
-    bottom: 18px;
-    padding: 16px 18px;
+    right: 16px;
+    left: auto;
+    bottom: 16px;
+    width: auto;
+    max-width: calc(100vw - 32px);
+    padding: 14px 18px;
+    gap: 10px;
+    font-size: 15px;
+    justify-content: center;
   }
+  .floatButton span {
+    white-space: nowrap;
+  }
+  .floatDot {
+    display: none;
+  }
+  .floatButton {
+  display: inline-flex;
+  align-items: center;
+}
+
+.floatButton svg {
+  flex: 0 0 auto;
+  width: 20px;
+  height: 20px;
+  display: block;
+}
 }

@@ -22,9 +22,9 @@ import {
   Video,
   X,
 } from 'lucide-react';
-import { landingContent, type LandingContent } from '@/features/landing/data/content';
 import { mapSitePublicContentToLandingContent } from '@/features/landing/mappers/map-site-public-content-to-landing-content';
 import { getSitePublicContent } from '@/features/landing/services/get-site-public-content';
+import type { LandingUiContent } from '@/features/landing/types/landing-ui-content';
 import { buildWhatsappLink } from '@/features/landing/utils/build-whatsapp-link';
 import styles from './landing-page.module.css';
 
@@ -32,14 +32,11 @@ const specialtyIcons = { brain: Brain, heart: Heart, smile: Smile, shield: Shiel
 const processIcons = { message: MessageCircle, calendar: Calendar, video: Video, chart: ChartNoAxesColumn } as const;
 const infoIcons = { video: Video, clock: Clock3, lock: Lock, calendar: Calendar } as const;
 
-type LandingPageProps = {
-  initialContent?: LandingContent;
-};
-
-export function LandingPage({ initialContent = landingContent }: LandingPageProps) {
+export function LandingPage() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
-  const [content, setContent] = useState<LandingContent>(initialContent);
+  const [content, setContent] = useState<LandingUiContent | null>(null);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   useEffect(() => {
     let isMounted = true;
@@ -53,8 +50,15 @@ export function LandingPage({ initialContent = landingContent }: LandingPageProp
         }
 
         setContent(mapSitePublicContentToLandingContent(sitePublicContent));
+        setLoadError(null);
       } catch (error) {
         console.error('Failed to load landing content from Firestore.', error);
+
+        if (!isMounted) {
+          return;
+        }
+
+        setLoadError('Não foi possível carregar o conteúdo do site.');
       }
     }
 
@@ -64,6 +68,39 @@ export function LandingPage({ initialContent = landingContent }: LandingPageProp
       isMounted = false;
     };
   }, []);
+
+  if (loadError) {
+    return (
+      <main className={styles.page}>
+        <section className={styles.sectionSoft}>
+          <div className={styles.container}>
+            <div className={styles.finalCtaCard}>
+              <div className={styles.finalCtaContent}>
+                <h1 className={styles.finalCtaTitle}>Conteúdo indisponível</h1>
+                <p className={styles.finalCtaDescription}>{loadError}</p>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+    );
+  }
+
+  if (!content) {
+    return (
+      <main className={styles.page}>
+        <section className={styles.sectionSoft}>
+          <div className={styles.container}>
+            <div className={styles.finalCtaCard}>
+              <div className={styles.finalCtaContent}>
+                <p className={styles.finalCtaDescription}>Carregando conteúdo...</p>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+    );
+  }
 
   const whatsappHref = buildWhatsappLink(content.contact.whatsapp, content.contact.whatsappMessage);
 

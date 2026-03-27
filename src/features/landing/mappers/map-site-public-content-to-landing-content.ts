@@ -1,5 +1,5 @@
-import { landingContent, type LandingContent } from '@/features/landing/data/content';
 import type { SitePublicContent } from '@/features/landing/types/site-public-content';
+import type { LandingUiContent } from '@/features/landing/types/landing-ui-content';
 
 function parseParagraphBody(body: string) {
   return body
@@ -9,14 +9,18 @@ function parseParagraphBody(body: string) {
     .map((paragraph) => paragraph.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>'));
 }
 
-export function mapSitePublicContentToLandingContent(content: SitePublicContent): LandingContent {
+export function mapSitePublicContentToLandingContent(content: SitePublicContent): LandingUiContent {
   const { profile, landing } = content;
 
+  const [brandName = 'Ana', brandAccent = 'Psicologia'] = profile.shortBrand
+    .split('|')
+    .map((part) => part.trim())
+    .filter(Boolean);
+
   return {
-    ...landingContent,
     brand: {
-      name: profile.shortBrand.split('|')[0]?.trim() || landingContent.brand.name,
-      accent: profile.shortBrand.split('|')[1]?.trim() || landingContent.brand.accent,
+      name: brandName,
+      accent: brandAccent,
     },
     professional: {
       fullName: profile.professionalName,
@@ -27,8 +31,8 @@ export function mapSitePublicContentToLandingContent(content: SitePublicContent)
     contact: {
       whatsapp: profile.whatsappNumber,
       whatsappMessage: profile.whatsappMessage,
-      instagram: profile.instagram ?? landingContent.contact.instagram,
-      email: profile.email ?? landingContent.contact.email,
+      instagram: profile.instagram ?? '@placeholder',
+      email: profile.email ?? 'contato@placeholder.com',
     },
     hero: {
       title: landing.hero.title,
@@ -64,6 +68,7 @@ export function mapSitePublicContentToLandingContent(content: SitePublicContent)
       description: landing.finalCta.description,
       buttonLabel: landing.finalCta.buttonLabel,
       helper: landing.finalCta.responseTimeText,
+      imageSrc: landing.finalCta.imageSrc ?? '/images/landing/final-cta-room.jpg',
     },
     footer: {
       description: landing.footer.description,

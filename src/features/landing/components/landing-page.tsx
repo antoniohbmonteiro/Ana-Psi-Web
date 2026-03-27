@@ -3,40 +3,27 @@
 import { Fragment, useEffect, useMemo, useState } from 'react';
 import {
   ArrowRight,
-  Brain,
   Calendar,
   ChartNoAxesColumn,
   Clock3,
-  Heart,
   Instagram,
   Lock,
   Mail,
   MapPin,
-  Menu,
   MessageCircle,
   Plus,
-  Shield,
-  Smile,
-  Sparkles,
-  Users,
   Video,
-  X,
 } from 'lucide-react';
 import { landingContent } from '@/features/landing/data/content';
 import type { LandingContent } from '@/features/landing/types/content';
 import { mapSitePublicContentToLandingContent } from '@/features/landing/mappers/map-site-public-content-to-landing-content';
 import { getSitePublicContent } from '@/features/landing/services/get-site-public-content';
 import { buildWhatsappLink } from '@/features/landing/utils/build-whatsapp-link';
+import { LandingAbout } from './landing-about';
+import { LandingHeader } from './landing-header';
+import { LandingHero } from './landing-hero';
+import { LandingSpecialties } from './landing-specialties';
 import styles from './landing-page.module.css';
-
-const specialtyIcons = {
-  brain: Brain,
-  heart: Heart,
-  smile: Smile,
-  shield: Shield,
-  spark: Sparkles,
-  users: Users,
-} as const;
 
 const processIcons = {
   message: MessageCircle,
@@ -54,12 +41,6 @@ const infoIcons = {
 
 type LandingPageProps = {
   initialContent?: LandingContent;
-};
-
-type SpecialtyItem = {
-  title: string;
-  description: string;
-  icon: keyof typeof specialtyIcons;
 };
 
 type ProcessItem = {
@@ -162,7 +143,6 @@ export function LandingPage({ initialContent = landingContent }: LandingPageProp
     [content.hero.title, content.hero.highlightWords]
   );
 
-  const specialtyItems = (content.specialties.items ?? []) as SpecialtyItem[];
   const processItems = (content.process.items ?? []) as ProcessItem[];
   const infoCardItems = (content.infoCards ?? []) as InfoCardItem[];
   const faqItems = (content.faq.items ?? []) as FaqItem[];
@@ -182,157 +162,29 @@ export function LandingPage({ initialContent = landingContent }: LandingPageProp
 
   return (
     <div className={styles.page}>
-      <header className={styles.header}>
-        <div className={styles.container}>
-          <div className={styles.headerInner}>
-            <a href="#top" className={styles.brand}>
-              <span>{content.brand.name}</span>
-              <span className={styles.brandDivider}>|</span>
-              <span className={styles.brandAccent}>{content.brand.accent}</span>
-            </a>
-
-            <nav className={styles.nav}>
-              <a href="#sobre" className={styles.navLink}>
-                Sobre
-              </a>
-              <a href="#como-funciona" className={styles.navLink}>
-                Como funciona
-              </a>
-              <a href="#faq" className={styles.navLink}>
-                FAQ
-              </a>
-              <a href={whatsappHref} target="_blank" rel="noreferrer" className={styles.headerButton}>
-                Contato
-              </a>
-            </nav>
-
-            <button
-              type="button"
-              aria-label={menuOpen ? 'Fechar menu' : 'Abrir menu'}
-              className={styles.mobileMenuButton}
-              onClick={() => setMenuOpen((value) => !value)}
-            >
-              {menuOpen ? <X size={22} /> : <Menu size={22} />}
-            </button>
-          </div>
-
-          {menuOpen ? (
-            <div className={styles.mobileMenu}>
-              <a href="#sobre" onClick={() => setMenuOpen(false)}>
-                Sobre
-              </a>
-              <a href="#como-funciona" onClick={() => setMenuOpen(false)}>
-                Como funciona
-              </a>
-              <a href="#faq" onClick={() => setMenuOpen(false)}>
-                FAQ
-              </a>
-              <a
-                href={whatsappHref}
-                target="_blank"
-                rel="noreferrer"
-                onClick={() => setMenuOpen(false)}
-                className={styles.headerButton}
-              >
-                Contato
-              </a>
-            </div>
-          ) : null}
-        </div>
-      </header>
+      <LandingHeader
+        brand={content.brand}
+        menuOpen={menuOpen}
+        whatsappHref={whatsappHref}
+        onToggleMenu={() => setMenuOpen((value) => !value)}
+        onCloseMenu={() => setMenuOpen(false)}
+      />
 
       <main id="top">
-        <section className={styles.hero}>
-          <div className={styles.container}>
-            <div className={styles.heroGrid}>
-              <div>
-                <h1 className={styles.heroTitle}>{renderedHeroTitle}</h1>
+        <LandingHero
+          professionalDisplayName={content.professional.displayName}
+          hero={content.hero}
+          whatsappHref={whatsappHref}
+          renderedHeroTitle={renderedHeroTitle}
+        />
 
-                <div className={styles.badge}>{content.hero.badge}</div>
+        <LandingAbout
+          about={content.about}
+          professionalDisplayName={content.professional.displayName}
+          whatsappHref={whatsappHref}
+        />
 
-                <p className={styles.heroDescription}>{content.hero.description}</p>
-
-                <a href={whatsappHref} target="_blank" rel="noreferrer" className={styles.primaryButton}>
-                  <MessageCircle size={22} />
-                  {content.hero.ctaLabel}
-                </a>
-              </div>
-
-              <div className={styles.heroVisual}>
-                <div className={styles.heroImageFrame}>
-                  <img
-                    src={content.hero.imageSrc}
-                    alt={content.professional.displayName}
-                    className={styles.heroImage}
-                  />
-                </div>
-
-                <div className={styles.heroStat}>
-                  <div className={styles.heroStatValue}>{content.hero.statValue}</div>
-                  <div className={styles.heroStatText}>{content.hero.statText}</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section id="sobre" className={styles.section}>
-          <div className={styles.container}>
-            <div className={styles.aboutGrid}>
-              <div className={styles.aboutImageWrap}>
-                <img
-                  src={content.about.imageSrc}
-                  alt={content.professional.displayName}
-                  className={styles.aboutImage}
-                />
-              </div>
-
-              <div>
-                <div className={styles.eyebrow}>{content.about.eyebrow}</div>
-                <h2 className={styles.cardTitle}>{content.about.title}</h2>
-
-                <div className={styles.aboutText}>
-                  {content.about.paragraphs.map((paragraph: string, index: number) => (
-                    <p
-                      key={`${index}-${paragraph.slice(0, 24)}`}
-                      dangerouslySetInnerHTML={{ __html: paragraph }}
-                    />
-                  ))}
-                </div>
-
-                <a href={whatsappHref} target="_blank" rel="noreferrer" className={styles.linkCta}>
-                  {content.about.ctaLabel}
-                </a>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section className={styles.finalCtaSection}>
-          <div className={styles.container}>
-            <div className={styles.sectionHeader}>
-              <div className={styles.eyebrow}>{content.specialties.eyebrow}</div>
-              <h2 className={styles.sectionTitleCenter}>{content.specialties.title}</h2>
-              <p className={styles.sectionLead}>{content.specialties.subtitle}</p>
-            </div>
-
-            <div className={styles.cardsGrid}>
-              {specialtyItems.map((item: SpecialtyItem, index: number) => {
-                const Icon = specialtyIcons[item.icon];
-
-                return (
-                  <article key={`${item.title}-${index}`} className={styles.card}>
-                    <div className={styles.iconWrap}>
-                      <Icon size={24} />
-                    </div>
-                    <h3 className={styles.cardTitle}>{item.title}</h3>
-                    <p className={styles.cardDescription}>{item.description}</p>
-                  </article>
-                );
-              })}
-            </div>
-          </div>
-        </section>
+        <LandingSpecialties specialties={content.specialties} />
 
         <section id="como-funciona" className={styles.section}>
           <div className={styles.container}>

@@ -101,7 +101,7 @@
   margin-top: 38px;
   margin-bottom: 32px;
   font-size: 62px;
-  line-height: 1.20;
+  line-height: 1.2;
   letter-spacing: -0.05em;
   font-weight: 600;
   color: #0f172a;
@@ -618,26 +618,44 @@
   .finalCtaCard {
     grid-template-columns: 1fr;
   }
+
+  .hero {
+    min-height: auto;
+    padding-bottom: 84px;
+  }
+
+  .heroGrid {
+    gap: 36px;
+  }
+
   .heroVisual {
     max-width: 640px;
+    margin: 0 auto;
   }
+
   .cardsGrid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
   .infoGrid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
   .footerGrid {
     grid-template-columns: 1fr 1fr;
   }
 }
+
 @media (max-width: 840px) {
   .headerInner {
     min-height: 68px;
+    gap: 16px;
   }
+
   .nav {
     display: none;
   }
+
   .mobileMenuButton {
     display: inline-flex;
     align-items: center;
@@ -649,12 +667,14 @@
     background: #fff;
     color: #334155;
   }
+
   .mobileMenu {
     display: grid;
     gap: 10px;
     padding: 14px 0 18px;
     border-top: 1px solid #ece7f4;
   }
+
   .mobileMenu a {
     padding: 10px 0;
     color: #334155;
@@ -662,91 +682,141 @@
     font-size: 16px;
     line-height: 1.5;
   }
+
   .section,
   .sectionSoft {
     padding: 72px 0;
   }
+
   .hero {
     padding: 10px 0 72px;
-    min-height: auto;
   }
+
+  .heroGrid {
+    gap: 28px;
+  }
+
   .heroTitle,
   .sectionTitleLeft,
   .sectionTitleCenter {
     font-size: 42px;
   }
+
+  .heroDescription {
+    max-width: none;
+  }
+
   .finalCtaTitle {
     font-size: 28px;
   }
+
   .heroImageFrame {
     height: 520px;
   }
+
   .cardsGrid,
   .processGrid,
   .infoGrid,
   .footerGrid {
     grid-template-columns: 1fr;
   }
+
   .finalCtaVisual {
     min-height: 300px;
   }
+
   .finalCtaContent {
     padding: 28px 22px;
   }
 }
+
 @media (max-width: 560px) {
   .container {
     padding: 0 18px;
   }
+
   .brand {
     font-size: 18px;
   }
+
   .badge {
     font-size: 13px;
-    padding: 9px 14px;
+    line-height: 1.35;
+    padding: 10px 14px;
+    white-space: normal;
   }
+
   .heroTitle,
   .sectionTitleLeft,
   .sectionTitleCenter {
     font-size: 34px;
-    line-height: 1.02;
+    line-height: 1.1;
   }
+
+  .heroTitle {
+    margin-top: 28px;
+    margin-bottom: 24px;
+  }
+
+  .heroTitleLine + .heroTitleLine {
+    margin-top: 4px;
+  }
+
   .finalCtaTitle {
     font-size: 28px;
-    line-height: 1.08;
+    line-height: 1.12;
   }
+
   .heroDescription,
   .sectionLead,
   .finalCtaDescription,
   .aboutText p {
     font-size: 17px;
   }
+
   .primaryButton,
   .secondaryButton,
   .floatButton {
     width: 100%;
     justify-content: center;
   }
+
   .heroImageFrame {
     height: 420px;
     border-radius: 24px;
   }
+
   .heroStat {
     position: static;
     margin-top: 16px;
+    max-width: none;
   }
+
   .card,
   .processCard,
-  .infoCard,
-  .faqTrigger,
-  .faqAnswer,
-  .finalCtaContent {
+  .infoCard {
     padding-left: 20px;
     padding-right: 20px;
   }
+
+  .faqTrigger {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  .faqAnswerInner {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  .finalCtaContent {
+    padding: 24px 20px;
+  }
+
   .finalCtaVisual {
     min-height: 220px;
   }
+
   .floatButton {
     right: 18px;
     left: 18px;

@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { landingContent } from '@/features/landing/data/content';
 import type { LandingContent } from '@/features/landing/types/content';
 import { mapSitePublicContentToLandingContent } from '@/features/landing/mappers/map-site-public-content-to-landing-content';
 import { getSitePublicContent } from '@/features/landing/services/get-site-public-content';
@@ -21,15 +20,25 @@ type LandingPageProps = {
   initialContent?: LandingContent;
 };
 
-export function LandingPage({ initialContent = landingContent }: LandingPageProps) {
+type LoadState = 'loading' | 'ready' | 'error';
+
+export function LandingPage({ initialContent }: LandingPageProps) {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [content, setContent] = useState<LandingContent>(initialContent);
+  const [openFaq, setOpenFaq] = useState<number | null>(0);
+  const [content, setContent] = useState<LandingContent | null>(initialContent ?? null);
+  const [loadState, setLoadState] = useState<LoadState>(initialContent ? 'ready' : 'loading');
 
   useEffect(() => {
+    if (initialContent) {
+      return;
+    }
+
     let isMounted = true;
 
     async function loadSitePublicContent() {
       try {
+        setLoadState('loading');
+
         const sitePublicContent = await getSitePublicContent();
 
         if (!isMounted) {
@@ -37,8 +46,15 @@ export function LandingPage({ initialContent = landingContent }: LandingPageProp
         }
 
         setContent(mapSitePublicContentToLandingContent(sitePublicContent));
+        setLoadState('ready');
       } catch (error) {
         console.error('Failed to load landing content from Firestore.', error);
+
+        if (!isMounted) {
+          return;
+        }
+
+        setLoadState('error');
       }
     }
 
@@ -47,7 +63,39 @@ export function LandingPage({ initialContent = landingContent }: LandingPageProp
     return () => {
       isMounted = false;
     };
-  }, []);
+  }, [initialContent]);
+
+  if (loadState === 'loading' || !content) {
+    return (
+      <div className={styles.page}>
+        <main className={styles.section}>
+          <div className={styles.container}>
+            <div className={styles.sectionHeader}>
+              <div className={styles.eyebrow}>Carregando</div>
+              <h1 className={styles.sectionTitleCenter}>Preparando o site...</h1>
+              <p className={styles.sectionLead}>Aguarde um instante.</p>
+            </div>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
+  if (loadState === 'error') {
+    return (
+      <div className={styles.page}>
+        <main className={styles.section}>
+          <div className={styles.container}>
+            <div className={styles.sectionHeader}>
+              <div className={styles.eyebrow}>Erro ao carregar</div>
+              <h1 className={styles.sectionTitleCenter}>Não foi possível carregar o conteúdo do site.</h1>
+              <p className={styles.sectionLead}>Verifique a conexão, as regras do Firestore e tente novamente.</p>
+            </div>
+          </div>
+        </main>
+      </div>
+    );
+  }
 
   const whatsappHref = buildWhatsappLink(content.contact.whatsapp, content.contact.whatsappMessage);
 
@@ -80,7 +128,12 @@ export function LandingPage({ initialContent = landingContent }: LandingPageProp
 
         <LandingInfoCards infoCards={content.infoCards} />
 
-        <LandingFaq faq={content.faq} whatsappHref={whatsappHref} />
+        <LandingFaq
+          faq={content.faq}
+          openFaq={openFaq}
+          onToggleFaq={(index) => setOpenFaq((current) => (current === index ? null : index))}
+          whatsappHref={whatsappHref}
+        />
 
         <LandingFinalCta finalCta={content.finalCta} whatsappHref={whatsappHref} />
       </main>
@@ -91,6 +144,11 @@ export function LandingPage({ initialContent = landingContent }: LandingPageProp
         footer={content.footer}
         professional={content.professional}
       />
+
+      <a href={whatsappHref} target="_blank" rel="noreferrer" className={styles.floatButton}>
+        <span>Fale comigo</span>
+        <span className={styles.floatDot} />
+      </a>
     </div>
   );
 }

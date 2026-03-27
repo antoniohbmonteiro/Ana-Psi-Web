@@ -1,8 +1,7 @@
 export type SitePublicLanding = {
   hero: {
     title: string;
-    highlight: string;
-    suffix: string;
+    highlightWords: string[];
     description: string;
     badgePrefix: string;
     ctaLabel: string;

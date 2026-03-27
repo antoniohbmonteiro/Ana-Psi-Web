@@ -1,26 +1,23 @@
+import { landingContent } from '@/features/landing/data/content';
+import type { LandingContent } from '@/features/landing/types/content';
 import type { SitePublicContent } from '@/features/landing/types/site-public-content';
-import type { LandingUiContent } from '@/features/landing/types/landing-ui-content';
 
 function parseParagraphBody(body: string) {
   return body
-    .split(/\n\n+/)
+    .split(/\r?\n\r?\n+/)
     .map((paragraph) => paragraph.trim())
     .filter(Boolean)
     .map((paragraph) => paragraph.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>'));
 }
 
-export function mapSitePublicContentToLandingContent(content: SitePublicContent): LandingUiContent {
+export function mapSitePublicContentToLandingContent(content: SitePublicContent): LandingContent {
   const { profile, landing } = content;
 
-  const [brandName = 'Ana', brandAccent = 'Psicologia'] = profile.shortBrand
-    .split('|')
-    .map((part) => part.trim())
-    .filter(Boolean);
-
   return {
+    ...landingContent,
     brand: {
-      name: brandName,
-      accent: brandAccent,
+      name: profile.shortBrand.split('|')[0]?.trim() || landingContent.brand.name,
+      accent: profile.shortBrand.split('|')[1]?.trim() || landingContent.brand.accent,
     },
     professional: {
       fullName: profile.professionalName,
@@ -31,13 +28,12 @@ export function mapSitePublicContentToLandingContent(content: SitePublicContent)
     contact: {
       whatsapp: profile.whatsappNumber,
       whatsappMessage: profile.whatsappMessage,
-      instagram: profile.instagram ?? '@placeholder',
-      email: profile.email ?? 'contato@placeholder.com',
+      instagram: profile.instagram ?? landingContent.contact.instagram,
+      email: profile.email ?? landingContent.contact.email,
     },
     hero: {
       title: landing.hero.title,
-      highlight: landing.hero.highlight,
-      suffix: landing.hero.suffix,
+      highlightWords: landing.hero.highlightWords,
       description: landing.hero.description,
       badge: `${landing.hero.badgePrefix} | CRP ${profile.crp}`,
       ctaLabel: landing.hero.ctaLabel,
@@ -68,7 +64,7 @@ export function mapSitePublicContentToLandingContent(content: SitePublicContent)
       description: landing.finalCta.description,
       buttonLabel: landing.finalCta.buttonLabel,
       helper: landing.finalCta.responseTimeText,
-      imageSrc: landing.finalCta.imageSrc ?? '/images/landing/final-cta-room.jpg',
+      imageSrc: landing.finalCta.imageSrc,
     },
     footer: {
       description: landing.footer.description,

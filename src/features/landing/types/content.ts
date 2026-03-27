@@ -1,38 +1,6 @@
-export type LandingNavItem = {
-  label: string;
-  href: string;
-};
-
-export type LandingFaqItem = {
-  question: string;
-  answer: string;
-};
-
-export type LandingSpecialtyItem = {
-  title: string;
-  description: string;
-  icon: "brain" | "heart" | "smile" | "shield" | "lightbulb" | "users";
-};
-
-export type LandingPrincipleItem = {
-  title: string;
-  description: string;
-  icon: "heart" | "users" | "lightbulb" | "target";
-};
-
-export type LandingProcessItem = {
-  number: string;
-  title: string;
-  description: string;
-  icon: "message-circle" | "calendar" | "video" | "trending-up";
-};
-
-export type LandingInfoItem = {
-  title: string;
-  value: string;
-  detail: string;
-  icon: "video" | "clock" | "lock" | "calendar";
-};
+export type SpecialtyIconKey = 'brain' | 'heart' | 'smile' | 'shield' | 'spark' | 'users';
+export type ProcessIconKey = 'message' | 'calendar' | 'video' | 'chart';
+export type InfoIconKey = 'video' | 'clock' | 'lock' | 'calendar';
 
 export type LandingContent = {
   brand: {
@@ -43,25 +11,19 @@ export type LandingContent = {
     fullName: string;
     displayName: string;
     crp: string;
-    city: string;
-    state: string;
-    audience: string[];
     approach: string;
-    modalities: string[];
   };
   contact: {
     whatsapp: string;
     whatsappMessage: string;
-    whatsappFloatMessage: string;
     instagram: string;
     email: string;
   };
-  nav: LandingNavItem[];
   hero: {
-    badge: string;
     title: string;
-    highlight: string;
+    highlightWords: string[];
     description: string;
+    badge: string;
     ctaLabel: string;
     statValue: string;
     statText: string;
@@ -71,45 +33,56 @@ export type LandingContent = {
     eyebrow: string;
     title: string;
     paragraphs: string[];
-    linkLabel: string;
+    ctaLabel: string;
     imageSrc: string;
-  };
-  approach: {
-    badge: string;
-    title: string;
-    highlight: string;
-    paragraphs: string[];
-    principles: LandingPrincipleItem[];
   };
   specialties: {
     eyebrow: string;
     title: string;
-    description: string;
-    items: LandingSpecialtyItem[];
+    subtitle: string;
+    items: {
+      title: string;
+      description: string;
+      icon: SpecialtyIconKey;
+    }[];
   };
   process: {
     eyebrow: string;
     title: string;
-    description: string;
-    items: LandingProcessItem[];
+    subtitle: string;
+    items: {
+      number: string;
+      title: string;
+      description: string;
+      icon: ProcessIconKey;
+    }[];
   };
-  info: LandingInfoItem[];
+  infoCards: {
+    title: string;
+    value: string;
+    detail: string;
+    icon: InfoIconKey;
+  }[];
   faq: {
     eyebrow: string;
     title: string;
-    description: string;
-    items: LandingFaqItem[];
+    subtitle: string;
+    items: {
+      question: string;
+      answer: string;
+    }[];
+    footerLead: string;
+    footerCtaLabel: string;
   };
   finalCta: {
     title: string;
     description: string;
-    ctaLabel: string;
+    buttonLabel: string;
     helper: string;
+    imageSrc?: string;
   };
   footer: {
     description: string;
-    quickLinks: LandingNavItem[];
-    contactMode: string;
-    copyright: string;
+    locationLabel: string;
   };
 };

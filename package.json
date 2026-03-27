@@ -6,12 +6,11 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint",
-    "seed:site-public": "node scripts/seed-site-public-content.mjs"
+    "lint": "eslint"
   },
   "dependencies": {
     "clsx": "^2.1.1",
-    "firebase-admin": "^13.6.0",
+    "firebase": "^12.2.1",
     "lucide-react": "^0.577.0",
     "next": "16.1.6",
     "react": "19.2.3",

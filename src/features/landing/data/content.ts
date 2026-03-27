@@ -69,6 +69,8 @@ export const landingContent = {
     eyebrow: 'Dúvidas',
     title: 'Perguntas frequentes',
     subtitle: 'Esclareci as principais dúvidas, mas fique à vontade para perguntar o que quiser.',
+    footerLead: 'Ainda tem dúvidas?',
+    footerCtaLabel: 'Falar comigo no WhatsApp →',
     items: [
       { question: 'Como funciona a primeira sessão?', answer: 'Na primeira sessão, conversamos sobre o que te trouxe até aqui, suas expectativas e objetivos. Também explico como funciona o processo terapêutico e respondo suas dúvidas.' },
       { question: 'Quanto tempo dura o tratamento?', answer: 'Cada processo tem seu ritmo. A duração varia de acordo com suas demandas, objetivos e momento de vida.' },
@@ -83,8 +85,12 @@ export const landingContent = {
     description: 'Agendar sua primeira sessão é simples. Vamos conversar sem compromisso sobre como posso ajudar você.',
     buttonLabel: 'Agendar via WhatsApp',
     helper: 'Respondo em até 24 horas',
+    imageSrc: '/images/landing/final-cta-room.jpg',
   },
-  footer: { description: 'Um espaço de acolhimento, escuta e cuidado para sua saúde mental.' },
+  footer: {
+    description: 'Um espaço de acolhimento, escuta e cuidado para sua saúde mental.',
+    locationLabel: 'Atendimento online | Contagem, BH e região',
+  },
 } as const;
 
 export type LandingContent = typeof landingContent;

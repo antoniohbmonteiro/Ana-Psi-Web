@@ -5,8 +5,10 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "build:hosting": "next build && node scripts/prepare-hosting.mjs",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "deploy:hosting": "firebase deploy --only hosting"
   },
   "dependencies": {
     "clsx": "^2.1.1",

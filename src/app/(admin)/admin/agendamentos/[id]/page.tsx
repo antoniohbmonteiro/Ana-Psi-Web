@@ -1,3 +1,9 @@
+export const dynamicParams = false;
+
+export function generateStaticParams() {
+  return [];
+}
+
 import { notFound } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { appointmentQuickActions } from "@/features/appointments/mock";

@@ -1,12 +1,10 @@
 import type { MetadataRoute } from 'next';
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, '');
+export const dynamic = 'force-static';
+
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000';
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  if (!siteUrl) {
-    return [];
-  }
-
   return [
     {
       url: siteUrl,

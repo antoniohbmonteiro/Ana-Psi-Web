@@ -1,1 +1,1 @@
-export type LandingContent = import('@/features/landing/data/content').LandingContent;
+export type { LandingContent } from '@/features/landing/types/content';

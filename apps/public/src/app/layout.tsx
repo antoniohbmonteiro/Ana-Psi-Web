@@ -8,14 +8,75 @@ const inter = Inter({
   display: 'swap',
 });
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://boaventurapsi.com.br';
 const siteName = 'Ana Psicologia';
 const siteTitle = 'Ana Paula Boaventura | Psicóloga Online';
 const siteDescription =
   'Psicoterapia online para adultos e adolescentes com acolhimento, escuta ativa e cuidado profissional.';
 
+const contact = {
+  email: 'anapaulaboraventura.psi@gmail.com',
+  telephone: '+55 31 97358-9839',
+  instagramUrl: 'https://instagram.com/anapaulaboraventura.psi',
+  linktreeUrl: 'https://linktr.ee/anapaulaboaventura.psi',
+};
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Person',
+      '@id': `${siteUrl}#person`,
+      name: 'Ana Paula Boaventura de Moura',
+      alternateName: 'Ana Paula Boaventura',
+      jobTitle: 'Psicóloga',
+      description: siteDescription,
+      url: siteUrl,
+      image: `${siteUrl}/images/landing/ana-hero.jpeg`,
+      email: `mailto:${contact.email}`,
+      telephone: contact.telephone,
+      sameAs: [contact.instagramUrl, contact.linktreeUrl],
+      worksFor: {
+        '@id': `${siteUrl}#business`,
+      },
+    },
+    {
+      '@type': ['ProfessionalService', 'LocalBusiness'],
+      '@id': `${siteUrl}#business`,
+      name: siteName,
+      url: siteUrl,
+      image: [
+        `${siteUrl}/images/landing/ana-hero.jpeg`,
+        `${siteUrl}/images/landing/ana-about.jpeg`,
+      ],
+      description: siteDescription,
+      telephone: contact.telephone,
+      email: contact.email,
+      sameAs: [contact.instagramUrl, contact.linktreeUrl],
+      areaServed: {
+        '@type': 'Country',
+        name: 'Brasil',
+      },
+      address: {
+        '@type': 'PostalAddress',
+        addressLocality: 'Contagem',
+        addressRegion: 'MG',
+        addressCountry: 'BR',
+      },
+      serviceType: [
+        'Psicoterapia online',
+        'Atendimento psicológico para adultos',
+        'Atendimento psicológico para adolescentes',
+      ],
+      founder: {
+        '@id': `${siteUrl}#person`,
+      },
+    },
+  ],
+};
+
 export const metadata: Metadata = {
-  ...(siteUrl ? { metadataBase: new URL(siteUrl) } : {}),
+  metadataBase: new URL(siteUrl),
   title: {
     default: siteTitle,
     template: '%s | Ana Psicologia',
@@ -34,14 +95,14 @@ export const metadata: Metadata = {
   creator: 'Ana Paula Boaventura',
   publisher: siteName,
   category: 'health',
-  alternates: siteUrl ? { canonical: '/' } : undefined,
+  alternates: { canonical: '/' },
   openGraph: {
     type: 'website',
     locale: 'pt_BR',
     siteName,
     title: siteTitle,
     description: siteDescription,
-    ...(siteUrl ? { url: '/' } : {}),
+    url: '/',
   },
   twitter: {
     card: 'summary',
@@ -73,7 +134,15 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR">
-      <body className={inter.className}>{children}</body>
+      <body className={inter.className}>
+        {children}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(jsonLd).replace(/</g, '\\u003c'),
+          }}
+        />
+      </body>
     </html>
   );
 }

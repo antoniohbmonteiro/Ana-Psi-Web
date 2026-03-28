@@ -1,145 +1,117 @@
 {
   "profile": {
-    "modalities": [
-      "Online"
-    ],
-    "instagram": "anapaulaboraventura.psi",
-    "displayName": "Ana Paula Boaventura",
     "professionalName": "Ana Paula Boaventura de Moura",
-    "whatsappNumber": "5531973589839",
-    "whatsappMessage": "Olá! Vim pelo site e gostaria de saber mais sobre o atendimento.",
-    "approach": "Psicóloga Humanista",
-    "state": "MG",
-    "city": "Contagem",
-    "crp": "04/84622",
-    "email": "anapaulaboraventura.psi@gmail.com",
+    "displayName": "Ana Paula Boaventura",
     "shortBrand": "Ana | Psicologia",
+    "crp": "04/84622",
+    "state": "MG",
     "audience": [
       "Adultos",
       "Adolescentes"
-    ]
+    ],
+    "modalities": [
+      "Online"
+    ],
+    "whatsappMessage": "Olá! Vim pelo site e gostaria de saber mais sobre o atendimento.",
+    "city": "Contagem",
+    "approach": "Psicóloga Humanista",
+    "email": "anapaulaboraventura.psi@gmail.com",
+    "instagram": "anapaulaboraventura.psi",
+    "whatsappNumber": "5531973589839"
   },
   "landing": {
+    "process": {
+      "eyebrow": "Processo",
+      "subtitle": "Um processo simples e acolhedor do primeiro contato ao acompanhamento.",
+      "title": "Como funciona o atendimento",
+      "items": [
+        {
+          "number": "01",
+          "title": "Primeiro contato",
+          "description": "Entre em contato pelo WhatsApp. Vou responder suas dúvidas e entender suas necessidades.",
+          "icon": "message"
+        },
+        {
+          "number": "02",
+          "title": "Agendamento",
+          "description": "Escolhemos juntas o melhor horário para sua rotina. Flexibilidade é importante.",
+          "icon": "calendar"
+        },
+        {
+          "number": "03",
+          "title": "Sessões online",
+          "description": "Encontros de 50 minutos por videochamada, em ambiente seguro e confidencial.",
+          "icon": "video"
+        },
+        {
+          "number": "04",
+          "title": "Evolução contínua",
+          "description": "Acompanhamento personalizado respeitando seu tempo e objetivos terapêuticos.",
+          "icon": "chart"
+        }
+      ]
+    },
     "specialties": {
+      "eyebrow": "Áreas de atuação",
       "subtitle": "Trabalho com diferentes demandas emocionais, sempre respeitando sua individualidade.",
+      "title": "Como posso ajudar você",
       "items": [
         {
           "title": "Ansiedade",
-          "icon": "brain",
-          "description": "Aprenda a lidar com pensamentos acelerados e preocupações excessivas."
+          "description": "Aprenda a lidar com pensamentos acelerados e preocupações excessivas.",
+          "icon": "brain"
         },
         {
+          "title": "Relacionamentos",
           "description": "Desenvolva relações mais saudáveis e autênticas.",
-          "icon": "heart",
-          "title": "Relacionamentos"
+          "icon": "heart"
         },
         {
-          "icon": "smile",
+          "title": "Autoestima",
           "description": "Reconecte-se consigo e fortaleça sua autoconfiança.",
-          "title": "Autoestima"
+          "icon": "smile"
         },
         {
-          "icon": "shield",
+          "title": "Traumas",
           "description": "Processe experiências difíceis em um espaço seguro.",
-          "title": "Traumas"
+          "icon": "shield"
         },
         {
           "title": "Autoconhecimento",
-          "icon": "spark",
-          "description": "Entenda seus padrões e descubra seu potencial."
+          "description": "Entenda seus padrões e descubra seu potencial.",
+          "icon": "spark"
         },
         {
+          "title": "Transições de vida",
           "description": "Navegue mudanças importantes com mais clareza.",
-          "icon": "users",
-          "title": "Transições de vida"
+          "icon": "users"
         }
-      ],
-      "eyebrow": "Áreas de atuação",
-      "title": "Como posso ajudar você"
-    },
-    "hero": {
-      "highlightWords": [
-        "saúde",
-        "mental"
-      ],
-      "ctaLabel": "Agendar via WhatsApp",
-      "badgePrefix": "Psicóloga Online (Ana Paula Boaventura)",
-      "suffix": "com acolhimento profissional",
-      "title": "Cuide da sua saúde\\nmental com\\nacolhimento\\nprofissional",
-      "imageSrc": "/images/landing/ana-hero.jpeg",
-      "primaryCtaMessage": "Olá! Vim pelo site e gostaria de agendar uma sessão.",
-      "statText": "atendimento online humanizado",
-      "highlight": "saúde mental",
-      "floatingCardTitle": "100%",
-      "description": "Psicoterapia individual para adultos e adolescentes, com escuta ativa, respeito ao seu tempo e um espaço seguro para falar sobre você.",
-      "primaryCtaLabel": "Agendar via WhatsApp",
-      "eyebrow": "Psicóloga Online (Ana) | CRP 04/84622",
-      "floatingCardText": "atendimento online humanizado",
-      "statValue": "100%",
-      "subtitle": "Psicoterapia individual para adultos e adolescentes, com escuta ativa, respeito ao seu tempo e um espaço seguro para falar sobre você."
-    },
-    "finalCta": {
-      "description": "Agendar sua primeira sessão é simples. Vamos conversar sem compromisso sobre como posso ajudar você.",
-      "responseTimeText": "Respondo em até 24 horas",
-      "buttonLabel": "Agendar via WhatsApp",
-      "imageSrc": "/images/landing/final-cta-room.jpg",
-      "title": "Pronta para dar o primeiro passo?"
-    },
-    "process": {
-      "items": [
-        {
-          "title": "Primeiro contato",
-          "icon": "message",
-          "number": "01",
-          "description": "Entre em contato pelo WhatsApp. Vou responder suas dúvidas e entender suas necessidades."
-        },
-        {
-          "description": "Escolhemos juntas o melhor horário para sua rotina. Flexibilidade é importante.",
-          "number": "02",
-          "icon": "calendar",
-          "title": "Agendamento"
-        },
-        {
-          "title": "Sessões online",
-          "number": "03",
-          "icon": "video",
-          "description": "Encontros de 50 minutos por videochamada, em ambiente seguro e confidencial."
-        },
-        {
-          "title": "Evolução contínua",
-          "number": "04",
-          "icon": "chart",
-          "description": "Acompanhamento personalizado respeitando seu tempo e objetivos terapêuticos."
-        }
-      ],
-      "subtitle": "Um processo simples e acolhedor do primeiro contato ao acompanhamento.",
-      "eyebrow": "Processo",
-      "title": "Como funciona o atendimento"
+      ]
     },
     "infoCards": [
       {
+        "title": "Atendimento Online",
         "value": "100% remoto",
-        "icon": "video",
         "detail": "Atendo de qualquer lugar via videochamada segura",
-        "title": "Atendimento Online"
+        "icon": "video"
       },
       {
-        "detail": "Sessões semanais ou quinzenais",
         "title": "Duração",
         "value": "50 minutos",
+        "detail": "Sessões semanais ou quinzenais",
         "icon": "clock"
       },
       {
         "title": "Sigilo",
+        "value": "Garantido",
         "detail": "Total confidencialidade profissional",
-        "icon": "lock",
-        "value": "Garantido"
+        "icon": "lock"
       },
       {
-        "icon": "calendar",
-        "value": "Horários variados",
         "title": "Flexibilidade",
-        "detail": "Manhã, tarde ou noite"
+        "value": "Horários variados",
+        "detail": "Manhã, tarde ou noite",
+        "icon": "calendar"
       }
     ],
     "footer": {
@@ -147,44 +119,72 @@
       "locationLabel": "Atendimento online | Contagem, BH e região"
     },
     "faq": {
+      "footerCtaLabel": "Falar comigo no WhatsApp →",
+      "eyebrow": "Dúvidas",
+      "subtitle": "Esclareci as principais dúvidas, mas fique à vontade para perguntar o que quiser.",
+      "title": "Perguntas frequentes",
       "items": [
         {
-          "answer": "Na primeira sessão, conversamos sobre o que te trouxe até aqui, suas expectativas e objetivos. Também explico como funciona o processo terapêutico e respondo suas dúvidas.",
-          "question": "Como funciona a primeira sessão?"
+          "question": "Como funciona a primeira sessão?",
+          "answer": "Na primeira sessão, conversamos sobre o que te trouxe até aqui, suas expectativas e objetivos. Também explico como funciona o processo terapêutico e respondo suas dúvidas."
         },
         {
-          "answer": "Cada processo tem seu ritmo. A duração varia de acordo com suas demandas, objetivos e momento de vida.",
-          "question": "Quanto tempo dura o tratamento?"
+          "question": "Quanto tempo dura o tratamento?",
+          "answer": "Cada processo tem seu ritmo. A duração varia de acordo com suas demandas, objetivos e momento de vida."
         },
         {
-          "answer": "Sim. O atendimento online é reconhecido e pode ser tão efetivo quanto o presencial, desde que você esteja em um ambiente reservado e com boa conexão.",
-          "question": "As sessões online funcionam?"
+          "question": "As sessões online funcionam?",
+          "answer": "Sim. O atendimento online é reconhecido e pode ser tão efetivo quanto o presencial, desde que você esteja em um ambiente reservado e com boa conexão."
         },
         {
-          "answer": "Sim. O ideal é avisar com antecedência para que possamos reorganizar o horário.",
-          "question": "Posso remarcar sessões?"
+          "question": "Posso remarcar sessões?",
+          "answer": "Sim. O ideal é avisar com antecedência para que possamos reorganizar o horário."
         },
         {
-          "answer": "Tudo que é compartilhado em sessão é tratado com confidencialidade, conforme o código de ética profissional.",
-          "question": "Como funciona o sigilo profissional?"
+          "question": "Como funciona o sigilo profissional?",
+          "answer": "Tudo que é compartilhado em sessão é tratado com confidencialidade, conforme o código de ética profissional."
         },
         {
-          "answer": "Os valores e formas de pagamento podem ser informados diretamente no WhatsApp.",
-          "question": "Qual o valor da sessão?"
+          "question": "Qual o valor da sessão?",
+          "answer": "Os valores e formas de pagamento podem ser informados diretamente no WhatsApp."
         }
       ],
-      "eyebrow": "Dúvidas",
-      "title": "Perguntas frequentes",
-      "subtitle": "Esclareci as principais dúvidas, mas fique à vontade para perguntar o que quiser.",
-      "footerLead": "Ainda tem dúvidas?",
-      "footerCtaLabel": "Falar comigo no WhatsApp →"
+      "footerLead": "Ainda tem dúvidas?"
     },
     "about": {
       "eyebrow": "Sobre mim",
       "imageSrc": "/images/landing/ana-about.jpeg",
+      "body": "Psicóloga com registro CRP 04/84622, com atuação clínica voltada para adultos e adolescentes.\n\nAcredito que cada pessoa tem sua própria história e ritmo. Meu papel é oferecer um espaço de **acolhimento, escuta ativa e confiança**, onde você possa se expressar livremente.\n\nMinha abordagem é humanista e busca favorecer **autoconhecimento, compreensão emocional e construção de recursos** para lidar com os desafios da vida.",
       "title": "Olá, sou a Ana",
-      "ctaLabel": "Falar comigo no WhatsApp →",
-      "body": "Psicóloga com registro CRP 04/84622, com atuação clínica voltada para adultos e adolescentes.\n\nAcredito que cada pessoa tem sua própria história e ritmo. Meu papel é oferecer um espaço de **acolhimento, escuta ativa e confiança**, onde você possa se expressar livremente.\n\nMinha abordagem é humanista e busca favorecer **autoconhecimento, compreensão emocional e construção de recursos** para lidar com os desafios da vida."
+      "ctaLabel": "Falar comigo no WhatsApp →"
+    },
+    "finalCta": {
+      "responseTimeText": "Respondo em até 24 horas",
+      "description": "Agendar sua primeira sessão é simples. Vamos conversar sem compromisso sobre como posso ajudar você.",
+      "imageSrc": "/images/landing/final-cta-room.jpg",
+      "title": "Pronta para dar o primeiro passo?",
+      "buttonLabel": "Agendar via WhatsApp"
+    },
+    "hero": {
+      "badgePrefix": "Psicóloga Online (Ana Paula Boaventura)",
+      "ctaLabel": "Agendar via WhatsApp",
+      "subtitle": "Psicoterapia individual para adultos e adolescentes, com escuta ativa, respeito ao seu tempo e um espaço seguro para falar sobre você.",
+      "imageSrc": "/images/landing/ana-hero.jpeg",
+      "floatingCardText": "atendimento online humanizado",
+      "primaryCtaMessage": "Olá! Vim pelo site e gostaria de agendar uma sessão.",
+      "highlight": "saúde mental",
+      "statValue": "100%",
+      "suffix": "com acolhimento profissional",
+      "primaryCtaLabel": "Agendar via WhatsApp",
+      "description": "Psicoterapia individual para adultos e adolescentes, com escuta ativa, respeito ao seu tempo e um espaço seguro para falar sobre você.",
+      "statText": "atendimento online humanizado",
+      "title": "Cuide da sua saúde\\nmental com\\nacolhimento\\nprofissional",
+      "floatingCardTitle": "100%",
+      "eyebrow": "Psicóloga Online (Ana) | CRP 04/84622",
+      "highlightWords": [
+        "saúde",
+        "mental"
+      ]
     }
   }
 }

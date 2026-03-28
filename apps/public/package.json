@@ -3,7 +3,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "sync:snapshot": "node ./scripts/sync-site-public-content.mjs",
+    "build": "npm run sync:snapshot && next build",
     "start": "next start",
     "lint": "eslint",
     "deploy:hosting": "firebase deploy --only hosting"
@@ -11,6 +12,7 @@
   "dependencies": {
     "clsx": "^2.1.1",
     "firebase": "^12.2.1",
+    "firebase-admin": "^13.7.0",
     "lucide-react": "^0.577.0",
     "next": "^16.1.6",
     "react": "^19.2.3",

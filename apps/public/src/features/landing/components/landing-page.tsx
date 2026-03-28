@@ -29,15 +29,13 @@ export function LandingPage({ initialContent }: LandingPageProps) {
   const [loadState, setLoadState] = useState<LoadState>(initialContent ? 'ready' : 'loading');
 
   useEffect(() => {
-    if (initialContent) {
-      return;
-    }
-
     let isMounted = true;
 
     async function loadSitePublicContent() {
       try {
-        setLoadState('loading');
+        if (!initialContent) {
+          setLoadState('loading');
+        }
 
         const sitePublicContent = await getSitePublicContent();
 
@@ -54,7 +52,9 @@ export function LandingPage({ initialContent }: LandingPageProps) {
           return;
         }
 
-        setLoadState('error');
+        if (!initialContent) {
+          setLoadState('error');
+        }
       }
     }
 

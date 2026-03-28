@@ -59,8 +59,10 @@ const jsonLd = {
       },
       address: {
         '@type': 'PostalAddress',
-        addressLocality: 'Contagem',
+        streetAddress: 'Rua dos Odontologos, 95',
+        addressLocality: 'Belo Horizonte',
         addressRegion: 'MG',
+        postalCode: '30840200',
         addressCountry: 'BR',
       },
       serviceType: [
@@ -71,6 +73,7 @@ const jsonLd = {
       founder: {
         '@id': `${siteUrl}#person`,
       },
+      
     },
   ],
 };

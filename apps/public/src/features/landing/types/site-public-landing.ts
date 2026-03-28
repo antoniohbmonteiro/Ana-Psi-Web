@@ -16,6 +16,17 @@ export type SitePublicLanding = {
     ctaLabel: string;
     imageSrc: string;
   };
+  approach: {
+    eyebrow: string;
+    title: string;
+    highlightWords: string[];
+    description: string[];
+    principles: Array<{
+      title: string;
+      description: string;
+      icon: 'heart' | 'users' | 'lightbulb' | 'target';
+    }>;
+  };
   specialties: {
     eyebrow: string;
     title: string;

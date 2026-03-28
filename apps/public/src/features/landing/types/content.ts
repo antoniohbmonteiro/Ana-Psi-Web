@@ -1,4 +1,5 @@
 export type SpecialtyIconKey = 'brain' | 'heart' | 'smile' | 'shield' | 'spark' | 'users';
+export type ApproachIconKey = 'heart' | 'users' | 'lightbulb' | 'target';
 export type ProcessIconKey = 'message' | 'calendar' | 'video' | 'chart';
 export type InfoIconKey = 'video' | 'clock' | 'lock' | 'calendar';
 
@@ -35,6 +36,17 @@ export type LandingContent = {
     paragraphs: string[];
     ctaLabel: string;
     imageSrc: string;
+  };
+  approach: {
+    eyebrow: string;
+    title: string;
+    highlightWords: string[];
+    description: string[];
+    principles: {
+      title: string;
+      description: string;
+      icon: ApproachIconKey;
+    }[];
   };
   specialties: {
     eyebrow: string;

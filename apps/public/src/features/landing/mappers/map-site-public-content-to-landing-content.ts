@@ -48,6 +48,7 @@ export function mapSitePublicContentToLandingContent(content: SitePublicContent)
       ctaLabel: landing.about.ctaLabel,
       imageSrc: landing.about.imageSrc,
     },
+    approach: landing.approach,
     specialties: landing.specialties,
     process: landing.process,
     infoCards: landing.infoCards,

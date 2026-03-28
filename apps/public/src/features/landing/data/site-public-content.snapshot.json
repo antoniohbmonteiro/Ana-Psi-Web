@@ -2,7 +2,6 @@
   "profile": {
     "professionalName": "Ana Paula Boaventura de Moura",
     "displayName": "Ana Paula Boaventura",
-    "shortBrand": "Ana | Psicologia",
     "crp": "04/84622",
     "state": "MG",
     "audience": [
@@ -17,7 +16,8 @@
     "approach": "Psicóloga Humanista",
     "email": "anapaulaboraventura.psi@gmail.com",
     "instagram": "anapaulaboraventura.psi",
-    "whatsappNumber": "5531973589839"
+    "whatsappNumber": "5531973589839",
+    "shortBrand": "Ana Paula Boaventura | Psicologia"
   },
   "landing": {
     "process": {
@@ -165,26 +165,59 @@
       "title": "Pronta para dar o primeiro passo?",
       "buttonLabel": "Agendar via WhatsApp"
     },
+    "approach": {
+      "description": [
+        "Na psicologia humanista, acredito que cada pessoa possui recursos internos para promover mudanças significativas em sua vida. Meu papel como terapeuta é facilitar esse processo de autodescoberta e crescimento pessoal.",
+        "O foco está no presente, nas suas experiências e sentimentos atuais, ajudando você a desenvolver maior autoconsciência e a tomar decisões mais alinhadas com seus valores e objetivos."
+      ],
+      "principles": [
+        {
+          "icon": "heart",
+          "title": "Acolhimento",
+          "description": "Ambiente seguro e livre de julgamentos, onde você é aceito como é."
+        },
+        {
+          "description": "Relação genuína entre terapeuta e paciente, baseada em confiança mútua.",
+          "title": "Autenticidade",
+          "icon": "users"
+        },
+        {
+          "description": "Desenvolvimento da consciência sobre si mesmo e suas potencialidades.",
+          "icon": "lightbulb",
+          "title": "Autoconhecimento"
+        },
+        {
+          "title": "Autonomia",
+          "icon": "target",
+          "description": "Empoderamento para fazer suas próprias escolhas com responsabilidade."
+        }
+      ],
+      "title": "Psicologia Humanista",
+      "eyebrow": "Abordagem Terapêutica",
+      "highlightWords": [
+        "Humanista"
+      ]
+    },
     "hero": {
-      "imageSrc": "/images/landing/ana-hero.jpeg",
+      "subtitle": "Atendimento psicológico para adultos, com escuta qualificada e prática ética no processo terapêutico.",
+      "floatingCardText": "atendimento online humanizado",
+      "description": "Atendimento psicológico para adultos, com escuta qualificada e prática ética no processo terapêutico.",
+      "suffix": "com acolhimento profissional",
+      "floatingCardTitle": "Sua saúde mental",
+      "badgePrefix": "Psicóloga Clínica",
+      "eyebrow": "Psicóloga Clínica | CRP 04/84622",
+      "title": "Permita-se olhar para a sua experiência com mais clareza",
+      "primaryCtaLabel": "Agendar via WhatsApp",
+      "statValue": "Acolhimento",
       "highlightWords": [
         "Permita-se",
         "experiência"
       ],
+      "imageSrc": "/images/landing/ana-hero.jpeg",
       "primaryCtaMessage": "Olá! Vim pelo site e gostaria de agendar uma sessão.",
-      "statValue": "100%",
-      "statText": "atendimento online humanizado",
       "highlight": "saúde mental",
-      "ctaLabel": "Agendar via WhatsApp",
-      "subtitle": "Atendimento psicológico para adultos, com escuta qualificada e prática ética no processo terapêutico.",
-      "description": "Atendimento psicológico para adultos, com escuta qualificada e prática ética no processo terapêutico.",
-      "floatingCardText": "atendimento online humanizado",
-      "badgePrefix": "Psicóloga Online (Ana Paula Boaventura)",
-      "eyebrow": "Psicóloga Online (Ana) | CRP 04/84622",
-      "suffix": "com acolhimento profissional",
-      "floatingCardTitle": "100%",
-      "primaryCtaLabel": "Agendar via WhatsApp",
-      "title": "Permita-se olhar para a sua experiência com mais clareza"
+      "statText": "como prioridade, onde você estiver.",
+      "ctaLabel": "Falar comigo no WhatsApp"
     }
   }
 }

@@ -4,6 +4,7 @@ import { useState } from 'react';
 import type { LandingContent } from '@/features/landing/types/content';
 import { buildWhatsappLink } from '@/features/landing/utils/build-whatsapp-link';
 import { LandingAbout } from './landing-about';
+import { LandingApproach } from './landing-approach';
 import { LandingFaq } from './landing-faq';
 import { LandingFinalCta } from './landing-final-cta';
 import { LandingFooter } from './landing-footer';
@@ -71,6 +72,8 @@ export function LandingPage({ content }: LandingPageProps) {
           professionalDisplayName={content.professional.displayName}
           whatsappHref={whatsappHref}
         />
+
+        <LandingApproach approach={content.approach} />
 
         <LandingSpecialties specialties={content.specialties} />
 

@@ -36,6 +36,37 @@ export const landingContent: LandingContent = {
     ctaLabel: 'Falar comigo no WhatsApp →',
     imageSrc: '/images/landing/ana-about.jpeg',
   },
+  approach: {
+    eyebrow: 'Abordagem Terapêutica',
+    title: 'Psicologia Humanista',
+    highlightWords: ['Humanista'],
+    description: [
+      'Na psicologia humanista, acredito que cada pessoa possui recursos internos para promover mudanças significativas em sua vida. Meu papel como terapeuta é facilitar esse processo de autodescoberta e crescimento pessoal.',
+      'O foco está no presente, nas suas experiências e sentimentos atuais, ajudando você a desenvolver maior autoconsciência e a tomar decisões mais alinhadas com seus valores e objetivos.',
+    ],
+    principles: [
+      {
+        title: 'Acolhimento',
+        description: 'Ambiente seguro e livre de julgamentos, onde você é aceito como é.',
+        icon: 'heart',
+      },
+      {
+        title: 'Autenticidade',
+        description: 'Relação genuína entre terapeuta e paciente, baseada em confiança mútua.',
+        icon: 'users',
+      },
+      {
+        title: 'Autoconhecimento',
+        description: 'Desenvolvimento da consciência sobre si mesmo e suas potencialidades.',
+        icon: 'lightbulb',
+      },
+      {
+        title: 'Autonomia',
+        description: 'Empoderamento para fazer suas próprias escolhas com responsabilidade.',
+        icon: 'target',
+      },
+    ],
+  },
   specialties: {
     eyebrow: 'Áreas de atuação',
     title: 'Como posso ajudar você',

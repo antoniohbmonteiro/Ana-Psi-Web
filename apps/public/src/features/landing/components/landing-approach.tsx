@@ -1,3 +1,4 @@
+import { Fragment } from 'react';
 import { Heart, Lightbulb, Target, Users } from 'lucide-react';
 import type { LandingContent } from '@/features/landing/types/content';
 import styles from './landing-page.module.css';
@@ -29,6 +30,18 @@ function renderTitle(title: string, highlightWords: string[]) {
   });
 }
 
+function renderParagraph(paragraph: string) {
+  return paragraph.split(/(\*\*.*?\*\*)/g).map((part, index) => {
+    const isBold = part.startsWith('**') && part.endsWith('**') && part.length > 4;
+
+    if (!isBold) {
+      return <Fragment key={`${part.slice(0, 16)}-${index}`}>{part}</Fragment>;
+    }
+
+    return <strong key={`${part.slice(2, 18)}-${index}`}>{part.slice(2, -2)}</strong>;
+  });
+}
+
 export function LandingApproach({ approach }: LandingApproachProps) {
   return (
     <section className={styles.section}>
@@ -44,7 +57,7 @@ export function LandingApproach({ approach }: LandingApproachProps) {
               key={`${paragraph.slice(0, 24)}-${index}`}
               className={styles.approachDescriptionParagraph}
             >
-              {paragraph}
+              {renderParagraph(paragraph)}
             </p>
           ))}
         </div>

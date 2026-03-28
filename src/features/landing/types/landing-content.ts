@@ -1,1 +1,0 @@
-export type { LandingContent } from '@/features/landing/types/content';

@@ -166,25 +166,25 @@
       "buttonLabel": "Agendar via WhatsApp"
     },
     "hero": {
-      "badgePrefix": "Psicóloga Online (Ana Paula Boaventura)",
-      "ctaLabel": "Agendar via WhatsApp",
-      "subtitle": "Psicoterapia individual para adultos e adolescentes, com escuta ativa, respeito ao seu tempo e um espaço seguro para falar sobre você.",
       "imageSrc": "/images/landing/ana-hero.jpeg",
-      "floatingCardText": "atendimento online humanizado",
-      "primaryCtaMessage": "Olá! Vim pelo site e gostaria de agendar uma sessão.",
-      "highlight": "saúde mental",
-      "statValue": "100%",
-      "suffix": "com acolhimento profissional",
-      "primaryCtaLabel": "Agendar via WhatsApp",
-      "description": "Psicoterapia individual para adultos e adolescentes, com escuta ativa, respeito ao seu tempo e um espaço seguro para falar sobre você.",
-      "statText": "atendimento online humanizado",
-      "title": "Cuide da sua saúde\\nmental com\\nacolhimento\\nprofissional",
-      "floatingCardTitle": "100%",
-      "eyebrow": "Psicóloga Online (Ana) | CRP 04/84622",
       "highlightWords": [
-        "saúde",
-        "mental"
-      ]
+        "Permita-se",
+        "experiência"
+      ],
+      "primaryCtaMessage": "Olá! Vim pelo site e gostaria de agendar uma sessão.",
+      "statValue": "100%",
+      "statText": "atendimento online humanizado",
+      "highlight": "saúde mental",
+      "ctaLabel": "Agendar via WhatsApp",
+      "subtitle": "Atendimento psicológico para adultos, com escuta qualificada e prática ética no processo terapêutico.",
+      "description": "Atendimento psicológico para adultos, com escuta qualificada e prática ética no processo terapêutico.",
+      "floatingCardText": "atendimento online humanizado",
+      "badgePrefix": "Psicóloga Online (Ana Paula Boaventura)",
+      "eyebrow": "Psicóloga Online (Ana) | CRP 04/84622",
+      "suffix": "com acolhimento profissional",
+      "floatingCardTitle": "100%",
+      "primaryCtaLabel": "Agendar via WhatsApp",
+      "title": "Permita-se olhar para a sua experiência com mais clareza"
     }
   }
 }

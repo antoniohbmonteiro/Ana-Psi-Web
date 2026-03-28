@@ -163,7 +163,7 @@
 
 .heroVisual {
   position: relative;
-  padding-bottom: 28px;
+  padding-bottom: 40px;
 }
 
 .heroImageFrame {
@@ -180,17 +180,14 @@
   content: "";
   position: absolute;
   inset: 0;
-  background:
-    radial-gradient(
-      circle at 50% 18%,
-      rgba(255, 255, 255, 0.2),
-      transparent 0 42%
-    ),
-    linear-gradient(
-      180deg,
-      rgba(147, 51, 234, 0.08) 0%,
-      rgba(124, 58, 237, 0.18) 100%
-    );
+background: linear-gradient(
+  180deg,
+  rgba(147, 51, 234, 0) 0%,
+  rgba(147, 51, 234, 0) 55%,
+  rgba(147, 51, 234, 0.05) 72%,
+  rgba(147, 51, 234, 0.11) 86%,
+  rgba(124, 58, 237, 0.18) 100%
+);
   pointer-events: none;
   z-index: 1;
 }
@@ -209,23 +206,31 @@
   position: absolute;
   left: 24px;
   bottom: -22px;
-  max-width: 190px;
+  width: fit-content;
+  min-width: 188px;
+  max-width: 240px;
   padding: 22px 24px;
   border-radius: 22px;
   background: #fff;
+  box-sizing: border-box;
   box-shadow: 0 20px 40px rgba(15, 23, 42, 0.12);
   z-index: 3;
 }
 
 .heroStatValue {
+  display: block;
+  width: max-content;
+  max-width: 100%;
   font-size: 30px;
-  line-height: 1;
+  line-height: 1.05;
   font-weight: 700;
   color: #9333ea;
+  white-space: nowrap;
 }
 
 .heroStatText {
   margin-top: 8px;
+  max-width: 150px;
   font-size: 14px;
   line-height: 1.5;
   color: #475569;
@@ -921,25 +926,31 @@
   }
 
   .heroVisual {
-    padding-bottom: 22px;
+    padding-bottom: 30px;
   }
 
   .heroStat {
     position: absolute;
     left: 12px;
-    bottom: -12px;
-    max-width: 140px;
+    bottom: -14px;
+    width: fit-content;
+    min-width: 168px;
+    max-width: 210px;
     padding: 14px 16px;
     border-radius: 18px;
     margin-top: 0;
   }
 
   .heroStatValue {
-    font-size: 24px;
+    display: block;
+    width: max-content;
+    max-width: 100%;
+    font-size: 22px;
   }
 
   .heroStatText {
     margin-top: 6px;
+    max-width: 132px;
     font-size: 12px;
     line-height: 1.45;
   }

@@ -199,25 +199,25 @@
       ]
     },
     "hero": {
-      "subtitle": "Atendimento psicológico para adultos, com escuta qualificada e prática ética no processo terapêutico.",
-      "floatingCardText": "atendimento online humanizado",
-      "description": "Atendimento psicológico para adultos, com escuta qualificada e prática ética no processo terapêutico.",
-      "suffix": "com acolhimento profissional",
       "floatingCardTitle": "Sua saúde mental",
+      "suffix": "com acolhimento profissional",
       "badgePrefix": "Psicóloga Clínica",
       "eyebrow": "Psicóloga Clínica | CRP 04/84622",
-      "title": "Permita-se olhar para a sua experiência com mais clareza",
       "primaryCtaLabel": "Agendar via WhatsApp",
-      "statValue": "Acolhimento",
+      "title": "Permita-se olhar para a sua experiência com mais clareza",
+      "subtitle": "Atendimento psicológico para adultos, com escuta qualificada e prática ética no processo terapêutico.",
+      "description": "Atendimento psicológico para adultos, com escuta qualificada e prática ética no processo terapêutico.",
+      "floatingCardText": "atendimento online humanizado",
+      "ctaLabel": "Falar comigo no WhatsApp",
+      "statValue": "Disponível",
       "highlightWords": [
         "Permita-se",
         "experiência"
       ],
-      "imageSrc": "/images/landing/ana-hero.jpeg",
       "primaryCtaMessage": "Olá! Vim pelo site e gostaria de agendar uma sessão.",
+      "imageSrc": "/images/landing/ana-hero.jpeg",
       "highlight": "saúde mental",
-      "statText": "como prioridade, onde você estiver.",
-      "ctaLabel": "Falar comigo no WhatsApp"
+      "statText": "para te acompanhar, onde você estiver"
     }
   }
 }

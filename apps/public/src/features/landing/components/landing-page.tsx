@@ -1,9 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import type { LandingContent } from '@/features/landing/types/content';
-import { mapSitePublicContentToLandingContent } from '@/features/landing/mappers/map-site-public-content-to-landing-content';
-import { getSitePublicContent } from '@/features/landing/services/get-site-public-content';
 import { buildWhatsappLink } from '@/features/landing/utils/build-whatsapp-link';
 import { LandingAbout } from './landing-about';
 import { LandingFaq } from './landing-faq';
@@ -17,85 +15,12 @@ import { LandingSpecialties } from './landing-specialties';
 import styles from './landing-page.module.css';
 
 type LandingPageProps = {
-  initialContent?: LandingContent;
+  content: LandingContent;
 };
 
-type LoadState = 'loading' | 'ready' | 'error';
-
-export function LandingPage({ initialContent }: LandingPageProps) {
+export function LandingPage({ content }: LandingPageProps) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
-  const [content, setContent] = useState<LandingContent | null>(initialContent ?? null);
-  const [loadState, setLoadState] = useState<LoadState>(initialContent ? 'ready' : 'loading');
-
-  useEffect(() => {
-    let isMounted = true;
-
-    async function loadSitePublicContent() {
-      try {
-        if (!initialContent) {
-          setLoadState('loading');
-        }
-
-        const sitePublicContent = await getSitePublicContent();
-
-        if (!isMounted) {
-          return;
-        }
-
-        setContent(mapSitePublicContentToLandingContent(sitePublicContent));
-        setLoadState('ready');
-      } catch (error) {
-        console.error('Failed to load landing content from Firestore.', error);
-
-        if (!isMounted) {
-          return;
-        }
-
-        if (!initialContent) {
-          setLoadState('error');
-        }
-      }
-    }
-
-    void loadSitePublicContent();
-
-    return () => {
-      isMounted = false;
-    };
-  }, [initialContent]);
-
-  if (loadState === 'loading' || !content) {
-    return (
-      <div className={styles.page}>
-        <main className={styles.section} aria-busy="true" aria-live="polite">
-          <div className={styles.container}>
-            <div className={styles.sectionHeader}>
-              <div className={styles.eyebrow}>Carregando</div>
-              <h1 className={styles.sectionTitleCenter}>Preparando o site...</h1>
-              <p className={styles.sectionLead}>Aguarde um instante.</p>
-            </div>
-          </div>
-        </main>
-      </div>
-    );
-  }
-
-  if (loadState === 'error') {
-    return (
-      <div className={styles.page}>
-        <main className={styles.section} role="alert" aria-live="assertive">
-          <div className={styles.container}>
-            <div className={styles.sectionHeader}>
-              <div className={styles.eyebrow}>Erro ao carregar</div>
-              <h1 className={styles.sectionTitleCenter}>Não foi possível carregar o conteúdo do site.</h1>
-              <p className={styles.sectionLead}>Verifique a conexão, as regras do Firestore e tente novamente.</p>
-            </div>
-          </div>
-        </main>
-      </div>
-    );
-  }
 
   const whatsappHref = buildWhatsappLink(content.contact.whatsapp, content.contact.whatsappMessage);
 

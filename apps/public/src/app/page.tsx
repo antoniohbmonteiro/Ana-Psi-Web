@@ -4,7 +4,7 @@ import { mapSitePublicContentToLandingContent } from '@/features/landing/mappers
 import type { SitePublicContent } from '@/features/landing/types/site-public-content';
 
 export default function HomePage() {
-  const initialContent = mapSitePublicContentToLandingContent(snapshot as SitePublicContent);
+  const content = mapSitePublicContentToLandingContent(snapshot as SitePublicContent);
 
-  return <LandingPage initialContent={initialContent} />;
+  return <LandingPage content={content} />;
 }

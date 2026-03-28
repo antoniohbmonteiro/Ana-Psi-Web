@@ -370,6 +370,18 @@ background: linear-gradient(
   border: 1px solid #ebe7f5;
   border-radius: 24px;
   background: #fff;
+  transition:
+    border-color 0.22s ease,
+    box-shadow 0.22s ease,
+    transform 0.22s ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .card:hover {
+    border-color: #9333ea;
+    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
+    transform: translateY(-2px);
+  }
 }
 
 .iconWrap {

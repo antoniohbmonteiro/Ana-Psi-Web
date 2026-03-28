@@ -151,52 +151,12 @@
       ],
       "footerLead": "Ainda tem dúvidas?"
     },
-    "about": {
-      "eyebrow": "Sobre mim",
-      "imageSrc": "/images/landing/ana-about.jpeg",
-      "body": "Psicóloga com registro CRP 04/84622, com atuação clínica voltada para adultos e adolescentes.\n\nAcredito que cada pessoa tem sua própria história e ritmo. Meu papel é oferecer um espaço de **acolhimento, escuta ativa e confiança**, onde você possa se expressar livremente.\n\nMinha abordagem é humanista e busca favorecer **autoconhecimento, compreensão emocional e construção de recursos** para lidar com os desafios da vida.",
-      "title": "Olá, sou a Ana",
-      "ctaLabel": "Falar comigo no WhatsApp →"
-    },
     "finalCta": {
       "responseTimeText": "Respondo em até 24 horas",
       "description": "Agendar sua primeira sessão é simples. Vamos conversar sem compromisso sobre como posso ajudar você.",
       "imageSrc": "/images/landing/final-cta-room.jpg",
       "title": "Pronta para dar o primeiro passo?",
       "buttonLabel": "Agendar via WhatsApp"
-    },
-    "approach": {
-      "description": [
-        "Na psicologia humanista, acredito que cada pessoa possui recursos internos para promover mudanças significativas em sua vida. Meu papel como terapeuta é facilitar esse processo de autodescoberta e crescimento pessoal.",
-        "O foco está no presente, nas suas experiências e sentimentos atuais, ajudando você a desenvolver maior autoconsciência e a tomar decisões mais alinhadas com seus valores e objetivos."
-      ],
-      "principles": [
-        {
-          "icon": "heart",
-          "title": "Acolhimento",
-          "description": "Ambiente seguro e livre de julgamentos, onde você é aceito como é."
-        },
-        {
-          "description": "Relação genuína entre terapeuta e paciente, baseada em confiança mútua.",
-          "title": "Autenticidade",
-          "icon": "users"
-        },
-        {
-          "description": "Desenvolvimento da consciência sobre si mesmo e suas potencialidades.",
-          "icon": "lightbulb",
-          "title": "Autoconhecimento"
-        },
-        {
-          "title": "Autonomia",
-          "icon": "target",
-          "description": "Empoderamento para fazer suas próprias escolhas com responsabilidade."
-        }
-      ],
-      "title": "Psicologia Humanista",
-      "eyebrow": "Abordagem Terapêutica",
-      "highlightWords": [
-        "Humanista"
-      ]
     },
     "hero": {
       "floatingCardTitle": "Sua saúde mental",
@@ -218,6 +178,47 @@
       "imageSrc": "/images/landing/ana-hero.jpeg",
       "highlight": "saúde mental",
       "statText": "para te acompanhar, onde você estiver"
+    },
+    "about": {
+      "imageSrc": "/images/landing/ana-about.jpeg",
+      "eyebrow": "Sobre mim",
+      "body": "Psicóloga (CRP 04/84622) com atuação clínica voltada para **adultos**. Sou pós-graduanda em Avaliação e Diagnóstico Psicológico e conduzo meu trabalho a partir da **abordagem humanista centrada na pessoa**.\n\nA psicoterapia é um **convite para olhar para si** com mais atenção, respeitando o seu tempo e a sua história. Meu papel é auxiliar você a **compreender melhor suas relações** e a lidar com o que causa sofrimento, construindo formas mais possíveis de se posicionar diante da vida.\n\nO atendimento é realizado com **escuta qualificada**, respeito à sua autonomia e **responsabilidade técnica**, seguindo as diretrizes do Código de Ética Profissional do Psicólogo.",
+      "title": "Olá, sou a Ana",
+      "ctaLabel": "Falar comigo no WhatsApp →"
+    },
+    "approach": {
+      "description": [
+        "A Abordagem Centrada na Pessoa é uma vertente da psicologia humanista que parte do princípio de que é possível compreender melhor o que se vive quando se encontra um espaço de **escuta seguro e sem julgamentos.**",
+        "Na prática, a psicoterapia é construída na relação entre **paciente e terapeuta, que caminham lado a lado ao longo do processo.** Não há um roteiro pré-definido ou respostas prontas, mas um trabalho que se desenvolve a partir do que é vivido e trazido em cada encontro.",
+        "Ao longo desse caminho, torna-se possível compreender melhor suas relações, escolhas e formas de lidar com o que acontece, favorecendo uma maior responsabilidade diante da própria vida e das decisões que a constrói."
+      ],
+      "principles": [
+        {
+          "icon": "heart",
+          "title": "Acolhimento",
+          "description": "Ambiente seguro e livre de julgamentos, onde você é aceito como é."
+        },
+        {
+          "description": "Relação genuína entre terapeuta e paciente, baseada em confiança mútua.",
+          "title": "Autenticidade",
+          "icon": "users"
+        },
+        {
+          "title": "Autoconhecimento",
+          "icon": "lightbulb",
+          "description": "Desenvolvimento da consciência sobre si mesmo e suas potencialidades."
+        },
+        {
+          "title": "Autonomia",
+          "icon": "target",
+          "description": "Empoderamento para fazer suas próprias escolhas com responsabilidade."
+        }
+      ],
+      "title": "Psicologia Humanista",
+      "eyebrow": "Abordagem Terapêutica",
+      "highlightWords": [
+        "Humanista"
+      ]
     }
   }
 }

@@ -187,38 +187,38 @@
       "ctaLabel": "Falar comigo no WhatsApp →"
     },
     "approach": {
-      "title": "Psicologia Humanista",
-      "principles": [
-        {
-          "icon": "hand-heart",
-          "title": "Aceitação",
-          "description": "Um lugar seguro para ser quem você é. Um acolhimento de todos os seus sentimentos e história, sem julgamentos, criando um espaço de total confiança para você ser aceito por inteiro."
-        },
-        {
-          "title": "Autenticidade",
-          "icon": "users",
-          "description": "Um encontro humano entre duas pessoas reais. Uma relação transparente, sem a rigidez de uma especialista, ajudando você a tirar as máscaras e encontrar a sua própria verdade."
-        },
-        {
-          "icon": "blend",
-          "title": "Empatia",
-          "description": "A capacidade de mergulhar no seu mundo e enxergar a vida através dos seus olhos. É compreender o significado real de cada experiência e sentimento que você compartilha em sessão."
-        },
-        {
-          "description": "O objetivo é que você assuma o controle da sua vida. Você desenvolve a segurança necessária para tomar suas próprias decisões e se tornar o verdadeiro protagonista da sua história.",
-          "title": "Autonomia",
-          "icon": "compass"
-        }
+      "eyebrow": "Abordagem Terapêutica",
+      "highlightWords": [
+        "Humanista"
       ],
       "description": [
         "Dentro da Psicologia Humanista, trabalho com a **Abordagem Centrada na Pessoa**, que acredita na sua capacidade de transformar a própria vida quando encontra um espaço de **escuta seguro, ético e sem julgamentos.**",
         "Na prática, a psicoterapia é construída em conjunto. **Caminhamos lado a lado**, sem roteiros prontos ou fórmulas mágicas. O foco é o que você vive e traz em cada encontro, respeitando o seu tempo e a sua história.",
         "Ao longo desse caminho, torna-se possível compreender melhor suas relações e escolhas, desenvolvendo mais **segurança e autonomia** para lidar com os desafios da vida e as decisões que você constrói."
       ],
-      "highlightWords": [
-        "Humanista"
-      ],
-      "eyebrow": "Abordagem Terapêutica"
+      "title": "Psicologia Humanista",
+      "principles": [
+        {
+          "description": "Um lugar seguro para ser quem você é. Um acolhimento de todos os seus sentimentos e história, sem julgamentos, criando um espaço de total confiança para você ser aceito por inteiro.",
+          "icon": "hand-heart",
+          "title": "Aceitação"
+        },
+        {
+          "icon": "sparkles",
+          "title": "Autenticidade",
+          "description": "Um encontro humano entre duas pessoas reais. Uma relação transparente, sem a rigidez de uma especialista, ajudando você a tirar as máscaras e encontrar a sua própria verdade."
+        },
+        {
+          "description": "A capacidade de mergulhar no seu mundo e enxergar a vida através dos seus olhos. É compreender o significado real de cada experiência e sentimento que você compartilha em sessão.",
+          "title": "Empatia",
+          "icon": "blend"
+        },
+        {
+          "title": "Autonomia",
+          "icon": "compass",
+          "description": "O objetivo é que você assuma o controle da sua vida. Você desenvolve a segurança necessária para tomar suas próprias decisões e se tornar o verdadeiro protagonista da sua história."
+        }
+      ]
     }
   }
 }

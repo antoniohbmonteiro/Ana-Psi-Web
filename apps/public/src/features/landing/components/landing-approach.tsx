@@ -1,5 +1,5 @@
 import { Fragment } from 'react';
-import { Heart, Lightbulb, Target, Users } from 'lucide-react';
+import { Blend, Compass, HandHeart, Heart, Lightbulb, Sparkles, Target, Users } from 'lucide-react';
 import type { LandingContent } from '@/features/landing/types/content';
 import styles from './landing-page.module.css';
 
@@ -8,6 +8,10 @@ const approachIcons = {
   users: Users,
   lightbulb: Lightbulb,
   target: Target,
+  sparkles: Sparkles,
+  'hand-heart': HandHeart,
+  blend: Blend,
+  compass: Compass,
 } as const;
 
 type LandingApproachProps = {

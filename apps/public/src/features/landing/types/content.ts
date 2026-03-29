@@ -1,5 +1,22 @@
-export type SpecialtyIconKey = 'brain' | 'heart' | 'smile' | 'shield' | 'spark' | 'users';
-export type ApproachIconKey = 'heart' | 'users' | 'lightbulb' | 'target';
+export type SpecialtyIconKey =
+  | 'brain'
+  | 'heart'
+  | 'smile'
+  | 'shield'
+  | 'spark'
+  | 'sparkles'
+  | 'users';
+
+export type ApproachIconKey =
+  | 'heart'
+  | 'users'
+  | 'lightbulb'
+  | 'target'
+  | 'sparkles'
+  | 'hand-heart'
+  | 'blend'
+  | 'compass';
+
 export type ProcessIconKey = 'message' | 'calendar' | 'video' | 'chart';
 export type InfoIconKey = 'video' | 'clock' | 'lock' | 'calendar';
 

@@ -8,6 +8,7 @@ const specialtyIcons = {
   smile: Smile,
   shield: Shield,
   spark: Sparkles,
+  sparkles: Sparkles,
   users: Users,
 } as const;
 

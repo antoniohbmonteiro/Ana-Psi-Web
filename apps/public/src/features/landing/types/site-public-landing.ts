@@ -24,7 +24,15 @@ export type SitePublicLanding = {
     principles: Array<{
       title: string;
       description: string;
-      icon: 'heart' | 'users' | 'lightbulb' | 'target';
+      icon:
+        | 'heart'
+        | 'users'
+        | 'lightbulb'
+        | 'target'
+        | 'sparkles'
+        | 'hand-heart'
+        | 'blend'
+        | 'compass';
     }>;
   };
   specialties: {
@@ -34,7 +42,7 @@ export type SitePublicLanding = {
     items: Array<{
       title: string;
       description: string;
-      icon: 'brain' | 'heart' | 'smile' | 'shield' | 'spark' | 'users';
+      icon: 'brain' | 'heart' | 'smile' | 'shield' | 'spark' | 'sparkles' | 'users';
     }>;
   };
   process: {

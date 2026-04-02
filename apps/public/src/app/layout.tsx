@@ -85,6 +85,13 @@ export const metadata: Metadata = {
     template: '%s | Ana Psicologia',
   },
   description: siteDescription,
+  icons: {
+    icon: [
+      { url: '/favicon.ico', sizes: 'any' },
+      { url: '/icon.png', type: 'image/png' },
+    ],
+    apple: [{ url: '/icon.png', type: 'image/png' }],
+  },
   applicationName: siteName,
   keywords: [
     'psicóloga online',

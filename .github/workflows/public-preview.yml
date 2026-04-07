@@ -19,6 +19,7 @@ jobs:
     permissions:
       contents: read
       pull-requests: write
+      checks: write
 
     steps:
       - name: Checkout
@@ -33,7 +34,19 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      - name: Sync public snapshot
+        working-directory: apps/public
+        env:
+          FIREBASE_SERVICE_ACCOUNT_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_ANA_PSI }}
+        run: npm run sync:snapshot
+
+      - name: Debug FAQ answer
+        run: |
+          node -e "const s=require('./apps/public/src/features/landing/data/site-public-content.snapshot.json'); const item=s.landing.faq.items.find(i=>i.question==='Qual o valor da sessão?'); console.log(item);"
+
       - name: Build public app
+        env:
+          FIREBASE_SERVICE_ACCOUNT_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_ANA_PSI }}
         run: npm run build:public
 
       - name: Deploy preview channel
@@ -45,3 +58,5 @@ jobs:
           entryPoint: apps/public
           channelId: pr-${{ github.event.pull_request.number }}
           expires: 3d
+
+          

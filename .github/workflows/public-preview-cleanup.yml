@@ -26,3 +26,4 @@ jobs:
         shell: bash
         run: |
           npx firebase-tools hosting:channel:delete pr-${{ github.event.pull_request.number }} --project ana-psi --force || true
+          

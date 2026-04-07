@@ -19,6 +19,7 @@ jobs:
     permissions:
       contents: read
       pull-requests: write
+      checks: write
 
     steps:
       - name: Checkout
@@ -45,3 +46,4 @@ jobs:
           entryPoint: apps/public
           channelId: pr-${{ github.event.pull_request.number }}
           expires: 3d
+          

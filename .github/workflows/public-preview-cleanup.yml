@@ -1,0 +1,28 @@
+name: Public Preview Cleanup
+
+on:
+  pull_request:
+    branches:
+      - main
+    types:
+      - closed
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Write Firebase service account key
+        shell: bash
+        run: |
+          cat <<'EOF' > "$RUNNER_TEMP/firebase-service-account.json"
+          ${{ secrets.FIREBASE_SERVICE_ACCOUNT_ANA_PSI }}
+          EOF
+          echo "GOOGLE_APPLICATION_CREDENTIALS=$RUNNER_TEMP/firebase-service-account.json" >> "$GITHUB_ENV"
+
+      - name: Delete preview channel
+        shell: bash
+        run: |
+          npx firebase-tools hosting:channel:delete pr-${{ github.event.pull_request.number }} --project ana-psi --force || true

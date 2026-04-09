@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
+import { siteName, siteUrl } from './site-config';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -8,11 +9,9 @@ const inter = Inter({
   display: 'swap',
 });
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://boaventurapsi.com.br';
-const siteName = 'Ana Psicologia';
-const siteTitle = 'Ana Paula Boaventura | Psicóloga Online';
+const siteTitle = 'Ana Paula Boaventura | Psicóloga para Adultos Online';
 const siteDescription =
-  'Psicoterapia online para adultos e adolescentes com acolhimento, escuta ativa e cuidado profissional.';
+  'Atendimento psicológico online para adultos com escuta qualificada, acolhimento e condução ética.';
 
 const contact = {
   email: 'anapaulaboraventura.psi@gmail.com',
@@ -68,12 +67,10 @@ const jsonLd = {
       serviceType: [
         'Psicoterapia online',
         'Atendimento psicológico para adultos',
-        'Atendimento psicológico para adolescentes',
       ],
       founder: {
         '@id': `${siteUrl}#person`,
       },
-      
     },
   ],
 };
@@ -97,7 +94,7 @@ export const metadata: Metadata = {
     'psicóloga online',
     'psicoterapia online',
     'psicóloga para adultos',
-    'psicóloga para adolescentes',
+    'atendimento psicológico para adultos',
     'acolhimento psicológico',
     'Ana Paula Boaventura',
   ],

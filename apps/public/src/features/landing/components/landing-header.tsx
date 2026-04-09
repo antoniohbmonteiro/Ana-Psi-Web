@@ -8,6 +8,7 @@ type LandingHeaderProps = {
   whatsappHref: string;
   onToggleMenu: () => void;
   onCloseMenu: () => void;
+  onWhatsappClick: () => void;
 };
 
 export function LandingHeader({
@@ -16,6 +17,7 @@ export function LandingHeader({
   whatsappHref,
   onToggleMenu,
   onCloseMenu,
+  onWhatsappClick,
 }: LandingHeaderProps) {
   return (
     <header className={styles.header}>
@@ -43,6 +45,7 @@ export function LandingHeader({
               rel="noreferrer"
               className={styles.headerButton}
               aria-label="Entrar em contato pelo WhatsApp"
+              onClick={onWhatsappClick}
             >
               Contato
             </a>
@@ -75,7 +78,10 @@ export function LandingHeader({
               href={whatsappHref}
               target="_blank"
               rel="noreferrer"
-              onClick={onCloseMenu}
+              onClick={() => {
+                onWhatsappClick();
+                onCloseMenu();
+              }}
               className={styles.headerButton}
               aria-label="Entrar em contato pelo WhatsApp"
             >

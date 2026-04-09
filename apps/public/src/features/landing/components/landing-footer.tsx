@@ -8,6 +8,7 @@ type LandingFooterProps = {
   contact: LandingContent['contact'];
   footer: LandingContent['footer'];
   professional: LandingContent['professional'];
+  onWhatsappClick: () => void;
 };
 
 export function LandingFooter({
@@ -15,6 +16,7 @@ export function LandingFooter({
   contact,
   footer,
   professional,
+  onWhatsappClick,
 }: LandingFooterProps) {
   const whatsappHref = buildWhatsappLink(contact.whatsapp, contact.whatsappMessage);
 
@@ -95,6 +97,7 @@ export function LandingFooter({
         rel="noreferrer"
         className={styles.floatButton}
         aria-label="Falar comigo no WhatsApp"
+        onClick={onWhatsappClick}
       >
         <MessageCircle size={20} aria-hidden="true" />
         <span>Fale comigo</span>

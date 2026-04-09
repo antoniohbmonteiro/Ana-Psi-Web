@@ -7,6 +7,7 @@ type LandingHeroProps = {
   professionalDisplayName: string;
   hero: LandingContent['hero'];
   whatsappHref: string;
+  onWhatsappClick: () => void;
 };
 
 function normalizeHeroWord(value: string) {
@@ -58,6 +59,7 @@ export function LandingHero({
   professionalDisplayName,
   hero,
   whatsappHref,
+  onWhatsappClick,
 }: LandingHeroProps) {
   const renderedHeroTitle = renderHeroTitle(hero.title, hero.highlightWords);
 
@@ -72,7 +74,13 @@ export function LandingHero({
 
             <p className={styles.heroDescription}>{hero.description}</p>
 
-            <a href={whatsappHref} target="_blank" rel="noreferrer" className={styles.primaryButton}>
+            <a
+              href={whatsappHref}
+              target="_blank"
+              rel="noreferrer"
+              className={styles.primaryButton}
+              onClick={onWhatsappClick}
+            >
               <MessageCircle size={22} />
               {hero.ctaLabel}
             </a>

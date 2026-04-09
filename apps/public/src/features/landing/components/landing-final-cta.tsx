@@ -5,9 +5,14 @@ import styles from './landing-page.module.css';
 type LandingFinalCtaProps = {
   finalCta: LandingContent['finalCta'];
   whatsappHref: string;
+  onWhatsappClick: () => void;
 };
 
-export function LandingFinalCta({ finalCta, whatsappHref }: LandingFinalCtaProps) {
+export function LandingFinalCta({
+  finalCta,
+  whatsappHref,
+  onWhatsappClick,
+}: LandingFinalCtaProps) {
   return (
     <section className={styles.sectionSoft}>
       <div className={styles.container}>
@@ -16,7 +21,13 @@ export function LandingFinalCta({ finalCta, whatsappHref }: LandingFinalCtaProps
             <h2 className={styles.finalCtaTitle}>{finalCta.title}</h2>
             <p className={styles.finalCtaDescription}>{finalCta.description}</p>
 
-            <a href={whatsappHref} target="_blank" rel="noreferrer" className={styles.secondaryButton}>
+            <a
+              href={whatsappHref}
+              target="_blank"
+              rel="noreferrer"
+              className={styles.secondaryButton}
+              onClick={onWhatsappClick}
+            >
               <MessageCircle size={22} />
               {finalCta.buttonLabel}
             </a>

@@ -41,6 +41,7 @@ jobs:
       - name: Build public app
         env:
           FIREBASE_SERVICE_ACCOUNT_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_ANA_PSI }}
+          NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID: ${{ secrets.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID }}
         run: npm run build:public
 
       - name: Deploy to live channel

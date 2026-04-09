@@ -1,5 +1,4 @@
 import type { Analytics } from 'firebase/analytics';
-import { getFirebaseApp } from '@/lib/firebase/client';
 
 let analyticsPromise: Promise<Analytics | null> | null = null;
 
@@ -19,6 +18,8 @@ async function loadAnalytics() {
   if (!supported) {
     return null;
   }
+
+  const { getFirebaseApp } = await import('@/lib/firebase/client');
 
   return getAnalytics(getFirebaseApp());
 }

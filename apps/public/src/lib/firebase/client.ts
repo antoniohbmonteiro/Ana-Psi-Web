@@ -48,6 +48,3 @@ export function getFirestoreDb() {
 
   return firestoreInstance;
 }
-
-export const firebaseApp = getFirebaseApp();
-export const db = getFirestoreDb();

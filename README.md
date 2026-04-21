@@ -18,3 +18,4 @@ Base inicial do projeto em Next + Tailwind.
 ## Rodar
 npm install
 npm run dev
+

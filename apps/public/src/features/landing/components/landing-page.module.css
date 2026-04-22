@@ -1126,9 +1126,5 @@
     flex-shrink: 0;
     display: block;
   }
-
-  .floatButton .buttonIcon {
-    width: 20px;
-    height: 20px;
-  }
+  
 }

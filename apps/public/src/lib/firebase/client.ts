@@ -8,10 +8,14 @@ const firebaseConfig: FirebaseOptions = {
   storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
   messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+  measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
 };
 
 function assertFirebaseEnv() {
-  const missingKeys = Object.entries(firebaseConfig)
+  const requiredConfig = { ...firebaseConfig };
+  delete requiredConfig.measurementId;
+
+  const missingKeys = Object.entries(requiredConfig)
     .filter(([, value]) => !value)
     .map(([key]) => key);
 
@@ -44,6 +48,3 @@ export function getFirestoreDb() {
 
   return firestoreInstance;
 }
-
-export const firebaseApp = getFirebaseApp();
-export const db = getFirestoreDb();

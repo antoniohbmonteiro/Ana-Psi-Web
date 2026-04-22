@@ -1,10 +1,10 @@
 import { doc, getDoc } from 'firebase/firestore';
-import { db } from '@/lib/firebase/client';
+import { getFirestoreDb } from '@/lib/firebase/client';
 import type { SitePublicLanding } from '@/features/landing/types/site-public-landing';
 import type { SitePublicProfile } from '@/features/landing/types/site-public-profile';
 
 async function getRequiredDocument<T>(path: [string, string], label: string): Promise<T> {
-  const snapshot = await getDoc(doc(db, ...path));
+  const snapshot = await getDoc(doc(getFirestoreDb(), ...path));
 
   if (!snapshot.exists()) {
     throw new Error(`Missing Firestore document: ${label}`);

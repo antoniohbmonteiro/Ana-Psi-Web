@@ -5,12 +5,14 @@ type LandingAboutProps = {
   about: LandingContent['about'];
   professionalDisplayName: string;
   whatsappHref: string;
+  onWhatsappClick: () => void;
 };
 
 export function LandingAbout({
   about,
   professionalDisplayName,
   whatsappHref,
+  onWhatsappClick,
 }: LandingAboutProps) {
   return (
     <section id="sobre" className={styles.section}>
@@ -33,7 +35,13 @@ export function LandingAbout({
               ))}
             </div>
 
-            <a href={whatsappHref} target="_blank" rel="noreferrer" className={styles.linkCta}>
+            <a
+              href={whatsappHref}
+              target="_blank"
+              rel="noreferrer"
+              className={styles.linkCta}
+              onClick={onWhatsappClick}
+            >
               {about.ctaLabel}
             </a>
           </div>

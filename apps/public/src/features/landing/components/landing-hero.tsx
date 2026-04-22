@@ -1,5 +1,4 @@
 import { Fragment } from 'react';
-import { MessageCircle } from 'lucide-react';
 import type { LandingContent } from '@/features/landing/types/content';
 import styles from './landing-page.module.css';
 
@@ -7,6 +6,7 @@ type LandingHeroProps = {
   professionalDisplayName: string;
   hero: LandingContent['hero'];
   whatsappHref: string;
+  onWhatsappClick: () => void;
 };
 
 function normalizeHeroWord(value: string) {
@@ -58,6 +58,7 @@ export function LandingHero({
   professionalDisplayName,
   hero,
   whatsappHref,
+  onWhatsappClick,
 }: LandingHeroProps) {
   const renderedHeroTitle = renderHeroTitle(hero.title, hero.highlightWords);
 
@@ -72,8 +73,19 @@ export function LandingHero({
 
             <p className={styles.heroDescription}>{hero.description}</p>
 
-            <a href={whatsappHref} target="_blank" rel="noreferrer" className={styles.primaryButton}>
-              <MessageCircle size={22} />
+            <a
+              href={whatsappHref}
+              target="_blank"
+              rel="noreferrer"
+              className={styles.primaryButton}
+              onClick={onWhatsappClick}
+            >
+              <img
+                src="/images/landing/whatsapp/Digital_Glyph_White_RGB_2026.svg"
+                alt=""
+                aria-hidden="true"
+                className={styles.primaryButtonIcon}
+              />
               {hero.ctaLabel}
             </a>
           </div>

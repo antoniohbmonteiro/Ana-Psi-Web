@@ -28,16 +28,12 @@ export function LandingFinalCta({
               className={styles.secondaryButton}
               onClick={onWhatsappClick}
             >
-<<<<<<< HEAD
               <img
                 src="/images/landing/whatsapp/Digital_Glyph_Green_RGB_2026.svg"
                 alt=""
                 aria-hidden="true"
                 className={styles.secondaryButtonIcon}
               />
-=======
-              <MessageCircle size={22} />
->>>>>>> 8e45fac022d411f5ab583d7c41f0fe0ad9bb351d
               {finalCta.buttonLabel}
             </a>
 

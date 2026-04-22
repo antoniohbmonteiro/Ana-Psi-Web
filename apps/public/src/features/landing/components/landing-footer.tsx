@@ -1,4 +1,4 @@
-import { Instagram, Link2, Mail, MapPin, MessageCircle } from 'lucide-react';
+import { Instagram, Link2, Mail, MapPin } from 'lucide-react';
 import type { LandingContent } from '@/features/landing/types/content';
 import { buildWhatsappLink } from '@/features/landing/utils/build-whatsapp-link';
 import styles from './landing-page.module.css';
@@ -99,7 +99,12 @@ export function LandingFooter({
         aria-label="Falar comigo no WhatsApp"
         onClick={onWhatsappClick}
       >
-        <MessageCircle size={20} aria-hidden="true" />
+        <img
+          src="/images/landing/whatsapp/Digital_Glyph_White_RGB_2026.svg"
+          alt=""
+          aria-hidden="true"
+          className={styles.buttonIcon}
+        />
         <span>Fale comigo</span>
         <span className={styles.floatDot} aria-hidden="true" />
       </a>

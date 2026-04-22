@@ -1,5 +1,4 @@
 import { Fragment } from 'react';
-import { MessageCircle } from 'lucide-react';
 import type { LandingContent } from '@/features/landing/types/content';
 import styles from './landing-page.module.css';
 
@@ -81,7 +80,12 @@ export function LandingHero({
               className={styles.primaryButton}
               onClick={onWhatsappClick}
             >
-              <MessageCircle size={22} />
+              <img
+                src="/images/landing/whatsapp/Digital_Glyph_White_RGB_2026.svg"
+                alt=""
+                aria-hidden="true"
+                className={styles.primaryButtonIcon}
+              />
               {hero.ctaLabel}
             </a>
           </div>

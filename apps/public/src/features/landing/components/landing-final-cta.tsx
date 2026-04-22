@@ -1,4 +1,4 @@
-import { ArrowRight, MessageCircle } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import type { LandingContent } from '@/features/landing/types/content';
 import styles from './landing-page.module.css';
 
@@ -28,7 +28,12 @@ export function LandingFinalCta({
               className={styles.secondaryButton}
               onClick={onWhatsappClick}
             >
-              <MessageCircle size={22} />
+              <img
+                src="/images/landing/whatsapp/Digital_Glyph_Green_RGB_2026.svg"
+                alt=""
+                aria-hidden="true"
+                className={styles.buttonIcon}
+              />
               {finalCta.buttonLabel}
             </a>
 

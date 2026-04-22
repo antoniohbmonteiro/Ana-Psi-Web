@@ -1119,4 +1119,16 @@
     height: 20px;
     display: block;
   }
+
+  .buttonIcon {
+    width: 22px;
+    height: 22px;
+    flex-shrink: 0;
+    display: block;
+  }
+
+  .floatButton .buttonIcon {
+    width: 20px;
+    height: 20px;
+  }
 }

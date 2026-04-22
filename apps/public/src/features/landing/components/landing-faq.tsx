@@ -7,6 +7,7 @@ type LandingFaqProps = {
   openFaq: number | null;
   onToggleFaq: (index: number) => void;
   whatsappHref: string;
+  onWhatsappClick: () => void;
 };
 
 export function LandingFaq({
@@ -14,6 +15,7 @@ export function LandingFaq({
   openFaq,
   onToggleFaq,
   whatsappHref,
+  onWhatsappClick,
 }: LandingFaqProps) {
   return (
     <section id="faq" className={styles.section}>
@@ -71,7 +73,13 @@ export function LandingFaq({
               {faq.footerLead}
             </p>
 
-            <a href={whatsappHref} target="_blank" rel="noreferrer" className={styles.linkCta}>
+            <a
+              href={whatsappHref}
+              target="_blank"
+              rel="noreferrer"
+              className={styles.linkCta}
+              onClick={onWhatsappClick}
+            >
               {faq.footerCtaLabel}
             </a>
           </div>

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { trackWhatsappClick } from '@/features/landing/analytics/track-whatsapp-click';
 import type { LandingContent } from '@/features/landing/types/content';
 import { buildWhatsappLink } from '@/features/landing/utils/build-whatsapp-link';
 import { LandingAbout } from './landing-about';
@@ -56,6 +57,7 @@ export function LandingPage({ content }: LandingPageProps) {
         brand={content.brand}
         menuOpen={menuOpen}
         whatsappHref={whatsappHref}
+        onWhatsappClick={() => trackWhatsappClick({ location: 'header' })}
         onToggleMenu={() => setMenuOpen((value) => !value)}
         onCloseMenu={() => setMenuOpen(false)}
       />
@@ -65,12 +67,14 @@ export function LandingPage({ content }: LandingPageProps) {
           professionalDisplayName={content.professional.displayName}
           hero={content.hero}
           whatsappHref={whatsappHref}
+          onWhatsappClick={() => trackWhatsappClick({ location: 'hero' })}
         />
 
         <LandingAbout
           about={content.about}
           professionalDisplayName={content.professional.displayName}
           whatsappHref={whatsappHref}
+          onWhatsappClick={() => trackWhatsappClick({ location: 'about' })}
         />
 
         <LandingApproach approach={content.approach} />
@@ -86,9 +90,14 @@ export function LandingPage({ content }: LandingPageProps) {
           openFaq={openFaq}
           onToggleFaq={(index: number) => setOpenFaq((current) => (current === index ? null : index))}
           whatsappHref={whatsappHref}
+          onWhatsappClick={() => trackWhatsappClick({ location: 'faq' })}
         />
 
-        <LandingFinalCta finalCta={content.finalCta} whatsappHref={whatsappHref} />
+        <LandingFinalCta
+          finalCta={content.finalCta}
+          whatsappHref={whatsappHref}
+          onWhatsappClick={() => trackWhatsappClick({ location: 'final_cta' })}
+        />
       </main>
 
       <LandingFooter
@@ -96,6 +105,7 @@ export function LandingPage({ content }: LandingPageProps) {
         contact={content.contact}
         footer={content.footer}
         professional={content.professional}
+        onWhatsappClick={() => trackWhatsappClick({ location: 'floating_button' })}
       />
     </div>
   );

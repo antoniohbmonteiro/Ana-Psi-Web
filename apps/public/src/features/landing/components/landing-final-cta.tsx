@@ -1,13 +1,18 @@
-import { ArrowRight, MessageCircle } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import type { LandingContent } from '@/features/landing/types/content';
 import styles from './landing-page.module.css';
 
 type LandingFinalCtaProps = {
   finalCta: LandingContent['finalCta'];
   whatsappHref: string;
+  onWhatsappClick: () => void;
 };
 
-export function LandingFinalCta({ finalCta, whatsappHref }: LandingFinalCtaProps) {
+export function LandingFinalCta({
+  finalCta,
+  whatsappHref,
+  onWhatsappClick,
+}: LandingFinalCtaProps) {
   return (
     <section className={styles.sectionSoft}>
       <div className={styles.container}>
@@ -16,8 +21,19 @@ export function LandingFinalCta({ finalCta, whatsappHref }: LandingFinalCtaProps
             <h2 className={styles.finalCtaTitle}>{finalCta.title}</h2>
             <p className={styles.finalCtaDescription}>{finalCta.description}</p>
 
-            <a href={whatsappHref} target="_blank" rel="noreferrer" className={styles.secondaryButton}>
-              <MessageCircle size={22} />
+            <a
+              href={whatsappHref}
+              target="_blank"
+              rel="noreferrer"
+              className={styles.secondaryButton}
+              onClick={onWhatsappClick}
+            >
+              <img
+                src="/images/landing/whatsapp/Digital_Glyph_Green_RGB_2026.svg"
+                alt=""
+                aria-hidden="true"
+                className={styles.secondaryButtonIcon}
+              />
               {finalCta.buttonLabel}
             </a>
 

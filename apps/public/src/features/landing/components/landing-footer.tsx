@@ -1,4 +1,4 @@
-import { Instagram, Link2, Mail, MapPin, MessageCircle } from 'lucide-react';
+import { Instagram, Link2, Mail, MapPin } from 'lucide-react';
 import type { LandingContent } from '@/features/landing/types/content';
 import { buildWhatsappLink } from '@/features/landing/utils/build-whatsapp-link';
 import styles from './landing-page.module.css';
@@ -8,6 +8,7 @@ type LandingFooterProps = {
   contact: LandingContent['contact'];
   footer: LandingContent['footer'];
   professional: LandingContent['professional'];
+  onWhatsappClick: () => void;
 };
 
 export function LandingFooter({
@@ -15,6 +16,7 @@ export function LandingFooter({
   contact,
   footer,
   professional,
+  onWhatsappClick,
 }: LandingFooterProps) {
   const whatsappHref = buildWhatsappLink(contact.whatsapp, contact.whatsappMessage);
 
@@ -95,8 +97,14 @@ export function LandingFooter({
         rel="noreferrer"
         className={styles.floatButton}
         aria-label="Falar comigo no WhatsApp"
+        onClick={onWhatsappClick}
       >
-        <MessageCircle size={20} aria-hidden="true" />
+        <img
+          src="/images/landing/whatsapp/Digital_Glyph_White_RGB_2026.svg"
+          alt=""
+          aria-hidden="true"
+          className={styles.floatButtonIcon}
+        />
         <span>Fale comigo</span>
         <span className={styles.floatDot} aria-hidden="true" />
       </a>

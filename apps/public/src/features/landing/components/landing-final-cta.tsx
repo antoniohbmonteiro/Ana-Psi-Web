@@ -32,7 +32,9 @@ export function LandingFinalCta({
                 src="/images/landing/whatsapp/Digital_Glyph_Green_RGB_2026.svg"
                 alt=""
                 aria-hidden="true"
-                className={styles.buttonIcon}
+                className={styles.primaryButtonIcon}
+                width={22}
+                height={22}
               />
               {finalCta.buttonLabel}
             </a>

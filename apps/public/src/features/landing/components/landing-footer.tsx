@@ -103,7 +103,9 @@ export function LandingFooter({
           src="/images/landing/whatsapp/Digital_Glyph_White_RGB_2026.svg"
           alt=""
           aria-hidden="true"
-          className={styles.buttonIcon}
+          className={styles.primaryButtonIcon}
+          width={20}
+          height={20}
         />
         <span>Fale comigo</span>
         <span className={styles.floatDot} aria-hidden="true" />

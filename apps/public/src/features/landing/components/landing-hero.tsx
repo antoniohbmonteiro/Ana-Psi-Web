@@ -1,6 +1,8 @@
 import { Fragment } from 'react';
+import { Check } from 'lucide-react';
 import type { LandingContent } from '@/features/landing/types/content';
-import styles from './landing-page.module.css';
+import pageStyles from './landing-page.module.css';
+import styles from './landing-hero.module.css';
 
 type LandingHeroProps = {
   professionalDisplayName: string;
@@ -8,6 +10,12 @@ type LandingHeroProps = {
   whatsappHref: string;
   onWhatsappClick: () => void;
 };
+
+const defaultHeroChecks = [
+  'Atendimento particular',
+  '100% online',
+  'Abordagem humanista',
+] as const;
 
 function normalizeHeroWord(value: string) {
   return value
@@ -61,17 +69,29 @@ export function LandingHero({
   onWhatsappClick,
 }: LandingHeroProps) {
   const renderedHeroTitle = renderHeroTitle(hero.title, hero.highlightWords);
+  const checks = hero.checks?.length ? hero.checks : defaultHeroChecks;
 
   return (
     <section className={styles.hero}>
-      <div className={styles.container}>
+      <div className={pageStyles.container}>
         <div className={styles.heroGrid}>
-          <div>
-            <h1 className={styles.heroTitle}>{renderedHeroTitle}</h1>
-
+          <div className={styles.heroContent}>
             <div className={styles.badge}>{hero.badge}</div>
 
+            <h1 className={styles.heroTitle}>{renderedHeroTitle}</h1>
+
             <p className={styles.heroDescription}>{hero.description}</p>
+
+            <div className={styles.heroChecks} aria-label="Diferenciais do atendimento">
+              {checks.map((check) => (
+                <div key={check} className={styles.heroCheck}>
+                  <span className={styles.heroCheckIcon} aria-hidden="true">
+                    <Check size={12} strokeWidth={3} />
+                  </span>
+                  <span>{check}</span>
+                </div>
+              ))}
+            </div>
 
             <a
               href={whatsappHref}
@@ -93,11 +113,6 @@ export function LandingHero({
           <div className={styles.heroVisual}>
             <div className={styles.heroImageFrame}>
               <img src={hero.imageSrc} alt={professionalDisplayName} className={styles.heroImage} />
-            </div>
-
-            <div className={styles.heroStat}>
-              <div className={styles.heroStatValue}>{hero.statValue}</div>
-              <div className={styles.heroStatText}>{hero.statText}</div>
             </div>
           </div>
         </div>

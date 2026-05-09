@@ -1,0 +1,50 @@
+/* About section heading spacing */
+.aboutHeader {
+  display: grid;
+  gap: 18px;
+  margin-bottom: 24px;
+}
+
+.aboutEyebrow {
+  display: block;
+  font-size: 15px;
+  line-height: 1.2;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+
+.aboutTitle {
+  margin: 0;
+  font-size: 42px;
+  line-height: 1.08;
+  letter-spacing: -0.04em;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+@media (max-width: 840px) {
+  .aboutHeader {
+    gap: 16px;
+    margin-bottom: 22px;
+  }
+
+  .aboutTitle {
+    font-size: 36px;
+  }
+}
+
+@media (max-width: 560px) {
+  .aboutHeader {
+    gap: 14px;
+    margin-bottom: 20px;
+  }
+
+  .aboutEyebrow {
+    font-size: 14px;
+  }
+
+  .aboutTitle {
+    font-size: 32px;
+    line-height: 1.08;
+  }
+}

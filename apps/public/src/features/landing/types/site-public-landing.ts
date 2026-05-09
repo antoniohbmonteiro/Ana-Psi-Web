@@ -8,6 +8,7 @@ export type SitePublicLanding = {
     statValue: string;
     statText: string;
     imageSrc: string;
+    checks?: string[];
   };
   about: {
     eyebrow: string;

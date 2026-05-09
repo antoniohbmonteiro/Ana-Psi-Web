@@ -46,6 +46,7 @@ export type LandingContent = {
     statValue: string;
     statText: string;
     imageSrc: string;
+    checks?: string[];
   };
   about: {
     eyebrow: string;

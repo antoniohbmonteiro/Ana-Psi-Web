@@ -40,6 +40,7 @@ export function mapSitePublicContentToLandingContent(content: SitePublicContent)
       statValue: landing.hero.statValue,
       statText: landing.hero.statText,
       imageSrc: landing.hero.imageSrc,
+      checks: landing.hero.checks,
     },
     about: {
       eyebrow: landing.about.eyebrow,

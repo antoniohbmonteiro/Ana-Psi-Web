@@ -23,8 +23,10 @@ export function LandingAbout({
           </div>
 
           <div>
-            <div className={styles.eyebrow}>{about.eyebrow}</div>
-            <h2 className={styles.cardTitle}>{about.title}</h2>
+            <div className={styles.aboutHeader}>
+              <div className={`${styles.eyebrow} ${styles.aboutEyebrow}`}>{about.eyebrow}</div>
+              <h2 className={styles.aboutTitle}>{about.title}</h2>
+            </div>
 
             <div className={styles.aboutText}>
               {about.paragraphs.map((paragraph: string, index: number) => (

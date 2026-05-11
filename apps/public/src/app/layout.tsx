@@ -14,9 +14,9 @@ const siteDescription =
   'Atendimento psicológico online para adultos com escuta qualificada, acolhimento e condução ética.';
 
 const contact = {
-  email: 'anapaulaboraventura.psi@gmail.com',
+  email: 'anapaulaboaventura.psi@gmail.com',
   telephone: '+55 31 97358-9839',
-  instagramUrl: 'https://instagram.com/anapaulaboraventura.psi',
+  instagramUrl: 'https://instagram.com/anapaulaboaventura.psi',
   linktreeUrl: 'https://linktr.ee/anapaulaboaventura.psi',
 };
 
@@ -110,11 +110,20 @@ export const metadata: Metadata = {
     title: siteTitle,
     description: siteDescription,
     url: '/',
+    images: [
+      {
+        url: '/opengraph-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'Ana Paula Boaventura | Psicóloga Online',
+      },
+    ],
   },
   twitter: {
-    card: 'summary',
+    card: 'summary_large_image',
     title: siteTitle,
     description: siteDescription,
+    images: ['/opengraph-image.png'],
   },
   robots: {
     index: true,

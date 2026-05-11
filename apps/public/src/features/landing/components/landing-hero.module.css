@@ -272,46 +272,99 @@
 
 @media (max-width: 560px) {
   .hero {
-    padding: 8px 0 60px;
+    padding: 0 0 54px;
+    background: #f5f3ff;
+  }
+
+  .heroGrid {
+    gap: 0;
+  }
+
+  .heroVisual {
+    order: -1;
+    width: calc(100% + 36px);
+    margin: 0 -18px;
+  }
+
+  .heroImageFrame,
+  .heroImage {
+    min-height: 200px;
+    height: 200px;
+    border-radius: 0;
+  }
+
+  .heroImage {
+    object-position: center 40%;
+  }
+
+  .heroImageFrame::after {
+    background: linear-gradient(
+      180deg,
+      rgba(245, 243, 255, 0) 0%,
+      rgba(245, 243, 255, 0) 70%,
+      rgba(245, 243, 255, 0.62) 85%,
+      #f5f3ff 100%
+    );
+  }
+
+  .heroContent {
+    padding: 22px 0 0;
+  }
+
+  .badge {
+    padding: 9px 14px;
+    font-size: 13px;
+    line-height: 1.35;
   }
 
   .heroTitle {
     margin-top: 24px;
-    font-size: 34px;
-    line-height: 1.06;
+    font-size: 32px;
+    line-height: 1.08;
+    letter-spacing: -0.045em;
   }
 
   .heroDescription {
-    margin-top: 24px;
-    font-size: 17px;
-    line-height: 1.7;
+    margin-top: 18px;
+    font-size: 16px;
+    line-height: 1.58;
   }
 
   .heroChecks {
-    display: grid;
-    gap: 12px;
-    margin-top: 24px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 12px;
+    margin-top: 20px;
   }
 
   .heroCheck {
-    font-size: 15px;
-    line-height: 1.45;
+    gap: 8px;
+    font-size: 13px;
+    line-height: 1.35;
+  }
+
+  .heroCheckIcon {
+    width: 16px;
+    height: 16px;
+  }
+
+  .heroCheckIcon svg {
+    width: 11px;
+    height: 11px;
   }
 
   .primaryButton {
     width: 100%;
     justify-content: center;
-    margin-top: 32px;
+    margin-top: 24px;
+    padding: 15px 18px;
+    border-radius: 12px;
+    font-size: 15px;
+    box-shadow: 0 14px 28px rgba(37, 211, 102, 0.18);
   }
 
-  .heroImageFrame,
-  .heroImage {
-    min-height: 420px;
-    height: 420px;
-    border-radius: 24px;
-  }
-
-  .heroImage {
-    object-position: center 32%;
+  .primaryButtonIcon {
+    width: 20px;
+    height: 20px;
   }
 }

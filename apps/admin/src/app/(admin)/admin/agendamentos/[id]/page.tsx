@@ -1,13 +1,6 @@
-export const dynamicParams = false;
-
-export function generateStaticParams() {
-  return [];
-}
-
 import { notFound } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { appointmentQuickActions } from "@/features/appointments/mock";
-import { getAppointmentById } from "@/features/appointments/repository";
 import { ActivityTimelineCard } from "@/features/appointments/components/activity-timeline-card";
 import { AppointmentSummaryCard } from "@/features/appointments/components/appointment-summary-card";
 import { PatientInfoCard } from "@/features/appointments/components/patient-info-card";

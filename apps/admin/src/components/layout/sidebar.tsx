@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  BookOpen,
   CalendarDays,
   CircleDollarSign,
   Clock3,
@@ -22,7 +21,6 @@ const items = [
   { href: "/admin/pre-reservas", label: "Pré-reservas", icon: FileClock },
   { href: "/admin/disponibilidade", label: "Disponibilidade", icon: Clock3 },
   { href: "/admin/bloqueios", label: "Bloqueios", icon: ShieldBan },
-  { href: "/agendar", label: "Agendamento Online", icon: BookOpen },
 ];
 
 export function Sidebar() {
@@ -45,7 +43,8 @@ export function Sidebar() {
           <ul className="space-y-2">
             {items.map((item) => {
               const Icon = item.icon;
-              const active = pathname.startsWith(item.href);
+              const active =
+                pathname === item.href || pathname.startsWith(`${item.href}/`);
 
               return (
                 <li key={item.href}>

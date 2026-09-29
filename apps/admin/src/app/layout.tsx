@@ -8,55 +8,20 @@ const inter = Inter({
   display: 'swap',
 });
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
-const siteName = 'Ana Psicologia';
-const siteTitle = 'Ana Paula Boaventura | Psicóloga Online';
-const siteDescription =
-  'Psicoterapia online para adultos e adolescentes com acolhimento, escuta ativa e cuidado profissional.';
-
 export const metadata: Metadata = {
-  ...(siteUrl ? { metadataBase: new URL(siteUrl) } : {}),
   title: {
-    default: siteTitle,
-    template: '%s | Ana Psicologia',
+    default: 'Gestão de Consultório | Boaventura Psicologia',
+    template: '%s | Boaventura Psicologia',
   },
-  description: siteDescription,
-  applicationName: siteName,
-  keywords: [
-    'psicóloga online',
-    'psicoterapia online',
-    'psicóloga para adultos',
-    'psicóloga para adolescentes',
-    'acolhimento psicológico',
-    'Ana Paula Boaventura',
-  ],
-  authors: [{ name: 'Ana Paula Boaventura' }],
-  creator: 'Ana Paula Boaventura',
-  publisher: siteName,
-  category: 'health',
-  alternates: siteUrl ? { canonical: '/' } : undefined,
-  openGraph: {
-    type: 'website',
-    locale: 'pt_BR',
-    siteName,
-    title: siteTitle,
-    description: siteDescription,
-    ...(siteUrl ? { url: '/' } : {}),
-  },
-  twitter: {
-    card: 'summary',
-    title: siteTitle,
-    description: siteDescription,
-  },
+  description: 'Painel administrativo do consultório.',
+  applicationName: 'Boaventura Psicologia – Painel',
   robots: {
-    index: true,
-    follow: true,
+    index: false,
+    follow: false,
+    nocache: true,
     googleBot: {
-      index: true,
-      follow: true,
-      'max-image-preview': 'large',
-      'max-snippet': -1,
-      'max-video-preview': -1,
+      index: false,
+      follow: false,
     },
   },
 };

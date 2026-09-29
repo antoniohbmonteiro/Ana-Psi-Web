@@ -12,6 +12,7 @@
     "build:admin": "npm run build --workspace @ana-psi/admin",
     "lint:public": "npm run lint --workspace @ana-psi/public",
     "lint:admin": "npm run lint --workspace @ana-psi/admin",
+    "typecheck:admin": "npm run typecheck --workspace @ana-psi/admin",
     "deploy:public": "npm run deploy:hosting --workspace @ana-psi/public"
   }
 }

@@ -1,15 +1,16 @@
 import Link from "next/link";
 import { Card } from "@/components/ui/card";
 import type { Session } from "../types";
+import { getCivilDateParts } from "@/lib/app-date";
+import { getAppointmentStatusPresentation } from "@/features/appointments/presentation";
 import {
   getSessionsForSlot,
   getSessionCardStyles,
-  toIsoDate,
   weekdayLabels,
 } from "../utils";
 
 type Props = {
-  weekDays: Date[];
+  weekDays: string[];
   timeSlots: string[];
   sessions: Session[];
 };
@@ -34,15 +35,15 @@ export function WeeklyCalendarGrid({
 
             {weekDays.map((date) => (
               <div
-                key={toIsoDate(date)}
+                key={date}
                 className="border-l p-3 text-center"
                 style={{ borderColor: "var(--border)" }}
               >
                 <p className="text-xs font-medium app-muted">
-                  {weekdayLabels[(date.getDay() + 6) % 7]}
+                  {weekdayLabels[(getCivilDateParts(date).weekday + 6) % 7]}
                 </p>
                 <p className="mt-1 text-sm font-medium text-[var(--foreground)]">
-                  {date.getDate()}
+                  {getCivilDateParts(date).day}
                 </p>
               </div>
             ))}
@@ -67,7 +68,7 @@ export function WeeklyCalendarGrid({
 
                 return (
                   <div
-                    key={`${toIsoDate(date)}-${time}`}
+                    key={`${date}-${time}`}
                     className="border-l p-2"
                     style={{ borderColor: "var(--border)" }}
                   >
@@ -78,11 +79,12 @@ export function WeeklyCalendarGrid({
                             <p className="text-sm font-medium">{session.patientName}</p>
                             <p className="mt-1 text-xs opacity-90">
                               {session.duration} min
+                              {session.type === "appointment" ? ` · ${getAppointmentStatusPresentation(session.status).label}` : ""}
                             </p>
                           </>
                         );
 
-                        if (session.type === "blocked" || !session.appointmentId) {
+                        if (session.type === "blocked") {
                           return (
                             <div
                               key={session.id}

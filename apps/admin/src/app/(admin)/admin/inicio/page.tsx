@@ -8,20 +8,27 @@ import { NextPatientCard } from "@/components/shared/next-patient-card";
 import { AlertsPanel } from "@/features/home/components/alerts-panel";
 import { QuickActionsPanel } from "@/features/home/components/quick-actions-panel";
 import { getAppTodayIso } from "@/lib/app-date";
-import { appointmentsService } from "@/features/appointments/service";
+import { createAppointmentsService } from "@/features/appointments/service";
+import { getNextAppointmentDayLabel } from "@/features/appointments/presentation";
 
-const todayIso = getAppTodayIso();
-const todayAppointments = appointmentsService.getAppointmentsByDate(todayIso);
-const nextAppointment = appointmentsService.getNextAppointment(todayIso);
-const totalDuration = appointmentsService.getTotalDurationByDate(todayIso);
+export const dynamic = "force-dynamic";
 
 export default function InicioPage() {
+  const now = new Date();
+  const todayIso = getAppTodayIso(now);
+  const appointmentsService = createAppointmentsService(now);
+  const todayAppointments = appointmentsService.getAppointmentsByDate(todayIso);
+  const nextAppointment = appointmentsService.getNextAppointment(now);
+  const totalDuration = appointmentsService.getTotalDurationByDate(todayIso);
+  const pendingPayments = appointmentsService.getPendingPaymentsCount();
+  const pendingAppointments = appointmentsService.getPendingAppointmentsCount();
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-page-title">Boa tarde, Ana</h1>
         <p className="mt-1 text-page-subtitle">
-          Você tem {todayAppointments.length} sessões hoje e {appointmentsService.getPendingPaymentsCount() + appointmentsService.getNewRequestsCount()} pendências        </p>
+          Você tem {todayAppointments.length} sessões hoje e {pendingPayments + pendingAppointments} pendências
+        </p>
       </div>
 
       <div
@@ -38,15 +45,15 @@ export default function InicioPage() {
         />
 
         <NextPatientCard
-          name={nextAppointment?.patientName ?? "Sem sessões"}
+          name={nextAppointment?.patient.fullName ?? "Sem sessões"}
           time={nextAppointment?.time ?? "--:--"}
-          countdown="Hoje"
+          countdown={getNextAppointmentDayLabel(nextAppointment, now)}
           href={nextAppointment ? `/admin/agendamentos/${nextAppointment.id}` : undefined}
         />
 
         <MetricCard
           title="Pagamentos Pendentes"
-          value={String(appointmentsService.getPendingPaymentsCount())}
+          value={String(pendingPayments)}
           helper="Sessões aguardando pagamento"
           icon={<DollarSign size={24} />}
           iconBg="rgba(245,158,11,0.10)"
@@ -55,7 +62,7 @@ export default function InicioPage() {
 
         <MetricCard
           title="Novas Solicitações"
-          value={String(appointmentsService.getNewRequestsCount())}
+          value={String(pendingAppointments)}
           helper="Agendamentos pendentes"
           icon={<Bell size={24} />}
           iconBg="rgba(59,130,246,0.10)"
@@ -75,8 +82,8 @@ export default function InicioPage() {
               className="space-y-3 overflow-auto pr-2"
               style={{ height: "var(--layout-today-scroll-height)" }}
             >
-              {todayAppointments.map((appointment, index) => {
-                const isNext = index === 0;
+              {todayAppointments.map((appointment) => {
+                const isNext = appointment.id === nextAppointment?.id;
 
                 return (
                   <Link
@@ -112,7 +119,7 @@ export default function InicioPage() {
                             {isNext ? <Badge variant="primary">Próxima</Badge> : null}
                           </div>
 
-                          <p className="text-item-title">{appointment.patientName}</p>
+                          <p className="text-item-title">{appointment.patient.fullName}</p>
                           <p className="mt-1 text-sm app-muted">
                             {appointment.duration} minutos
                           </p>

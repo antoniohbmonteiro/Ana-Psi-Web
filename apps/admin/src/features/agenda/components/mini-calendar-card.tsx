@@ -1,13 +1,14 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { monthNames, weekdayLabels, toIsoDate, addDays } from "../utils";
+import { monthNames, weekdayLabels, addDays } from "../utils";
+import { getCivilDateParts } from "@/lib/app-date";
 
 type MiniCalendarDay = {
-  date: Date;
+  date: string;
   isCurrentMonth: boolean;
 };
 
 type Props = {
-  currentWeekStart: Date;
+  currentWeekStart: string;
   miniCalendarDays: MiniCalendarDay[];
 };
 
@@ -19,7 +20,7 @@ export function MiniCalendarCard({
     <Card className="rounded-xl">
       <CardContent className="p-4">
         <h2 className="text-[15px] font-medium leading-5 text-[var(--foreground)]">
-          {monthNames[currentWeekStart.getMonth()]} {currentWeekStart.getFullYear()}
+          {monthNames[getCivilDateParts(currentWeekStart).month - 1]} {getCivilDateParts(currentWeekStart).year}
         </h2>
 
         <div className="mt-3 grid grid-cols-7 gap-y-1 text-center">
@@ -34,12 +35,11 @@ export function MiniCalendarCard({
 
           {miniCalendarDays.map(({ date, isCurrentMonth }) => {
             const isInCurrentWeek =
-              toIsoDate(date) >= toIsoDate(currentWeekStart) &&
-              toIsoDate(date) <= toIsoDate(addDays(currentWeekStart, 6));
+              date >= currentWeekStart && date <= addDays(currentWeekStart, 6);
 
             return (
               <div
-                key={toIsoDate(date)}
+                key={date}
                 className="mx-auto flex h-7 w-7 items-center justify-center rounded-lg text-[12px]"
                 style={
                   isInCurrentWeek
@@ -55,7 +55,7 @@ export function MiniCalendarCard({
                       }
                 }
               >
-                {date.getDate()}
+                {getCivilDateParts(date).day}
               </div>
             );
           })}

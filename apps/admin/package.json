@@ -6,7 +6,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint . --max-warnings=0",
-    "typecheck": "next typegen && tsc --noEmit"
+    "typecheck": "next typegen && tsc --noEmit",
+    "test:appointments": "tsc -p tsconfig.tests.json && node --test .next/domain-tests/features/appointments/__tests__/core.test.js .next/domain-tests/features/agenda/__tests__/adapter.test.js"
   },
   "dependencies": {
     "clsx": "^2.1.1",

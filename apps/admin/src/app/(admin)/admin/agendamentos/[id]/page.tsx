@@ -1,12 +1,14 @@
 import { notFound } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { appointmentQuickActions } from "@/features/appointments/mock";
+import { appointmentQuickActions, toAppointmentDetailPresentation } from "@/features/appointments/presentation";
 import { ActivityTimelineCard } from "@/features/appointments/components/activity-timeline-card";
 import { AppointmentSummaryCard } from "@/features/appointments/components/appointment-summary-card";
 import { PatientInfoCard } from "@/features/appointments/components/patient-info-card";
 import { PaymentSummaryCard } from "@/features/appointments/components/payment-summary-card";
 import { QuickActionsCard } from "@/features/appointments/components/quick-actions-card";
-import { appointmentsService } from "@/features/appointments/service";
+import { createAppointmentsService } from "@/features/appointments/service";
+
+export const dynamic = "force-dynamic";
 
 type Props = {
   params: Promise<{
@@ -16,11 +18,13 @@ type Props = {
 
 export default async function AppointmentDetailPage({ params }: Props) {
   const { id } = await params;
-  const appointment = appointmentsService.getAppointmentById(id);
+  const appointment = createAppointmentsService(new Date()).getAppointmentById(id);
 
   if (!appointment) {
     notFound();
   }
+
+  const view = toAppointmentDetailPresentation(appointment);
 
   return (
     <div className="space-y-6">
@@ -44,39 +48,15 @@ export default async function AppointmentDetailPage({ params }: Props) {
       </div>
 
       <div className="grid grid-cols-1 gap-6 xl:grid-cols-[1.2fr_0.8fr]">
-        <AppointmentSummaryCard
-          patientName={appointment.patientName}
-          dateLabel={appointment.dateLabel}
-          timeLabel={appointment.timeLabel}
-          durationLabel={appointment.durationLabel}
-          modalityLabel={appointment.modalityLabel}
-          sessionTypeLabel={appointment.sessionTypeLabel}
-          appointmentStatusLabel={appointment.appointmentStatusLabel}
-          appointmentStatusVariant={appointment.appointmentStatusVariant}
-          paymentStatusLabel={appointment.paymentStatusLabel}
-          paymentStatusVariant={appointment.paymentStatusVariant}
-          meetingLink={appointment.meetingLink}
-          notes={appointment.notes}
-        />
+        <AppointmentSummaryCard {...view.summary} />
 
-        <PaymentSummaryCard
-          amountLabel={appointment.payment.amountLabel}
-          methodLabel={appointment.payment.methodLabel}
-          statusLabel={appointment.payment.statusLabel}
-          statusVariant={appointment.payment.statusVariant}
-          paidAtLabel={appointment.payment.paidAtLabel}
-        />
+        <PaymentSummaryCard {...view.payment} />
       </div>
 
       <div className="grid grid-cols-1 gap-6 xl:grid-cols-[0.9fr_1.1fr]">
-        <PatientInfoCard
-          fullName={appointment.patient.fullName}
-          phone={appointment.patient.phone}
-          email={appointment.patient.email}
-          typeLabel={appointment.patient.typeLabel}
-        />
+        <PatientInfoCard {...view.patient} />
 
-        <ActivityTimelineCard items={appointment.activityTimeline} />
+        <ActivityTimelineCard items={view.activityTimeline} />
       </div>
 
       <QuickActionsCard actions={appointmentQuickActions} />

@@ -1,4 +1,4 @@
-type BadgeVariant = "neutral" | "primary" | "success" | "warning" | "danger" | "info";
+export type BadgeVariant = "neutral" | "primary" | "success" | "warning" | "danger" | "info";
 
 const variantStyles: Record<BadgeVariant, React.CSSProperties> = {
   neutral: {

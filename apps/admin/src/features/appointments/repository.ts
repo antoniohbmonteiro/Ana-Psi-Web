@@ -1,38 +1,23 @@
-import { appointments } from "./mock";
+import { createMockAppointments } from "./mock";
+import type { Appointment } from "./types";
 
-export function getAllAppointments() {
-  return appointments;
-}
+export type AppointmentsRepository = {
+  getAllAppointments(): Appointment[];
+  getAppointmentById(id: string): Appointment | undefined;
+  getAppointmentsByDate(date: string): Appointment[];
+};
 
-export function getAppointmentById(id: string) {
-  return appointments.find((appointment) => appointment.id === id);
-}
-
-export function getAppointmentsByDate(date: string) {
-  return appointments
-    .filter((appointment) => appointment.date === date)
-    .sort((a, b) => a.time.localeCompare(b.time));
-}
-
-export function getNextAppointment(date: string) {
-  return getAppointmentsByDate(date)[0] ?? null;
-}
-
-export function getPendingPaymentsCount() {
-  return appointments.filter(
-    (appointment) => appointment.paymentStatusVariant === "warning"
-  ).length;
-}
-
-export function getNewRequestsCount() {
-  return appointments.filter(
-    (appointment) => appointment.appointmentStatusVariant === "warning"
-  ).length;
-}
-
-export function getTotalDurationByDate(date: string) {
-  return getAppointmentsByDate(date).reduce(
-    (total, appointment) => total + appointment.duration,
-    0
+export function createAppointmentsRepository(
+  referenceNow: Date,
+  data: readonly Appointment[] = createMockAppointments(referenceNow)
+): AppointmentsRepository {
+  const appointments = [...data].sort(
+    (a, b) => a.date.localeCompare(b.date) ||
+      a.time.localeCompare(b.time) || a.id.localeCompare(b.id)
   );
+  return {
+    getAllAppointments: () => [...appointments],
+    getAppointmentById: (id) => appointments.find((item) => item.id === id),
+    getAppointmentsByDate: (date) => appointments.filter((item) => item.date === date),
+  };
 }

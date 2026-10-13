@@ -1,11 +1,14 @@
-export type SessionType = "confirmed" | "blocked";
+import type { AppointmentStatus } from "../appointments/types";
 
-export type Session = {
+export type SessionType = "appointment" | "blocked";
+type SessionBase = {
   id: string;
-  appointmentId?: string;
   date: string;
   time: string;
   patientName: string;
   duration: number;
-  type: SessionType;
 };
+export type Session = SessionBase & (
+  | { type: "appointment"; appointmentId: string; status: AppointmentStatus }
+  | { type: "blocked"; appointmentId?: never; status?: never }
+);

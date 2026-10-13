@@ -1,48 +1,41 @@
-export type StatusBadgeVariant =
-  | "neutral"
-  | "primary"
-  | "success"
-  | "warning"
-  | "danger"
-  | "info";
+export type AppointmentStatus =
+  | "pending" | "confirmed" | "completed" | "cancelled" | "no_show";
+export type AppointmentModality = "online" | "in_person";
+export type PaymentStatus = "pending" | "paid" | "refunded";
+export type AppointmentSessionType = "initial" | "follow_up";
+export type PatientRelationship = "new" | "returning";
+export type PaymentMethod = "pix" | "payment_link" | "cash";
 
 export type AppointmentActivity = {
   id: number;
   title: string;
   description: string;
-  timeLabel: string;
+  occurredAt: string; // ISO 8601 UTC instant ending in Z.
 };
 
 export type AppointmentPatient = {
   fullName: string;
   phone: string;
   email: string;
-  typeLabel: string;
+  relationship: PatientRelationship;
 };
 
+// One appointment has one charge; amounts are integer BRL cents.
 export type AppointmentPayment = {
-  amountLabel: string;
-  methodLabel: string;
-  statusLabel: string;
-  statusVariant: StatusBadgeVariant;
-  paidAtLabel?: string;
+  amount: number;
+  method: PaymentMethod;
+  status: PaymentStatus;
+  paidAt?: string; // ISO 8601 UTC instant ending in Z.
 };
 
 export type Appointment = {
   id: string;
-  date: string;
-  dateLabel: string;
-  time: string;
-  timeLabel: string;
-  duration: number;
-  durationLabel: string;
-  patientName: string;
-  modalityLabel: string;
-  sessionTypeLabel: string;
-  appointmentStatusLabel: string;
-  appointmentStatusVariant: StatusBadgeVariant;
-  paymentStatusLabel: string;
-  paymentStatusVariant: StatusBadgeVariant;
+  date: string; // YYYY-MM-DD civil date in America/Sao_Paulo.
+  time: string; // HH:mm civil time in America/Sao_Paulo.
+  duration: number; // Minutes.
+  status: AppointmentStatus;
+  modality: AppointmentModality;
+  sessionType: AppointmentSessionType;
   meetingLink?: string;
   notes?: string;
   patient: AppointmentPatient;

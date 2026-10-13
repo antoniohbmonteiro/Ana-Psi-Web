@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Clock3 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import type { Session } from "../types";
+import { getAppointmentStatusPresentation } from "@/features/appointments/presentation";
 
 type Props = {
   sessions: Session[];
@@ -26,6 +27,11 @@ export function TodayAppointmentsCard({ sessions }: Props) {
                   {session.time}
                 </p>
                 <p className="mt-1 text-sm app-muted">{session.patientName}</p>
+                {session.type === "appointment" ? (
+                  <p className="mt-1 text-xs app-muted">
+                    {getAppointmentStatusPresentation(session.status).label}
+                  </p>
+                ) : null}
               </>
             );
 

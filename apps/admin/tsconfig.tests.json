@@ -1,0 +1,31 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "CommonJS",
+    "moduleResolution": "node",
+    "rootDir": "./src",
+    "outDir": "./.next/domain-tests",
+    "noEmit": false,
+    "noEmitOnError": true,
+    "incremental": false,
+    "allowJs": false,
+    "declaration": false,
+    "emitDeclarationOnly": false,
+    "sourceMap": false,
+    "types": [
+      "node",
+      "react"
+    ],
+    "paths": {},
+    "plugins": []
+  },
+  "include": [
+    "src/features/appointments/__tests__/core.test.ts",
+    "src/features/agenda/__tests__/adapter.test.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    ".next"
+  ]
+}

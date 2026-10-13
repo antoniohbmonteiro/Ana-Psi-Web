@@ -37,13 +37,14 @@ export default async function AppointmentDetailPage({ params }: Props) {
         </div>
 
         <div className="flex flex-wrap gap-3">
-          <Button variant="secondary" className="rounded-xl">
+          <Button variant="secondary" className="rounded-xl" disabled aria-describedby="appointment-integration-note">
             Remarcar
           </Button>
-          <Button variant="danger" className="rounded-xl">
+          <Button variant="danger" className="rounded-xl" disabled aria-describedby="appointment-integration-note">
             Cancelar
           </Button>
-          <Button className="rounded-xl">Marcar como Concluído</Button>
+          <Button className="rounded-xl" disabled aria-describedby="appointment-integration-note">Marcar como Concluído</Button>
+          <p id="appointment-integration-note" className="w-full text-xs app-muted">Disponível após integração</p>
         </div>
       </div>
 

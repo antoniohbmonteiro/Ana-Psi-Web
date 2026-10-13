@@ -24,7 +24,7 @@ export function QuickActionsCard({ actions }: Props) {
         <div>
           <h3 className="text-section-title">Ações Rápidas</h3>
           <p className="mt-1 text-sm app-muted">
-            Atalhos úteis para operar este atendimento
+            Disponível após integração
           </p>
         </div>
 
@@ -36,7 +36,8 @@ export function QuickActionsCard({ actions }: Props) {
               <button
                 key={action}
                 type="button"
-                className="app-card-soft flex min-h-[96px] flex-col items-center justify-center gap-3 p-4 text-center transition hover:opacity-90"
+                disabled
+                className="app-card-soft flex min-h-[96px] cursor-not-allowed flex-col items-center justify-center gap-3 p-4 text-center opacity-60"
               >
                 <Icon size={18} color="var(--primary-dark)" />
                 <span className="text-quick-action">{action}</span>

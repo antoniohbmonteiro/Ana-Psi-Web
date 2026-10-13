@@ -66,7 +66,7 @@ npm run build:admin
 ```
 
 O CI executa essa sequência com Node 20. Os testes usam `node:test` e
-`node:assert/strict`, sem dependências extras. O TypeScript compila os dois arquivos
+`node:assert/strict`, sem dependências extras. O TypeScript compila os quatro arquivos
 de teste e suas dependências para CommonJS em `.next/domain-tests`; Node executa
 os arquivos JavaScript por caminhos explícitos, sem loaders ou suporte nativo a TS.
 
@@ -85,3 +85,104 @@ Para validação visual em produção, conferir Home → Detalhe e Agenda → De
 navegação semanal, desktop/viewport estreito e ausência de divergência de dia
 com navegador em outro timezone. As três rotas devem aparecer como dinâmicas
 no build; Home e Agenda não devem constar como rotas estáticas do prerender manifest.
+
+## Comandos de domínio (PR 3)
+
+`features/appointments/commands.ts` exporta `createAppointment`, `editAppointment`,
+`rescheduleAppointment`, `cancelAppointment`, `confirmAppointment`,
+`completeAppointment` e `markAppointmentNoShow`. São funções puras: recebem uma
+entrada (validada em runtime), um snapshot de appointments e um contexto explícito
+com `now` e `actorId`. Na criação, o contexto também contém um ID fornecido pela
+camada chamadora confiável. Não acessam relógio global, Firebase ou sessão.
+
+O resultado é `{ ok: true, appointment }` ou `{ ok: false, error }`. Sucesso retorna
+um snapshot independente, inclusive paciente, pagamento e histórico aninhados.
+Nenhum comando grava no repository ou altera seus argumentos. Os testes aplicam
+resultados a novas fixtures para verificar consultas; isso não constitui persistência.
+
+### Identidade, versão e auditoria
+
+- `patient.id` é obrigatório e estável; não derive identidade de nome ou contatos.
+  Nome e vínculo são obrigatórios; telefone/e-mail são opcionais e exibem
+  “Não informado” quando ausentes.
+- Criação inicia `version: 1`; demais alterações efetivas incrementam a versão e
+  exigem `expectedVersion`. Divergência retorna `VERSION_CONFLICT`.
+- Cada sucesso produz exatamente um evento com `type`, `actorId`, sequência numérica
+  e `occurredAt = now.toISOString()`. IDs anteriores são preservados.
+- Criação registra o estado inicial; remarcação guarda os dois intervalos;
+  transições guardam os dois status e cancelamento pode guardar um motivo.
+  Edição registra campos e mudanças administrativas, sem duplicar o texto de
+  observações no evento. Não registrar informações clínicas nas observações.
+- Falhas e operações sem efeito não geram eventos. Códigos de erro em inglês;
+  mensagens de apresentação em português.
+
+### Regras de operação
+
+- Criação exige data existente `YYYY-MM-DD`, hora `HH:mm`, início estritamente
+  futuro em São Paulo, duração inteira positiva, modalidade, tipo de sessão,
+  valor inteiro seguro não negativo em centavos e método de pagamento válido.
+  Campos desconhecidos são rejeitados, inclusive nos objetos de paciente/edição.
+- O status inicial é `confirmed` por padrão, ou `pending` explícito. Pagamento
+  começa sempre `pending`, sem `paidAt`. Não há registro de recebimento financeiro.
+- Link de sessão é opcional e deve ser HTTPS; presencial não conserva link.
+- Edição de modalidade, tipo de sessão, link e observações é permitida apenas em
+  `pending`/`confirmed` antes do início. Valor/método só mudam com pagamento pendente.
+  `null` remove link/observações; mudar para presencial remove o link existente.
+  Edição não muda paciente, horário, duração ou status.
+- Remarcação altera data, hora e duração antes do início original; o novo início
+  deve estar no futuro. Preserva ID, paciente, status e pagamento. O próprio ID é
+  excluído da validação de conflito.
+- `pending → confirmed`, `pending/confirmed → cancelled`,
+  `confirmed → completed`, `pending/confirmed → no_show`. Estados terminais não
+  permitem reabertura. Confirmação tardia e cancelamento tardio são permitidos.
+- Conclusão/ausência exigem que o término previsto tenha sido atingido, inclusive
+  exatamente no término. Cancelar, concluir e registrar ausência preservam todo o
+  pagamento, inclusive `paidAt`; não produzem reembolso.
+- Intervalos são semiabertos `[início, término)`: conflito se
+  `candidateStart < existingEnd && existingStart < candidateEnd`. Todos os
+  appointments não cancelados ocupam tempo, independentemente da modalidade.
+  Intervalos adjacentes são permitidos. Duração não depende dos slots da interface.
+- Sessões não ultrapassam a meia-noite; término exatamente à meia-noite é permitido.
+  Horários por minuto são aceitos. Não há buffer, disponibilidade ou bloqueio real.
+
+Erros: `VALIDATION_ERROR` (com erros por campo quando aplicável), `NOT_FOUND`,
+`DUPLICATE_ID`, `INVALID_TRANSITION`, `INVALID_OPERATION_TIME`, `SCHEDULE_CONFLICT`,
+`VERSION_CONFLICT` e `NO_CHANGES`. Repetir uma transição retorna `INVALID_TRANSITION`;
+edição/remarcação sem efeito retorna `NO_CHANGES`.
+
+### Interface e próximos PRs
+
+As ações de escrita continuam desabilitadas com indicação “Disponível após
+integração”. Alertas e atalhos são demonstrativos. “Ver agendamento” apenas navega
+ao Detalhe. Nenhum endpoint de mutação ou CRUD em memória foi introduzido.
+
+1. **PR 4:** autenticação Firebase, autorização por UID administrativo, sessões
+   protegidas, Firestore no servidor, regras negando acesso direto às coleções
+   administrativas, consultas assíncronas e testes com emuladores. O Admin SDK
+   contorna Security Rules: autorização no servidor e IAM são obrigatórios.
+   Credenciais não entram em código, mocks ou testes. Produção não terá fallback
+   automático para mocks. Home deve calcular indicadores de um único dataset por
+   requisição. O admin permanece independente de `apps/public`.
+2. **PR 5:** criação persistida e identificação mínima de pacientes. Antes da
+   primeira escrita real, transação deve ler versão/dados/ocupação, executar o
+   domínio e gravar appointment/histórico atomicamente. Um documento de controle
+   por agenda/data serializa alterações de ocupação, inclusive em um dia vazio;
+   remarcação entre dias atualiza os dois controles. Identificador de solicitação
+   estável evita duplicar criação após resposta perdida. IDs e efeitos externos
+   não são gerados em callbacks sujeitos a retry.
+3. **PR 6:** edição, remarcação e cancelamento persistidos.
+4. **PR 7:** confirmação, conclusão e ausência persistidas.
+
+Antes da criação real, a grade precisa exibir inícios entre slots e expandir a
+faixa visível quando necessário; duração continuará textual sem redesign. O
+bloqueio hardcoded não valida ocupação. `blocks` persistidos usarão sobreposição e
+`availability` futura validará o intervalo inteiro dentro de uma janela disponível.
+Após commit persistido, atualizar/invalidate Home, Agenda e Detalhe; não mostrar
+sucesso antecipado. A versão local não garante exclusão entre requisições: isso
+depende da transação e de testes concorrentes com emuladores.
+
+Mocks usam IDs/autores fictícios e domínios `example.invalid`; não são importados
+automaticamente para Firestore. Os novos testes cobrem entradas inválidas,
+transições, limites temporais, conflitos, remarcação, edição, pagamentos preservados,
+histórico, versões, imutabilidade, consultas após alterações e timezones distintos.
+Testes de durabilidade, autorização e concorrência real pertencem ao PR 4/5.

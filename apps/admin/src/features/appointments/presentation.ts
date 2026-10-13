@@ -97,12 +97,12 @@ export function toAppointmentDetailPresentation(appointment: Appointment) {
     },
     patient: {
       fullName: appointment.patient.fullName,
-      phone: appointment.patient.phone,
-      email: appointment.patient.email,
+      phone: appointment.patient.phone || "Não informado",
+      email: appointment.patient.email || "Não informado",
       typeLabel: relationships[appointment.patient.relationship],
     },
-    activityTimeline: appointment.activityTimeline.map(({ occurredAt, ...item }) => ({
-      ...item, timeLabel: formatActivityInstant(occurredAt),
+    activityTimeline: appointment.activityTimeline.map(({ id, title, description, occurredAt }) => ({
+      id, title, description, timeLabel: formatActivityInstant(occurredAt),
     })),
   };
 }

@@ -142,8 +142,12 @@ test("a service retains one dataset even if queried after midnight", () => {
 
 test("mock events are UTC instants with ordered history and coherent payment/completion", () => {
   for (const item of createMockAppointments(referenceNow)) {
+    assert.equal(item.version, 1);
+    assert.ok(item.patient.id.startsWith("mock-patient-"));
     let previous = -Infinity;
     for (const event of item.activityTimeline) {
+      assert.ok(event.type);
+      assert.equal(event.actorId, "mock-admin");
       assert.equal(new Date(event.occurredAt).toISOString(), event.occurredAt);
       const instant = Date.parse(event.occurredAt);
       assert.ok(instant >= previous);

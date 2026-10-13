@@ -55,10 +55,13 @@ export function AgendaCalendar({ todayIso, sessions }: Props) {
         </div>
 
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-          <Button className="rounded-xl">
-            <Plus size={16} className="mr-2" />
-            Novo Agendamento
-          </Button>
+          <div className="space-y-1">
+            <Button className="whitespace-nowrap rounded-xl" disabled aria-describedby="agenda-integration-note">
+              <Plus size={16} className="mr-2" />
+              Novo Agendamento
+            </Button>
+            <p id="agenda-integration-note" className="text-xs app-muted">Disponível após integração</p>
+          </div>
 
           <div className="flex items-center gap-2">
             <button

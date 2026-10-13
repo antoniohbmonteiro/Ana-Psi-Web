@@ -1,6 +1,5 @@
 import Link from "next/link";
-import { Bell, Calendar, DollarSign, Play } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Bell, Calendar, DollarSign } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { MetricCard } from "@/components/shared/metric-card";
@@ -126,14 +125,9 @@ export default function InicioPage() {
                         </div>
 
                         {isNext ? (
-                          <Button
-                            className="rounded-xl"
-                            size="sm"
-                            style={{ backgroundColor: "var(--primary)" }}
-                          >
-                            <Play size={16} className="mr-2" />
-                            Iniciar Sessão
-                          </Button>
+                          <span className="inline-flex h-9 items-center rounded-xl bg-[var(--primary)] px-4 text-sm font-medium text-white">
+                            Ver agendamento
+                          </span>
                         ) : null}
                       </div>
                     </div>

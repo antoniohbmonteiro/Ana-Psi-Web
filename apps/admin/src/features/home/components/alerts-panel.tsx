@@ -6,6 +6,7 @@ export function AlertsPanel() {
     <Card className="rounded-xl">
       <CardContent className="p-6">
         <h2 className="text-section-title mb-4">Alertas Prioritários</h2>
+        <p className="mb-4 text-xs app-muted">Dados demonstrativos</p>
 
         <div className="space-y-3">
           {alerts.map((alert) => {

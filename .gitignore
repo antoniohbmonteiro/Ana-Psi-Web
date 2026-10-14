@@ -25,6 +25,7 @@ yarn-error.log*
 .pnpm-debug.log*
 # env files (can opt-in for committing if needed)
 .env*
+!apps/admin/.env.example
 # vercel
 .vercel
 # typescript
@@ -40,3 +41,5 @@ apps/*/.next
 apps/*/out
 apps/*/node_modules
 .workspace-migration-backup
+apps/admin/*-debug.log*
+apps/admin/.firebase/

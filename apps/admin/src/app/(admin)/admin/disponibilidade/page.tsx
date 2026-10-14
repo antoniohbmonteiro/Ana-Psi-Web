@@ -1,4 +1,7 @@
-export default function DisponibilidadePage() {
+import { requireAdmin } from "@/lib/auth/access.server";
+
+export default async function DisponibilidadePage() {
+  await requireAdmin();
   return (
     <div>
       <h1>Disponibilidade</h1>

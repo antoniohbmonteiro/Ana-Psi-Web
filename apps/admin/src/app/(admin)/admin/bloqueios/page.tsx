@@ -1,4 +1,7 @@
-export default function BloqueiosPage() {
+import { requireAdmin } from "@/lib/auth/access.server";
+
+export default async function BloqueiosPage() {
+  await requireAdmin();
   return (
     <div>
       <h1>Bloqueios</h1>

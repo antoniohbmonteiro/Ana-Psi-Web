@@ -6,7 +6,7 @@ import { AppointmentSummaryCard } from "@/features/appointments/components/appoi
 import { PatientInfoCard } from "@/features/appointments/components/patient-info-card";
 import { PaymentSummaryCard } from "@/features/appointments/components/payment-summary-card";
 import { QuickActionsCard } from "@/features/appointments/components/quick-actions-card";
-import { createAppointmentsService } from "@/features/appointments/service";
+import { getDemoAppointmentsService } from "@/features/appointments/demo.server";
 
 export const dynamic = "force-dynamic";
 
@@ -18,7 +18,8 @@ type Props = {
 
 export default async function AppointmentDetailPage({ params }: Props) {
   const { id } = await params;
-  const appointment = createAppointmentsService(new Date()).getAppointmentById(id);
+  const service = await getDemoAppointmentsService(new Date());
+  const appointment = service.getAppointmentById(id);
 
   if (!appointment) {
     notFound();

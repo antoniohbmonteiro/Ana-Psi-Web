@@ -12,7 +12,12 @@ npm run start --workspace @ana-psi/admin
 
 ## Núcleo de appointments
 
-Home, Agenda e Detalhe usam o fluxo `appointments/mock → repository → service`.
+No PR 4A, Home, Agenda e Detalhe usam o fluxo autenticado
+`demo.server → appointments/mock → repository → service` somente quando
+`ADMIN_ENABLE_DEMO_APPOINTMENTS=true` em ambiente local/CI.
+As telas exibem “Demonstração — consultas ainda sem persistência”.
+Em ambientes remotos e quando a demonstração não está habilitada, as consultas
+ficam indisponíveis até a integração com Firestore no PR 4B.
 O adapter da Agenda recebe appointments do service; somente o bloqueio demonstrativo
 continua separado. Não há persistência nem operações de escrita.
 
@@ -156,7 +161,9 @@ As ações de escrita continuam desabilitadas com indicação “Disponível ap�
 integração”. Alertas e atalhos são demonstrativos. “Ver agendamento” apenas navega
 ao Detalhe. Nenhum endpoint de mutação ou CRUD em memória foi introduzido.
 
-1. **PR 4:** autenticação Firebase, autorização por UID administrativo, sessões
+1. **PR 4A (implementado):** autenticação Firebase e autorização por UID,
+   sessão de oito horas, CSRF, proteção de páginas/handlers e testes com Auth
+   Emulator. **PR 4B (pendente):**
    protegidas, Firestore no servidor, regras negando acesso direto às coleções
    administrativas, consultas assíncronas e testes com emuladores. O Admin SDK
    contorna Security Rules: autorização no servidor e IAM são obrigatórios.
@@ -185,4 +192,142 @@ Mocks usam IDs/autores fictícios e domínios `example.invalid`; não são impor
 automaticamente para Firestore. Os novos testes cobrem entradas inválidas,
 transições, limites temporais, conflitos, remarcação, edição, pagamentos preservados,
 histórico, versões, imutabilidade, consultas após alterações e timezones distintos.
-Testes de durabilidade, autorização e concorrência real pertencem ao PR 4/5.
+Autorização é testada no PR 4A. Durabilidade e concorrência persistida pertencem
+ao PR 4B/5.
+
+## Autenticação administrativa — PR 4A
+
+Somente o UID configurado no servidor em `ADMIN_ALLOWED_UID` pode estabelecer
+sessão. Estar autenticado no Firebase, conhecer o e-mail ou possuir um cookie
+não concede autorização administrativa.
+
+O login `/admin/entrar` usa e-mail/senha pelo SDK cliente com persistência apenas
+em memória. O ID token é enviado por POST ao servidor; o Admin SDK verifica
+revogação, UID e autenticação nos últimos cinco minutos antes de emitir um cookie
+HttpOnly de oito horas. O estado Firebase cliente é encerrado após a tentativa.
+Não há cadastro ou recuperação de senha nesta etapa.
+
+Cada página verifica sessão/autorização antes de renderizar. O layout também
+verifica, mas não é a única barreira. O helper de acesso memoiza somente durante
+a renderização; todos os verificadores usam `checkRevoked=true`. `proxy.ts`
+antecipa redirecionamentos quando não há cookie e aplica headers sem cache.
+Não verifica identidade nem substitui a autorização dos módulos de servidor.
+
+O cookie é host-only, `Path=/`, `SameSite=Lax`, HttpOnly e Secure em HTTPS.
+Em HTTPS tem prefixo `__Host-`; HTTP local usa outro nome. A sessão não é
+renovada automaticamente. Revogação, expiração, conta excluída/desabilitada e
+UID não autorizado impedem novas requisições protegidas.
+
+“Sair” exige CSRF e remove somente o cookie deste navegador, mesmo quando a
+sessão está inválida. Não revoga sessões em outros dispositivos. Uma cópia do
+cookie permanece válida até expiração ou revogação externa. A navegação completa
+no login/logout descarta o cache de navegação autenticado do cliente.
+
+### Desenvolvimento com Auth Emulator
+
+Node 20 (CI) ou 22 e Java 21 são as versões recomendadas para as ferramentas
+locais. O Auth Emulator desta etapa não precisa de um projeto Firebase real.
+Não reutilize `.firebaserc`, variáveis ou credenciais de `apps/public`.
+A CLI está fixada em 14.22.0; o override de `re2` 1.22.1, restrito à sua árvore,
+mantém compatibilidade com Node 20. Versões recentes de `re2` exigem Node 22/24.
+
+1. Faça uma cópia de segurança da sua `.env.local`, se já existir. Configure
+   `apps/admin/.env.local` usando exclusivamente os valores de `.env.example`.
+   `ADMIN_ORIGIN` deve ser exatamente a origem usada no navegador, sem barra
+   final. O exemplo usa `http://localhost:3000`.
+2. Na raiz, execute `npm ci` e `npm run emulators:admin`.
+3. Em outro terminal, execute `npm run seed:admin` e `npm run dev:admin`.
+4. Abra `/admin/entrar`. Login fictício: `ana.admin@example.invalid`;
+   senha exclusivamente local: `LocalOnly-123456!`.
+
+O seed cria apenas o usuário `local-admin-ana`, de forma explícita e idempotente.
+Ele exige ambiente local/CI, projeto `demo-ana-psi` e Auth em
+`127.0.0.1:9099`. Não grava appointments, não usa pacientes reais e não roda
+automaticamente. Os dados do emulador são descartáveis.
+
+A configuração central é lazy e falha fechada se estiver incompleta. Em
+`local/ci`, cliente/servidor devem apontar para o mesmo projeto demo e Auth
+local; ADC e service accounts não são usados. A demonstração de appointments
+exige `ADMIN_ENABLE_DEMO_APPOINTMENTS=true` explicitamente.
+
+Em `development/production`, exigir HTTPS, projeto remoto, SDK cliente com
+`NEXT_PUBLIC_FIREBASE_USE_EMULATORS=false` e ausência de qualquer variável de
+emulador. A demonstração é proibida. Credenciais privadas futuras serão ADC
+(`GOOGLE_APPLICATION_CREDENTIALS` fora do repositório ou identidade gerenciada).
+Nunca prefixar credenciais, UID autorizado ou configurações privadas com
+`NEXT_PUBLIC_`. O formulário recebe do servidor apenas a configuração pública
+validada; não há inicialização Firebase durante o build.
+
+Esta etapa não ativa projetos remotos, habilita providers, publica regras nem
+configura domínio/deploy. Antes da ativação futura, revisar IAM e a configuração
+do projeto escolhido. As consultas remotas continuam indisponíveis até o PR 4B.
+
+### Dependências antes da ativação remota
+
+O Admin SDK está fixado em 13.10.0, a versão mais recente da série 13 compatível
+com Node 20 consultada nesta implementação. Essa versão remove `node-forge` da
+árvore do SDK. O SDK 14 exige Node 22 e não foi adotado nesta etapa.
+
+A auditoria do workspace ainda identifica vulnerabilidades na base existente,
+incluindo Next 16.1.6. Antes de ativar um ambiente remoto ou usar dados reais,
+atualizar Next e revisar as dependências de produção em uma alteração própria,
+validando também o site público e o runtime LTS escolhido. Ver os avisos
+[Windows RCE](https://github.com/advisories/GHSA-p293-qw3h-jr36) e
+[Image Optimization RCE](https://github.com/advisories/GHSA-2xp9-vwfh-vxw4).
+Os testes desta etapa comprovam as barreiras de autenticação locais; não
+substituem a correção das vulnerabilidades do framework nem uma validação de
+produção. Não executar `npm audit fix --force` automaticamente.
+
+### Operações HTTP e CSRF
+
+- `GET /api/admin/auth/csrf`: token aleatório de 256 bits e cookie HttpOnly;
+  não possui CORS e rejeita origem estrangeira/contexto cross-site.
+- `POST /api/admin/auth/sessao`: corpo JSON `{ idToken }`, limite de 16 KiB,
+  header `X-CSRF-Token` correspondente ao cookie e `Origin === ADMIN_ORIGIN`.
+  Sucesso `204`, cookie de sessão e remoção do token CSRF usado.
+- `POST /api/admin/auth/sair`: mesma verificação CSRF/origem, sem exigir uma
+  sessão válida e sem chamar revogação; sucesso `204`.
+
+Respostas: `400` para corpo inválido, `401` para token/sessão inválidos ou login
+antigo, `403` para UID não autorizado ou CSRF inválido, `503` para configuração
+ou provedor indisponível. Mensagens e logs não devem incluir tokens, cookies,
+credenciais ou dados pessoais. Todas as respostas administrativas são privadas
+e sem cache. Novos handlers/Server Actions devem verificar autorização no
+próprio fluxo, antes de qualquer acesso a dados.
+
+### Testes e CI
+
+```powershell
+npm run test:appointments --workspace @ana-psi/admin
+npm run test:security:admin
+npm run typecheck:admin
+npm run lint:admin
+npm run build:admin
+npm run test:integration:admin
+```
+
+Os testes de segurança usam `node:test`, compilação CommonJS separada em
+`.next/security-tests` e `--conditions=react-server` para módulos `server-only`.
+A integração usa `emulators:exec --project demo-ana-psi --only auth`, fixtures
+fictícias, porta Next temporária e o build servido por `next start`.
+As variáveis são fornecidas explicitamente e credenciais herdadas são removidas;
+valores vazios impedem que `.env.local` preencha os principais campos privados.
+O runner encerra o servidor Next e a CLI encerra os emuladores.
+
+Para investigar o servidor de desenvolvimento sem build prévio:
+`npm run test:integration:admin -- --dev`. Isso não substitui a integração com
+`next start` no CI. Não execute a integração enquanto um Auth Emulator interativo
+estiver usando a porta 9099; o teste inicia sua própria instância.
+
+A suíte também reinicia Next com demonstração desabilitada, configuração
+incompleta e Auth apontando para uma porta local indisponível, comprovando
+falha fechada e respostas `503` sem dados demonstrativos.
+A suíte verifica login válido/inválido, UID não autorizado, acesso direto a
+todas as páginas, HTML/RSC sem dados privados, cookie inválido/expirado/revogado,
+autenticação antiga, conta desabilitada/excluída, CSRF, corpo inválido e logout
+preservando a sessão de outro navegador. Fixtures de cookies unsigned/expirados
+existem apenas nos testes do emulador. A política remota rejeita emuladores.
+
+O emulador não comprova IAM, assinatura de tokens de produção ou TLS remoto.
+Esses aspectos exigirão validação na ativação futura. O build continua usando
+Inter via Google Fonts e precisa de conectividade para obtê-la.

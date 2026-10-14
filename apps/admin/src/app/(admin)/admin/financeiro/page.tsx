@@ -1,4 +1,7 @@
-export default function FinanceiroPage() {
+import { requireAdmin } from "@/lib/auth/access.server";
+
+export default async function FinanceiroPage() {
+  await requireAdmin();
   return (
     <div>
       <h1>Financeiro</h1>

@@ -1,0 +1,5 @@
+{
+  "extends": "./tsconfig.tests.json",
+  "compilerOptions": { "outDir": "./.next/security-tests" },
+  "include": ["src/lib/auth/__tests__/security.test.ts"]
+}

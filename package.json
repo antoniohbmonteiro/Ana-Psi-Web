@@ -5,6 +5,11 @@
     "apps/public",
     "apps/admin"
   ],
+  "overrides": {
+    "firebase-tools": {
+      "re2": "1.22.1"
+    }
+  },
   "scripts": {
     "dev:public": "npm run dev --workspace @ana-psi/public",
     "dev:admin": "npm run dev --workspace @ana-psi/admin",
@@ -13,6 +18,10 @@
     "lint:public": "npm run lint --workspace @ana-psi/public",
     "lint:admin": "npm run lint --workspace @ana-psi/admin",
     "typecheck:admin": "npm run typecheck --workspace @ana-psi/admin",
-    "deploy:public": "npm run deploy:hosting --workspace @ana-psi/public"
+    "deploy:public": "npm run deploy:hosting --workspace @ana-psi/public",
+    "emulators:admin": "npm run emulators --workspace @ana-psi/admin",
+    "seed:admin": "npm run seed:auth --workspace @ana-psi/admin",
+    "test:security:admin": "npm run test:security --workspace @ana-psi/admin",
+    "test:integration:admin": "npm run test:integration --workspace @ana-psi/admin --"
   }
 }

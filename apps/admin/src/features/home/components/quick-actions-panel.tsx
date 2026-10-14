@@ -1,12 +1,19 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { quickActions } from "../mock";
+import { CalendarPlus, CreditCard, Link2, UserPlus } from "lucide-react";
+
+const quickActions = [
+  { label: "Novo Paciente", icon: UserPlus },
+  { label: "Registrar Pagamento", icon: CreditCard },
+  { label: "Nova Consulta", icon: CalendarPlus },
+  { label: "Link Agendamento", icon: Link2 },
+];
 
 export function QuickActionsPanel() {
   return (
     <Card className="rounded-xl">
       <CardContent className="p-6">
         <h2 className="text-section-title mb-4">Central de Ações</h2>
-        <p className="mb-4 text-xs app-muted">Atalhos demonstrativos. Disponível após integração.</p>
+        <p className="mb-4 text-xs app-muted">Disponível após integração.</p>
 
         <div className="grid grid-cols-2 gap-3">
           {quickActions.map((action) => {

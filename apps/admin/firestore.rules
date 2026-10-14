@@ -1,0 +1,15 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /settings/{documentId} {
+      allow get: if documentId in ['site_public_profile', 'site_public_landing'];
+      allow list, write: if false;
+    }
+    match /appointments/{document=**} {
+      allow read, write: if false;
+    }
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

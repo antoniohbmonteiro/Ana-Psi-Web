@@ -12,13 +12,16 @@ export function pad(value: number) {
   return String(value).padStart(2, "0");
 }
 
-export function buildTimeSlots() {
-  const slots: string[] = [];
-  for (let hour = 8; hour <= 21; hour += 1) {
-    slots.push(`${pad(hour)}:00`);
-    if (hour !== 21) slots.push(`${pad(hour)}:30`);
-  }
-  return slots;
+export function buildTimeSlots(sessions: readonly Session[] = []) {
+  const starts = sessions.map((session) => {
+    const [hour, minute] = session.time.split(":").map(Number);
+    return hour * 60 + minute;
+  });
+  const first = Math.floor(Math.min(480, ...starts) / 30) * 30;
+  const last = Math.min(1439, Math.ceil(Math.max(1260, ...starts) / 30) * 30);
+  const minutes = new Set(starts);
+  for (let minute = first; minute <= last; minute += 30) minutes.add(minute);
+  return [...minutes].sort((a, b) => a - b).map((minute) => `${pad(Math.floor(minute / 60))}:${pad(minute % 60)}`);
 }
 
 export function getWeekLabel(weekStart: string) {

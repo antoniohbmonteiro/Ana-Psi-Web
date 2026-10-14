@@ -71,3 +71,19 @@ test("calendar uses civil weeks/months while preserving 35 days and 30-minute sl
   assert.equal(getSessionCardStyles("appointment").backgroundColor, "var(--primary)");
   assert.equal(getSessionCardStyles("blocked").backgroundColor, "#DCD7E5");
 });
+
+test("calendar includes exact minute starts and extends its range without duplicates", () => {
+  const base = createMockAppointments(now)[0];
+  const sessions = toAppointmentSessions(["10:17", "07:15", "23:45", "10:17"].map((time, index) => ({
+    ...base, id: `slot-${index}`, date: today, time, duration: 15,
+  })));
+  const slots = buildTimeSlots(sessions);
+  for (const time of ["07:00", "07:15", "08:00", "10:17", "21:00", "23:30", "23:45"]) assert.ok(slots.includes(time));
+  assert.deepEqual(slots, [...new Set(slots)].sort());
+  const nextWeek = sessions.map((session) => ({ ...session, date: "2026-10-20" }));
+  assert.ok(!buildTimeSlots(nextWeek.filter((session) => session.date === today)).includes("10:17"));
+  assert.ok(buildTimeSlots(nextWeek).includes("10:17"));
+  assert.equal(getSessionsForSlot(sessions, today, "10:17").length, 2);
+  assert.ok(!JSON.stringify(sessions).includes("email"));
+  assert.ok(!JSON.stringify(sessions).includes("activityTimeline"));
+});

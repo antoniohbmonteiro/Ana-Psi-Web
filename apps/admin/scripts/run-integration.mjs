@@ -1,14 +1,22 @@
-import { spawn } from "node:child_process";
+import { spawn, spawnSync } from "node:child_process";
 import { createRequire } from "node:module";
 import { existsSync } from "node:fs";
 import { createServer } from "node:net";
 import { fileURLToPath } from "node:url";
 import { setTimeout as delay } from "node:timers/promises";
-import { assertLocalEmulatorEnvironment, localEnvironment } from "./emulator-env.mjs";
+import { assertLocalFirestoreEnvironment, localEnvironment } from "./emulator-env.mjs";
 
-assertLocalEmulatorEnvironment();
+assertLocalFirestoreEnvironment();
 const require = createRequire(import.meta.url);
 const appRoot = fileURLToPath(new URL("../", import.meta.url));
+const compilation = spawnSync(process.execPath, [require.resolve("typescript/bin/tsc"), "-p", "tsconfig.persistence-tests.json"], {
+  cwd: appRoot, env: localEnvironment(), stdio: "inherit", windowsHide: true,
+});
+if (compilation.status !== 0) throw new Error("Compilação dos testes de persistência falhou.");
+const persistence = spawnSync(process.execPath, ["--conditions=react-server", "--test", "tests/firestore.integration.test.mjs"], {
+  cwd: appRoot, env: localEnvironment(), stdio: "inherit", windowsHide: true,
+});
+if (persistence.status !== 0) throw new Error("Integração Firestore/Rules falhou.");
 const dev = process.argv.includes("--dev");
 if (!dev && !existsSync(new URL("../.next/BUILD_ID", import.meta.url))) {
   throw new Error("Execute npm run build:admin antes da integração, ou use --dev para validar o servidor de desenvolvimento.");
@@ -59,7 +67,7 @@ async function runSuite(file, overrides = {}, scenario = "auth") {
     if (!ready) throw new Error(`Servidor Next local não iniciou.\n${startupLog}`);
     console.log(`Integração HTTP com Next ${dev ? "dev" : "start"}: ${scenario}.`);
     const code = await new Promise((resolve, reject) => {
-      const tests = spawn(process.execPath, ["--test", file], {
+      const tests = spawn(process.execPath, ["--conditions=react-server", "--test", file], {
         cwd: appRoot, env: { ...testEnv, ADMIN_TEST_SCENARIO: scenario }, stdio: "inherit", windowsHide: true,
       });
       tests.once("error", reject);
@@ -71,7 +79,8 @@ async function runSuite(file, overrides = {}, scenario = "auth") {
 
 for (const [file, overrides, scenario] of [
   ["tests/auth.integration.test.mjs", {}, "auth"],
-  ["tests/config.integration.test.mjs", { ADMIN_ENABLE_DEMO_APPOINTMENTS: "false" }, "demo-disabled"],
+  ["tests/config.integration.test.mjs", { FIRESTORE_EMULATOR_HOST: "", ADMIN_ENABLE_DEMO_APPOINTMENTS: "true" }, "firestore-config-incomplete"],
+  ["tests/config.integration.test.mjs", { FIRESTORE_EMULATOR_HOST: "127.0.0.1:1" }, "firestore-unavailable"],
   ["tests/config.integration.test.mjs", { ADMIN_ALLOWED_UID: "" }, "config-incomplete"],
   ["tests/config.integration.test.mjs", {
     FIREBASE_AUTH_EMULATOR_HOST: "127.0.0.1:1", NEXT_PUBLIC_FIREBASE_AUTH_EMULATOR_URL: "http://127.0.0.1:1",

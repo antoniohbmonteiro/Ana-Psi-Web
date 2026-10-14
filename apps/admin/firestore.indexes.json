@@ -1,0 +1,10 @@
+{
+  "indexes": [],
+  "fieldOverrides": [
+    { "collectionGroup": "appointments", "fieldPath": "patient", "indexes": [] },
+    { "collectionGroup": "appointments", "fieldPath": "payment", "indexes": [] },
+    { "collectionGroup": "appointments", "fieldPath": "activityTimeline", "indexes": [] },
+    { "collectionGroup": "appointments", "fieldPath": "notes", "indexes": [] },
+    { "collectionGroup": "appointments", "fieldPath": "meetingLink", "indexes": [] }
+  ]
+}

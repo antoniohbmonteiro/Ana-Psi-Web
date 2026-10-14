@@ -72,13 +72,15 @@ test(`server fails closed with ${scenario}`, async () => {
     return;
   }
 
-  assert.equal(scenario, "demo-disabled");
+  assert.ok(["firestore-config-incomplete", "firestore-unavailable"].includes(scenario));
   assert.equal(session.status, 204);
   const cookie = session.headers.getSetCookie().find((value) => value.startsWith("ana-admin-session=")).split(";")[0];
   for (const path of ["/admin/inicio", "/admin/agenda", "/admin/agendamentos/apt-002"]) {
     const response = await request(path, { headers: { Cookie: cookie } });
     const body = await response.text();
     privateDataAbsent(body);
+    assert.match(body, scenario === "firestore-config-incomplete" ? /Consultas indisponíveis neste ambiente/ : /Consultas temporariamente indisponíveis/);
+    assert.match(body, /Tentar novamente/);
     assert.ok(!body.includes("Demonstração — consultas ainda sem persistência"));
     assert.match(response.headers.get("cache-control"), /no-store/);
   }

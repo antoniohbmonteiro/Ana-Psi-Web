@@ -1,15 +1,26 @@
+import { AppointmentsReadError } from "@/features/appointments/read-errors";
+import { AppointmentsReadFailure } from "@/features/appointments/components/read-error";
 import { getAppTodayIso } from "@/lib/app-date";
-import { getDemoAppointmentsService } from "@/features/appointments/demo.server";
+import { getAppointmentsService } from "@/features/appointments/application.server";
 import { toAppointmentSessions } from "@/features/agenda/adapter";
-import { blockedSessions } from "@/features/agenda/mock";
 import { AgendaCalendar } from "@/features/agenda/components/agenda-calendar";
+
+export const runtime = "nodejs";
 
 export const dynamic = "force-dynamic";
 
-export default async function AgendaPage() {
+async function renderPage() {
   const now = new Date();
   const todayIso = getAppTodayIso(now);
-  const service = await getDemoAppointmentsService(now);
-  const sessions = [...toAppointmentSessions(service.getAllAppointments()), ...blockedSessions];
+  const service = await getAppointmentsService();
+  const sessions = toAppointmentSessions(await service.getAllAppointments());
   return <AgendaCalendar key={todayIso} todayIso={todayIso} sessions={sessions} />;
+}
+
+export default async function Page() {
+  try { return await renderPage(); }
+  catch (error) {
+    if (error instanceof AppointmentsReadError) return <AppointmentsReadFailure code={error.code} />;
+    throw error;
+  }
 }

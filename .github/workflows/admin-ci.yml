@@ -55,6 +55,9 @@ jobs:
       - name: Test administrative security
         run: npm run test:security:admin
 
+      - name: Test Firestore mapping and asynchronous reads
+        run: npm run test:persistence:admin
+
       - name: Typecheck admin
         run: npm run typecheck:admin
 
@@ -64,5 +67,5 @@ jobs:
       - name: Build admin
         run: npm run build:admin
 
-      - name: Test Auth Emulator and protected routes
+      - name: Test Auth, Firestore, Rules and protected routes
         run: npm run test:integration:admin

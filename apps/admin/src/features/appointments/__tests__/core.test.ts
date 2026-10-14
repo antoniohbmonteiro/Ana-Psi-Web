@@ -19,18 +19,18 @@ function fixture(overrides: Partial<Appointment> = {}): Appointment {
   return { ...createMockAppointments(referenceNow)[1], id: "fixture", time: "17:00", ...overrides };
 }
 function serviceFor(data: Appointment[]) {
-  return createAppointmentsService(referenceNow, createAppointmentsRepository(referenceNow, data));
+  return createAppointmentsService(createAppointmentsRepository(data));
 }
 
-test("next appointment uses current time, not the first appointment of today", () => {
-  const service = createAppointmentsService(referenceNow);
-  assert.equal(service.getNextAppointment(referenceNow)?.id, "apt-004");
-  assert.equal(service.getNextAppointment(new Date("2026-10-13T11:00:00Z"))?.id, "apt-002");
-  assert.equal(service.getNextAppointment(new Date("2026-10-13T20:00:00Z"))?.id, "apt-006");
-  assert.equal(service.getNextAppointment(new Date("2026-10-13T23:00:00Z"))?.id, "apt-006");
+test("next appointment uses current time, not the first appointment of today", async () => {
+  const service = createAppointmentsService(createAppointmentsRepository(createMockAppointments(referenceNow)));
+  assert.equal((await service.getNextAppointment(referenceNow))?.id, "apt-004");
+  assert.equal((await service.getNextAppointment(new Date("2026-10-13T11:00:00Z")))?.id, "apt-002");
+  assert.equal((await service.getNextAppointment(new Date("2026-10-13T20:00:00Z")))?.id, "apt-006");
+  assert.equal((await service.getNextAppointment(new Date("2026-10-13T23:00:00Z")))?.id, "apt-006");
 });
 
-test("only future confirmed starts qualify, including seconds and milliseconds", () => {
+test("only future confirmed starts qualify, including seconds and milliseconds", async () => {
   const data: Appointment[] = [
     fixture({ id: "yesterday", date: addDays(today, -1) }),
     fixture({ id: "in-progress", time: "15:00", duration: 120 }),
@@ -40,45 +40,45 @@ test("only future confirmed starts qualify, including seconds and milliseconds",
     fixture({ id: "future", time: "17:00" }),
   ];
   const service = serviceFor(data);
-  assert.equal(service.getNextAppointment(referenceNow)?.id, "future");
-  assert.equal(serviceFor([fixture({ time: "15:20" })]).getNextAppointment(referenceNow), null);
-  assert.equal(serviceFor([fixture({ time: "15:20" })])
-    .getNextAppointment(new Date("2026-10-13T18:19:59.999Z"))?.id, "fixture");
-  assert.equal(serviceFor([fixture({ time: "15:20" })])
-    .getNextAppointment(new Date("2026-10-13T18:20:00.001Z")), null);
+  assert.equal((await service.getNextAppointment(referenceNow))?.id, "future");
+  assert.equal((await serviceFor([fixture({ time: "15:20" })]).getNextAppointment(referenceNow)), null);
+  assert.equal((await serviceFor([fixture({ time: "15:20" })])
+    .getNextAppointment(new Date("2026-10-13T18:19:59.999Z")))?.id, "fixture");
+  assert.equal((await serviceFor([fixture({ time: "15:20" })])
+    .getNextAppointment(new Date("2026-10-13T18:20:00.001Z"))), null);
 });
 
-test("next appointment supports presencial and pending payment without extra filters", () => {
+test("next appointment supports presencial and pending payment without extra filters", async () => {
   const candidate = fixture({ modality: "in_person" });
   assert.equal(candidate.payment.status, "pending");
-  assert.equal(serviceFor([candidate]).getNextAppointment(referenceNow)?.id, candidate.id);
+  assert.equal((await serviceFor([candidate]).getNextAppointment(referenceNow))?.id, candidate.id);
 });
 
-test("next appointment sorts unsorted input by date, time and then id", () => {
+test("next appointment sorts unsorted input by date, time and then id", async () => {
   const data = [
     fixture({ id: "tomorrow", date: addDays(today, 1), time: "08:00" }),
     fixture({ id: "later", time: "18:00" }),
     fixture({ id: "b" }),
     fixture({ id: "a" }),
   ];
-  assert.equal(serviceFor(data).getNextAppointment(referenceNow)?.id, "a");
-  assert.equal(serviceFor([]).getNextAppointment(referenceNow), null);
+  assert.equal((await serviceFor(data).getNextAppointment(referenceNow))?.id, "a");
+  assert.equal((await serviceFor([]).getNextAppointment(referenceNow)), null);
 });
 
-test("repository preserves order and returns independent arrays without mutating its input", () => {
+test("repository preserves order and returns independent arrays without mutating its input", async () => {
   const data = [fixture({ id: "b" }), fixture({ id: "tomorrow", date: addDays(today, 1) }), fixture({ id: "a" })];
   const originalIds = data.map((item) => item.id);
-  const repo = createAppointmentsRepository(referenceNow, data);
-  assert.deepEqual(repo.getAllAppointments().map((item) => item.id), ["a", "b", "tomorrow"]);
+  const repo = createAppointmentsRepository(data);
+  assert.deepEqual((await repo.getAllAppointments()).map((item) => item.id), ["a", "b", "tomorrow"]);
   assert.deepEqual(data.map((item) => item.id), originalIds);
-  repo.getAllAppointments().pop();
-  repo.getAppointmentsByDate(today).reverse().pop();
-  assert.deepEqual(repo.getAppointmentsByDate(today).map((item) => item.id), ["a", "b"]);
-  assert.equal(repo.getAppointmentById("a")?.id, "a");
-  assert.equal(repo.getAppointmentById("missing"), undefined);
+  (await repo.getAllAppointments()).pop();
+  (await repo.getAppointmentsByDate(today)).reverse().pop();
+  assert.deepEqual((await repo.getAppointmentsByDate(today)).map((item) => item.id), ["a", "b"]);
+  assert.equal((await repo.getAppointmentById("a"))?.id, "a");
+  assert.equal((await repo.getAppointmentById("missing")), undefined);
 });
 
-test("counts use domain status globally and duration includes every status on its date", () => {
+test("counts use domain status globally and duration includes every status on its date", async () => {
   const statuses: AppointmentStatus[] = ["pending", "confirmed", "completed", "cancelled", "no_show"];
   const data = statuses.map((status, index) => fixture({
     id: status, status, duration: 20 + index,
@@ -89,10 +89,10 @@ test("counts use domain status globally and duration includes every status on it
     payment: { amount: 10000, method: "cash", status: "refunded" },
   }));
   const service = serviceFor(data);
-  assert.equal(service.getPendingPaymentsCount(), 3);
-  assert.equal(service.getPendingAppointmentsCount(), 2);
-  assert.equal(service.getTotalDurationByDate(today), 110);
-  assert.equal(service.getTotalDurationByDate("2026-01-01"), 0);
+  assert.equal((await service.getPendingPaymentsCount()), 3);
+  assert.equal((await service.getPendingAppointmentsCount()), 2);
+  assert.equal((await service.getTotalDurationByDate(today)), 110);
+  assert.equal((await service.getTotalDurationByDate("2026-01-01")), 0);
 });
 
 test("civil today follows São Paulo even when UTC is already tomorrow", () => {
@@ -131,13 +131,13 @@ test("mocks are deterministic throughout a business day and shift only at its bo
   ]);
 });
 
-test("a service retains one dataset even if queried after midnight", () => {
-  const service = createAppointmentsService(referenceNow);
-  const original = service.getAllAppointments();
+test("a service retains one dataset even if queried after midnight", async () => {
+  const service = createAppointmentsService(createAppointmentsRepository(createMockAppointments(referenceNow)));
+  const original = (await service.getAllAppointments());
   const nextDay = new Date("2026-10-14T03:00:00Z");
-  service.getNextAppointment(nextDay);
-  assert.deepEqual(service.getAllAppointments(), original);
-  assert.notDeepEqual(createAppointmentsService(nextDay).getAllAppointments(), original);
+  (await service.getNextAppointment(nextDay));
+  assert.deepEqual((await service.getAllAppointments()), original);
+  assert.notDeepEqual((await createAppointmentsService(createAppointmentsRepository(createMockAppointments(nextDay))).getAllAppointments()), original);
 });
 
 test("mock events are UTC instants with ordered history and coherent payment/completion", () => {
@@ -227,6 +227,7 @@ test("business dates, mocks, selection, presentation and calendar ignore the pro
     dates: require.resolve("../../../lib/app-date"),
     mock: require.resolve("../mock"),
     service: require.resolve("../service"),
+    repository: require.resolve("../repository"),
     presentation: require.resolve("../presentation"),
     agenda: require.resolve("../../agenda/utils"),
   };
@@ -239,15 +240,15 @@ test("business dates, mocks, selection, presentation and calendar ignore the pro
     const agenda = require(paths.agenda);
     const now = new Date("2026-10-14T01:20:30.123Z");
     const appointments = mock.createMockAppointments(now);
-    console.log(JSON.stringify({
+    (async () => { console.log(JSON.stringify({
       current: dates.getAppDateTime(now),
       appointments,
-      next: service.createAppointmentsService(now).getNextAppointment(now).id,
+      next: (await service.createAppointmentsService(require(paths.repository).createAppointmentsRepository(appointments)).getNextAppointment(now)).id,
       event: presentation.formatActivityInstant("2026-10-14T01:20:00.000Z"),
       detail: presentation.toAppointmentDetailPresentation(appointments[0]),
       week: agenda.getWeekLabel(dates.getStartOfWeek(dates.getAppTodayIso(now))),
       mini: agenda.getMiniCalendarDays(dates.getAppTodayIso(now))
-    }));
+    })); })().catch((error) => { console.error(error); process.exitCode = 1; });
   `;
   const outputs = ["UTC", "America/Sao_Paulo", "Asia/Tokyo"].map((timezone) => {
     const result = spawnSync(process.execPath, ["-e", script], {

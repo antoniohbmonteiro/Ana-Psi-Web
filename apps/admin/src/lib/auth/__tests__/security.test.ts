@@ -33,10 +33,10 @@ const failsWith = (status: number) => (error: unknown) => error instanceof Admin
 test("local mode is explicit, supports a production Next build, and keeps private configuration separate", () => {
   const parsed = parseAdminConfig({ ...localEnv, NODE_ENV: "production", ADMIN_ENABLE_DEMO_APPOINTMENTS: "true" });
   assert.equal(parsed.local, true);
-  assert.equal(parsed.demoAppointments, true);
+  assert.ok(!("demoAppointments" in parsed));
   assert.equal(parsed.publicAuth.emulatorUrl, "http://127.0.0.1:9099");
   assert.ok(!("allowedUid" in parsed.publicAuth));
-  assert.equal(parseAdminConfig(localEnv).demoAppointments, false);
+  assert.ok(!("demoAppointments" in parseAdminConfig(localEnv)));
 });
 
 for (const key of ["ADMIN_ENV", "ADMIN_ORIGIN", "ADMIN_ALLOWED_UID", "FIREBASE_PROJECT_ID",

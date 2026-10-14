@@ -20,6 +20,7 @@ export function TodayAppointmentsCard({ sessions }: Props) {
         </div>
 
         <div className="space-y-2">
+          {sessions.length === 0 ? <p className="app-muted">Sem atendimentos hoje.</p> : null}
           {sessions.map((session) => {
             const content = (
               <>

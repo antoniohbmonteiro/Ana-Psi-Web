@@ -1,3 +1,5 @@
+import { AppointmentsReadError } from "@/features/appointments/read-errors";
+import { AppointmentsReadFailure } from "@/features/appointments/components/read-error";
 import Link from "next/link";
 import { Bell, Calendar, DollarSign } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -7,20 +9,22 @@ import { NextPatientCard } from "@/components/shared/next-patient-card";
 import { AlertsPanel } from "@/features/home/components/alerts-panel";
 import { QuickActionsPanel } from "@/features/home/components/quick-actions-panel";
 import { getAppTodayIso } from "@/lib/app-date";
-import { getDemoAppointmentsService } from "@/features/appointments/demo.server";
+import { getAppointmentsService } from "@/features/appointments/application.server";
 import { getNextAppointmentDayLabel } from "@/features/appointments/presentation";
+
+export const runtime = "nodejs";
 
 export const dynamic = "force-dynamic";
 
-export default async function InicioPage() {
+async function renderPage() {
   const now = new Date();
   const todayIso = getAppTodayIso(now);
-  const appointmentsService = await getDemoAppointmentsService(now);
-  const todayAppointments = appointmentsService.getAppointmentsByDate(todayIso);
-  const nextAppointment = appointmentsService.getNextAppointment(now);
-  const totalDuration = appointmentsService.getTotalDurationByDate(todayIso);
-  const pendingPayments = appointmentsService.getPendingPaymentsCount();
-  const pendingAppointments = appointmentsService.getPendingAppointmentsCount();
+  const appointmentsService = await getAppointmentsService();
+  const todayAppointments = await appointmentsService.getAppointmentsByDate(todayIso);
+  const nextAppointment = await appointmentsService.getNextAppointment(now);
+  const totalDuration = await appointmentsService.getTotalDurationByDate(todayIso);
+  const pendingPayments = await appointmentsService.getPendingPaymentsCount();
+  const pendingAppointments = await appointmentsService.getPendingAppointmentsCount();
   return (
     <div className="space-y-6">
       <div>
@@ -81,6 +85,7 @@ export default async function InicioPage() {
               className="space-y-3 overflow-auto pr-2"
               style={{ height: "var(--layout-today-scroll-height)" }}
             >
+              {todayAppointments.length === 0 ? <p className="app-muted">Sem atendimentos hoje.</p> : null}
               {todayAppointments.map((appointment) => {
                 const isNext = appointment.id === nextAppointment?.id;
 
@@ -145,4 +150,12 @@ export default async function InicioPage() {
       </div>
     </div>
   );
+}
+
+export default async function Page() {
+  try { return await renderPage(); }
+  catch (error) {
+    if (error instanceof AppointmentsReadError) return <AppointmentsReadFailure code={error.code} />;
+    throw error;
+  }
 }

@@ -305,36 +305,36 @@ test("successful commands detach nested patient, payment and previous history fr
   assert.equal(changed.activityTimeline[1].details?.status?.before, "pending");
 });
 
-test("query, agenda and detail views consistently reflect command snapshots without adding repository writes", () => {
+test("query, agenda and detail views consistently reflect command snapshots without adding repository writes", async () => {
   const created = success(createAppointment(input({ status: "pending" }), [], createContext));
-  const serviceFor = (data: Appointment[]) => createAppointmentsService(now, createAppointmentsRepository(now, data));
-  assert.equal(serviceFor([created]).getPendingAppointmentsCount(), 1);
-  assert.equal(serviceFor([created]).getNextAppointment(now), null);
+  const serviceFor = (data: Appointment[]) => createAppointmentsService(createAppointmentsRepository(data));
+  assert.equal((await serviceFor([created]).getPendingAppointmentsCount()), 1);
+  assert.equal((await serviceFor([created]).getNextAppointment(now)), null);
   const confirmed = success(confirmAppointment(operation(created), [created], context));
-  assert.equal(serviceFor([confirmed]).getNextAppointment(now)?.id, created.id);
+  assert.equal((await serviceFor([confirmed]).getNextAppointment(now))?.id, created.id);
   const rescheduled = success(rescheduleAppointment({ ...operation(confirmed), date: "2026-10-14", time: "10:17", duration: 60 }, [confirmed], context));
   const service = serviceFor([rescheduled]);
-  assert.equal(service.getAppointmentsByDate("2026-10-13").length, 0);
-  assert.equal(service.getTotalDurationByDate("2026-10-14"), 60);
-  assert.equal(service.getPendingAppointmentsCount(), 0);
-  assert.equal(service.getPendingPaymentsCount(), 1);
-  const session = toAppointmentSessions(service.getAllAppointments())[0];
+  assert.equal((await service.getAppointmentsByDate("2026-10-13")).length, 0);
+  assert.equal((await service.getTotalDurationByDate("2026-10-14")), 60);
+  assert.equal((await service.getPendingAppointmentsCount()), 0);
+  assert.equal((await service.getPendingPaymentsCount()), 1);
+  const session = toAppointmentSessions((await service.getAllAppointments()))[0];
   assert.equal(session.appointmentId, rescheduled.id);
   assert.equal(session.time, "10:17");
-  const detail = toAppointmentDetailPresentation(service.getAppointmentById(rescheduled.id)!);
+  const detail = toAppointmentDetailPresentation((await service.getAppointmentById(rescheduled.id))!);
   assert.equal(detail.summary.timeLabel, "10:17 às 11:17");
   assert.equal(detail.activityTimeline.length, 3);
   const cancelled = success(cancelAppointment(operation(rescheduled), [rescheduled], context));
-  assert.equal(serviceFor([cancelled]).getNextAppointment(now), null);
-  assert.equal(serviceFor([cancelled]).getPendingPaymentsCount(), 1);
-  assert.equal(serviceFor([cancelled]).getAppointmentsByDate("2026-10-14").length, 1);
+  assert.equal((await serviceFor([cancelled]).getNextAppointment(now)), null);
+  assert.equal((await serviceFor([cancelled]).getPendingPaymentsCount()), 1);
+  assert.equal((await serviceFor([cancelled]).getAppointmentsByDate("2026-10-14")).length, 1);
   assert.equal(toAppointmentSessions([cancelled])[0].status, "cancelled");
   const afterEnd = { ...context, now: new Date("2026-10-14T15:00:00Z") };
   for (const command of [completeAppointment, markAppointmentNoShow]) {
     const finished = success(command(operation(rescheduled), [rescheduled], afterEnd));
-    assert.equal(serviceFor([finished]).getNextAppointment(now), null);
-    assert.equal(serviceFor([finished]).getTotalDurationByDate("2026-10-14"), 60);
-    assert.equal(serviceFor([finished]).getPendingPaymentsCount(), 1);
+    assert.equal((await serviceFor([finished]).getNextAppointment(now)), null);
+    assert.equal((await serviceFor([finished]).getTotalDurationByDate("2026-10-14")), 60);
+    assert.equal((await serviceFor([finished]).getPendingPaymentsCount()), 1);
     assert.equal(toAppointmentSessions([finished])[0].status, finished.status);
     assert.equal(toAppointmentDetailPresentation(finished).activityTimeline.length, 4);
   }

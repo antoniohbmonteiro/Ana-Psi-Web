@@ -2,6 +2,8 @@ import test, { before, after } from "node:test";
 import assert from "node:assert/strict";
 import { setTimeout as delay } from "node:timers/promises";
 import { initializeApp as initializeAdmin, deleteApp as deleteAdmin } from "firebase-admin/app";
+import { getFirestore } from "firebase-admin/firestore";
+import { putFictitiousAppointments } from "../scripts/appointment-fixtures.mjs";
 import { getAuth as getAdminAuth } from "firebase-admin/auth";
 import { initializeApp as initializeClient, deleteApp as deleteClient } from "firebase/app";
 import { initializeAuth, connectAuthEmulator, inMemoryPersistence, signInWithEmailAndPassword, signOut } from "firebase/auth";
@@ -14,6 +16,7 @@ const origin = process.env.ADMIN_TEST_ORIGIN;
 assert.ok(origin && new URL(origin).hostname === "127.0.0.1");
 const adminApp = initializeAdmin({ projectId: DEMO_PROJECT_ID }, "integration-admin");
 const adminAuth = getAdminAuth(adminApp);
+const db = getFirestore(adminApp);
 const clientApp = initializeClient({ apiKey: "fake-api-key", projectId: DEMO_PROJECT_ID }, "integration-client");
 const clientAuth = initializeAuth(clientApp, { persistence: inMemoryPersistence });
 connectAuthEmulator(clientAuth, `http://${AUTH_HOST}`, { disableWarnings: true });
@@ -93,6 +96,7 @@ function unsignedFixture(cookie, changes) {
 }
 
 before(async () => {
+  await putFictitiousAppointments(db);
   for (const [uid, email] of [[ADMIN_UID, ADMIN_EMAIL], [otherUid, otherEmail]]) {
     try { await adminAuth.deleteUser(uid); }
     catch (error) { if (error.code !== "auth/user-not-found") throw error; }
@@ -102,6 +106,7 @@ before(async () => {
 
 after(async () => {
   await deleteClient(clientApp);
+  await db.terminate();
   await deleteAdmin(adminApp);
 });
 
@@ -140,7 +145,7 @@ test("authenticated non-admin cannot exchange tokens or use a legitimate Firebas
   for (const route of routes) await assertDenied(await request(route, jar));
 });
 
-test("valid login issues an eight-hour HttpOnly session and authorized pages are explicitly demonstrative", async () => {
+test("valid login issues an eight-hour HttpOnly session and authorized pages use persisted data", async () => {
   const { response, jar } = await exchange(await signIn());
   assert.equal(response.status, 204);
   assert.equal(clientAuth.currentUser, null);
@@ -156,8 +161,59 @@ test("valid login issues an eight-hour HttpOnly session and authorized pages are
   for (const route of routes) {
     const page = await request(route, jar);
     assert.equal(page.status, 200);
-    assert.match(await page.text(), /Demonstração — consultas ainda sem persistência/);
+    const html = await page.text();
+    assert.ok(!html.includes("Demonstração — consultas ainda sem persistência"));
+    if (["/admin/inicio", "/admin/agenda", "/admin/agendamentos/apt-002"].includes(route)) {
+      assert.ok(html.includes("Carlos Eduardo Santos"), "Authorized page must show the persisted fixture");
+    }
     assert.match(page.headers.get("cache-control"), /no-store/);
+  }
+});
+
+
+test("Home, Agenda and Detail share Firestore fixtures and preserve read-only actions", async () => {
+  const jar = await login();
+  for (const route of ["/admin/inicio", "/admin/agenda", "/admin/agendamentos/local-minute-0"]) {
+    const response = await request(route, jar); const html = await response.text();
+    assert.equal(response.status, 200);
+    assert.ok(html.includes("Paciente fictício 1"), `Missing persisted fixture on ${route}`);
+    assert.ok(html.includes("10:17"), `Missing exact start on ${route}`);
+    assert.match(html, /disabled/);
+    assert.ok(!html.includes("Dados demonstrativos"));
+    assert.ok(!html.includes("Bloqueio Pessoal"));
+    if (route === "/admin/inicio") assert.ok(html.includes("Ainda não integrado"));
+  }
+  const agenda = await (await request("/admin/agenda", jar)).text();
+  assert.match(agenda, /07:15/); assert.match(agenda, /23:45/);
+  const detail = await (await request("/admin/agendamentos/apt-002", jar)).text();
+  assert.ok(detail.includes("Pagamento"), "Detail must show payment information");
+  assert.ok(detail.includes("Histórico"), "Detail must show history information");
+});
+
+test("empty data, missing documents and corrupted data have distinct page states", async () => {
+  const jar = await login();
+  const documents = await db.collection("appointments").get();
+  try {
+    const batch = db.batch(); for (const item of documents.docs) batch.delete(item.ref); await batch.commit();
+    const home = await request("/admin/inicio", jar); const html = await home.text();
+    assert.equal(home.status, 200); assert.ok(html.includes("Sem atendimentos hoje")); assert.ok(html.includes("Sem sessões"));
+    const agenda = await request("/admin/agenda", jar); assert.ok((await agenda.text()).includes("Nenhum agendamento disponível"));
+    const missing = await request("/admin/agendamentos/missing", jar);
+    // With a loading boundary Next can commit 200 before streaming a not-found response.
+    const missingBody = await missing.text();
+    assert.ok([200, 404].includes(missing.status));
+    assert.ok(missing.status === 404 || missingBody.includes("NEXT_HTTP_ERROR_FALLBACK;404"), "Missing document must trigger Next notFound");
+    await db.doc("appointments/corrupt").set({ date: "invalid", notes: "private-corrupt-marker" });
+    for (const route of ["/admin/inicio", "/admin/agenda", "/admin/agendamentos/corrupt"]) {
+      const response = await request(route, jar); const body = await response.text();
+      assert.notEqual(response.status, 404); assert.match(body, /inconsistência nos dados/);
+      assert.ok(!body.includes("private-corrupt-marker"));
+      // Next serializes the available not-found component even when it is not rendered.
+      assert.ok(!body.includes("NEXT_HTTP_ERROR_FALLBACK;404"), "Invalid documents must not trigger notFound");
+    }
+  } finally {
+    await db.doc("appointments/corrupt").delete();
+    const batch = db.batch(); for (const item of documents.docs) batch.set(item.ref, item.data()); await batch.commit();
   }
 });
 

@@ -26,7 +26,10 @@ export function AgendaCalendar({ todayIso, sessions }: Props) {
     [currentWeekStart]
   );
 
-  const timeSlots = useMemo(() => buildTimeSlots(), []);
+  const timeSlots = useMemo(
+    () => buildTimeSlots(sessions.filter((session) => weekDays.includes(session.date))),
+    [sessions, weekDays]
+  );
   const miniCalendarDays = useMemo(
     () => getMiniCalendarDays(currentWeekStart),
     [currentWeekStart]
@@ -100,6 +103,7 @@ export function AgendaCalendar({ todayIso, sessions }: Props) {
           />
 
           <TodayAppointmentsCard sessions={todaysSessions} />
+          {sessions.length === 0 ? <p className="app-muted">Nenhum agendamento disponível.</p> : null}
         </div>
 
         <WeeklyCalendarGrid

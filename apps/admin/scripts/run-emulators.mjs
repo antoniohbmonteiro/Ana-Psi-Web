@@ -11,7 +11,7 @@ if (!["start", "test"].includes(command) || (mode !== undefined && mode !== "--d
 }
 const args = [require.resolve("firebase-tools/lib/bin/firebase.js"),
   command === "test" ? "emulators:exec" : "emulators:start",
-  "--config", "firebase.json", "--project", DEMO_PROJECT_ID, "--only", "auth"];
+  "--config", "firebase.json", "--project", DEMO_PROJECT_ID, "--only", "auth,firestore"];
 if (command === "test") args.push(`"${process.execPath}" scripts/run-integration.mjs${mode ? " --dev" : ""}`);
 const child = spawn(process.execPath, args, { cwd: appRoot, env: localEnvironment(), stdio: "inherit", windowsHide: true });
 child.on("error", () => { console.error("Não foi possível iniciar a CLI Firebase."); process.exitCode = 1; });

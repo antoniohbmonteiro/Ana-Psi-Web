@@ -1,5 +1,6 @@
 import "server-only";
 import { AdminAuthError } from "../auth/errors";
+import { AppointmentsReadError } from "../../features/appointments/read-errors";
 
 export const DEMO_PROJECT_ID = "demo-ana-psi";
 
@@ -19,7 +20,6 @@ export type AdminConfig = {
   allowedUid: string;
   projectId: string;
   authEmulatorHost?: string;
-  demoAppointments: boolean;
   publicAuth: PublicAuthConfig;
 };
 
@@ -89,10 +89,18 @@ export function parseAdminConfig(env: NodeJS.ProcessEnv): AdminConfig {
     environment: environment as AdminConfig["environment"], local,
     secure: originUrl.protocol === "https:", origin, allowedUid, projectId,
     authEmulatorHost: local ? env.FIREBASE_AUTH_EMULATOR_HOST : undefined,
-    demoAppointments: local && demo === "true", publicAuth,
+    publicAuth,
   };
 }
 
 export function getAdminConfig() {
   return parseAdminConfig(process.env);
+}
+
+export function requireFirestoreConfig(env: NodeJS.ProcessEnv = process.env) {
+  const config = parseAdminConfig(env);
+  if (config.local && (!env.FIRESTORE_EMULATOR_HOST || !localHostPort(env.FIRESTORE_EMULATOR_HOST))) {
+    throw new AppointmentsReadError("CONFIG_INVALID");
+  }
+  return config;
 }

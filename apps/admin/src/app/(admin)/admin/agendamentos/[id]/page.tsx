@@ -1,3 +1,5 @@
+import { AppointmentsReadError } from "@/features/appointments/read-errors";
+import { AppointmentsReadFailure } from "@/features/appointments/components/read-error";
 import { notFound } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { appointmentQuickActions, toAppointmentDetailPresentation } from "@/features/appointments/presentation";
@@ -6,7 +8,9 @@ import { AppointmentSummaryCard } from "@/features/appointments/components/appoi
 import { PatientInfoCard } from "@/features/appointments/components/patient-info-card";
 import { PaymentSummaryCard } from "@/features/appointments/components/payment-summary-card";
 import { QuickActionsCard } from "@/features/appointments/components/quick-actions-card";
-import { getDemoAppointmentsService } from "@/features/appointments/demo.server";
+import { getAppointmentsService } from "@/features/appointments/application.server";
+
+export const runtime = "nodejs";
 
 export const dynamic = "force-dynamic";
 
@@ -16,10 +20,10 @@ type Props = {
   }>;
 };
 
-export default async function AppointmentDetailPage({ params }: Props) {
+async function renderPage({ params }: Props) {
   const { id } = await params;
-  const service = await getDemoAppointmentsService(new Date());
-  const appointment = service.getAppointmentById(id);
+  const service = await getAppointmentsService();
+  const appointment = await service.getAppointmentById(id);
 
   if (!appointment) {
     notFound();
@@ -64,4 +68,12 @@ export default async function AppointmentDetailPage({ params }: Props) {
       <QuickActionsCard actions={appointmentQuickActions} />
     </div>
   );
+}
+
+export default async function Page(props: Props) {
+  try { return await renderPage(props); }
+  catch (error) {
+    if (error instanceof AppointmentsReadError) return <AppointmentsReadFailure code={error.code} />;
+    throw error;
+  }
 }

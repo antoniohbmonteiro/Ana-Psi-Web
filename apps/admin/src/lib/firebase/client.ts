@@ -1,49 +1,18 @@
-import { getApp, getApps, initializeApp, type FirebaseApp, type FirebaseOptions } from 'firebase/app';
-import { getFirestore, type Firestore } from 'firebase/firestore';
+"use client";
 
-const firebaseConfig: FirebaseOptions = {
-  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
-  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
-};
+import { getApps, initializeApp } from "firebase/app";
+import { connectAuthEmulator, getAuth, inMemoryPersistence, initializeAuth, type Auth } from "firebase/auth";
+import type { PublicAuthConfig } from "./config.server";
 
-function assertFirebaseEnv() {
-  const missingKeys = Object.entries(firebaseConfig)
-    .filter(([, value]) => !value)
-    .map(([key]) => key);
+let authInstance: Auth | undefined;
 
-  if (missingKeys.length > 0) {
-    throw new Error(`Missing Firebase public env vars: ${missingKeys.join(', ')}`);
-  }
+// Only public configuration crosses this boundary; credentials and the allowed UID stay on the server.
+export function getClientAuth(config: PublicAuthConfig) {
+  if (authInstance) return authInstance;
+  const name = "ana-admin-client";
+  const existing = getApps().find((app) => app.name === name);
+  const app = existing ?? initializeApp(config, name);
+  authInstance = existing ? getAuth(app) : initializeAuth(app, { persistence: inMemoryPersistence });
+  if (config.emulatorUrl) connectAuthEmulator(authInstance, config.emulatorUrl);
+  return authInstance;
 }
-
-let firebaseAppInstance: FirebaseApp | null = null;
-let firestoreInstance: Firestore | null = null;
-
-export function getFirebaseApp() {
-  if (firebaseAppInstance) {
-    return firebaseAppInstance;
-  }
-
-  assertFirebaseEnv();
-
-  firebaseAppInstance = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
-
-  return firebaseAppInstance;
-}
-
-export function getFirestoreDb() {
-  if (firestoreInstance) {
-    return firestoreInstance;
-  }
-
-  firestoreInstance = getFirestore(getFirebaseApp());
-
-  return firestoreInstance;
-}
-
-export const firebaseApp = getFirebaseApp();
-export const db = getFirestoreDb();

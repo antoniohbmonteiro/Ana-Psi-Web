@@ -1,4 +1,7 @@
-export default function PreReservasPage() {
+import { requireAdmin } from "@/lib/auth/access.server";
+
+export default async function PreReservasPage() {
+  await requireAdmin();
   return (
     <div>
       <h1>Pré-reservas</h1>

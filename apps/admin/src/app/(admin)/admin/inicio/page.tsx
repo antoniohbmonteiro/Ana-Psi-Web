@@ -7,15 +7,15 @@ import { NextPatientCard } from "@/components/shared/next-patient-card";
 import { AlertsPanel } from "@/features/home/components/alerts-panel";
 import { QuickActionsPanel } from "@/features/home/components/quick-actions-panel";
 import { getAppTodayIso } from "@/lib/app-date";
-import { createAppointmentsService } from "@/features/appointments/service";
+import { getDemoAppointmentsService } from "@/features/appointments/demo.server";
 import { getNextAppointmentDayLabel } from "@/features/appointments/presentation";
 
 export const dynamic = "force-dynamic";
 
-export default function InicioPage() {
+export default async function InicioPage() {
   const now = new Date();
   const todayIso = getAppTodayIso(now);
-  const appointmentsService = createAppointmentsService(now);
+  const appointmentsService = await getDemoAppointmentsService(now);
   const todayAppointments = appointmentsService.getAppointmentsByDate(todayIso);
   const nextAppointment = appointmentsService.getNextAppointment(now);
   const totalDuration = appointmentsService.getTotalDurationByDate(todayIso);

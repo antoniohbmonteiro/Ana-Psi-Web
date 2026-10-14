@@ -5,6 +5,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "emulators": "node scripts/run-emulators.mjs start",
+    "seed:auth": "node scripts/seed-auth.mjs",
+    "test:security": "tsc -p tsconfig.security-tests.json && node --conditions=react-server --test .next/security-tests/lib/auth/__tests__/security.test.js",
+    "test:integration": "node scripts/run-emulators.mjs test",
     "lint": "eslint . --max-warnings=0",
     "typecheck": "next typegen && tsc --noEmit",
     "test:appointments": "tsc -p tsconfig.tests.json && node --test .next/domain-tests/features/appointments/__tests__/core.test.js .next/domain-tests/features/appointments/__tests__/commands.test.js .next/domain-tests/features/appointments/__tests__/conflicts.test.js .next/domain-tests/features/agenda/__tests__/adapter.test.js"
@@ -12,10 +16,12 @@
   "dependencies": {
     "clsx": "^2.1.1",
     "firebase": "^12.2.1",
+    "firebase-admin": "13.10.0",
     "lucide-react": "^0.577.0",
     "next": "^16.1.6",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
+    "server-only": "0.0.1",
     "tailwind-merge": "^3.5.0"
   },
   "devDependencies": {
@@ -25,6 +31,7 @@
     "@types/react-dom": "^19.2.3",
     "eslint": "^9.39.4",
     "eslint-config-next": "^16.1.6",
+    "firebase-tools": "14.22.0",
     "tailwindcss": "^4.2.2",
     "typescript": "^5.9.3"
   }

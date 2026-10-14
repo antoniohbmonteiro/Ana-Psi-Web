@@ -1,4 +1,5 @@
 import { Sidebar } from "@/components/layout/sidebar";
+import { LogoutButton } from "./logout-button";
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   return (
@@ -13,6 +14,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               padding: "var(--layout-page-padding)",
             }}
           >
+            <LogoutButton />
             {children}
           </div>
         </main>

@@ -7,7 +7,9 @@ startup. Os comandos puros continuam disponíveis para os próximos PRs.
 
 ## Desenvolvimento local
 
-Node 20 e Java 21 são as versões utilizadas pelo CI. Execute na raiz:
+Node.js 24 LTS e Java 21 são as versões utilizadas pelo CI. A `.nvmrc` da raiz
+define a versão do Node nos workflows; `engines.node` na raiz exige `>=24 <25`
+para os dois workspaces. Validação local com Node v24.19.0. Execute na raiz:
 
 ```powershell
 npm ci
@@ -157,11 +159,13 @@ npm run test:integration:admin
 Mantemos `node:test`; TypeScript emite CommonJS em saídas ignoradas dentro de
 `.next`, com imports relativos. Testes de módulos privados usam
 `--conditions=react-server`. `@firebase/rules-unit-testing` está fixado em 5.0.2,
-compatível com Node 20 e Firebase 12. A ferramenta firebase-tools permanece
-14.22.0, com override de re2 1.22.1 para manter compatibilidade com Node 20.
-O lockfile existente inclui transitivas da CLI que declaram Node 22 e geram
-avisos de engine no npm ci; a integração é validada no Node 20 do CI. Revisar
-também essa árvore na tarefa separada de atualização das dependências.
+compatível com Node 24 e Firebase 12. A ferramenta firebase-tools permanece
+14.22.0. O override de re2 foi removido; a resolução transitiva é preservada no
+lockfile e validada por `npm ci` e pelos testes com Auth e Firestore Emulator.
+`superstatic@9.2.0`, dependência transitiva da CLI, declara apenas Node 18/20/22
+e gera aviso de engine em Node 24. Os fluxos de emuladores são validados em
+Node 24; revisar o suporte declarado dessa transitiva em tarefa específica de
+atualização da CLI. Não habilitar `engine-strict` sem resolver essa limitação.
 
 A integração usa `emulators:exec --project demo-ana-psi --only auth,firestore`,
 fixtures próprias, limpeza entre cenários e um Next real em porta temporária.
@@ -189,7 +193,8 @@ agendamento público, prontuários ou pagamentos online nesta etapa.
 
 Antes de ativação remota ou dados reais, tratar as vulnerabilidades existentes
 em tarefa específica, incluindo Next 16.1.6 e transitivas de Firebase/Firestore.
-Não executar `npm audit fix --force`. Não adotar Admin SDK 14, que exige Node 22,
-como parte deste PR. Depois das operações essenciais e atualização de segurança,
+Não executar `npm audit fix --force`. A atualização de Node não inclui migrar
+para Admin SDK 14 nem atualizar Next ou outras dependências funcionais.
+Depois das operações essenciais e atualização de segurança,
 configurar ambientes/IAM/hospedagem, validar com dados fictícios e liberar o
-piloto privado para Ana. `apps/public` permanece independente e inalterado.
+piloto privado para Ana. `apps/public` permanece independente, com comportamento preservado.

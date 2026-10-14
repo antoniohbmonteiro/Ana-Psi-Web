@@ -14,6 +14,14 @@ jobs:
       contents: read
 
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+
       - name: Write Firebase service account key
         shell: bash
         run: |
@@ -26,4 +34,3 @@ jobs:
         shell: bash
         run: |
           npx firebase-tools hosting:channel:delete pr-${{ github.event.pull_request.number }} --project ana-psi --force || true
-          

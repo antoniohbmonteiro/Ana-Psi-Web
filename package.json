@@ -1,15 +1,13 @@
 {
   "name": "ana-psi-web",
   "private": true,
+  "engines": {
+    "node": ">=24 <25"
+  },
   "workspaces": [
     "apps/public",
     "apps/admin"
   ],
-  "overrides": {
-    "firebase-tools": {
-      "re2": "1.22.1"
-    }
-  },
   "scripts": {
     "dev:public": "npm run dev --workspace @ana-psi/public",
     "dev:admin": "npm run dev --workspace @ana-psi/admin",

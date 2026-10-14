@@ -2,6 +2,9 @@
 
 ## Development
 
+Use Node.js 24 LTS, conforme `.nvmrc` e `engines.node` na raiz do monorepo.
+Execute `npm ci` na raiz antes dos comandos abaixo.
+
  npm run dev:public
 
 ## Build

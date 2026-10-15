@@ -50,7 +50,7 @@ function Field({ name, label, errors, hint, className, children }: {
       <label htmlFor={`appointment-${name}`} className="app-label">{label}</label>
       {children}
       {errors[name] ? (
-        <p id={`${name}-error`} className="mt-1.5 text-xs" style={{ color: "var(--destructive)" }}>{errors[name]}</p>
+        <p id={`${name}-error`} className="mt-1.5 text-xs" style={{ color: "var(--destructive-text)" }}>{errors[name]}</p>
       ) : hint ? <p className="mt-1.5 text-xs app-muted">{hint}</p> : null}
     </div>
   );

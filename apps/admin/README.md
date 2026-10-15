@@ -222,14 +222,15 @@ npm run test:integration:admin
 
 Mantemos `node:test`; TypeScript emite CommonJS em saídas ignoradas dentro de
 `.next`, com imports relativos. Testes de módulos privados usam
-`--conditions=react-server`. `@firebase/rules-unit-testing` está fixado em 5.0.2,
-compatível com Node 24 e Firebase 12. A ferramenta firebase-tools permanece
-14.22.0. O override de re2 foi removido; a resolução transitiva é preservada no
-lockfile e validada por `npm ci` e pelos testes com Auth e Firestore Emulator.
-`superstatic@9.2.0`, dependência transitiva da CLI, declara apenas Node 18/20/22
-e gera aviso de engine em Node 24. Os fluxos de emuladores são validados em
-Node 24; revisar o suporte declarado dessa transitiva em tarefa específica de
-atualização da CLI. Não habilitar `engine-strict` sem resolver essa limitação.
+`--conditions=react-server`. `@firebase/rules-unit-testing` está fixado em 6.0.0,
+compatível com Node 24 e Firebase 13. A ferramenta firebase-tools está fixada em
+15.34.0 (Firestore Emulator 1.22.0); a transitiva `superstatic@10` declara Node
+24 e a instalação não gera aviso de engine. Versões, auditoria e riscos
+residuais: [docs/security-dependency-updates.md](../../docs/security-dependency-updates.md).
+Com o Firestore 9, o cliente consulta Application Default Credentials para obter
+o universe domain ao abrir o canal gRPC, inclusive no emulador. Fora do GCE isso
+gera `MetadataLookupWarning`, esperado; as chamadas ao emulador continuam sem
+credenciais.
 
 A integração usa `emulators:exec --project demo-ana-psi --only auth,firestore`,
 fixtures próprias, limpeza entre cenários e um Next real em porta temporária.
@@ -264,10 +265,11 @@ operações devem seguir o mesmo padrão (versão esperada, ocupação por dia e
 idempotência). Não implementar portal, agendamento público, prontuários ou
 pagamentos online nesta etapa.
 
-Antes de ativação remota ou dados reais, tratar as vulnerabilidades existentes
-em tarefa específica, incluindo Next 16.1.6 e transitivas de Firebase/Firestore.
-Não executar `npm audit fix --force`. A atualização de Node não inclui migrar
-para Admin SDK 14 nem atualizar Next ou outras dependências funcionais.
+As vulnerabilidades de dependências foram tratadas na atualização de segurança
+(Next 16.4.1, Firebase 13, Admin SDK 14.5.0 e CLI 15.34.0); os riscos residuais
+estão justificados em `docs/security-dependency-updates.md`. Não executar
+`npm audit fix --force`. Antes da ativação remota, validar no ambiente hospedado
+o caminho de credenciais `applicationDefault()`, que os emuladores não cobrem.
 Depois das operações essenciais e atualização de segurança,
 configurar ambientes/IAM/hospedagem, validar com dados fictícios e liberar o
 piloto privado para Ana. `apps/public` permanece independente, com comportamento preservado.

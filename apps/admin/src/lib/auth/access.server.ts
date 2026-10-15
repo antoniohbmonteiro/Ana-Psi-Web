@@ -14,6 +14,14 @@ export const getAdminIdentity = cache(async () => {
   return verifyAdminSession(cookie, config, getAdminAuth());
 });
 
+export type AdminIdentity = Awaited<ReturnType<typeof getAdminIdentity>>;
+
+// Route handlers answer with HTTP status codes instead of redirecting.
+export async function requireAdminApi(): Promise<AdminIdentity> {
+  try { return await getAdminIdentity(); }
+  catch (error) { throw normalizeAuthError(error); }
+}
+
 export async function requireAdmin() {
   try { return await getAdminIdentity(); }
   catch (error) {

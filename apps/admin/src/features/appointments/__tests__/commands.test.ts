@@ -105,6 +105,12 @@ const invalidCreates: [string, unknown][] = [
   ["invalid link", input({ meetingLink: "broken" })],
   ["presencial link", input({ modality: "in_person", meetingLink: "https://example.invalid/session" })],
   ["invalid notes", { ...input(), notes: 123 }],
+  ["long patient ID", input({ patient: { id: "p".repeat(129), fullName: "Test", relationship: "new" } })],
+  ["long patient name", input({ patient: { id: "test", fullName: "N".repeat(121), relationship: "new" } })],
+  ["long phone", input({ patient: { id: "test", fullName: "Test", phone: "9".repeat(41), relationship: "new" } })],
+  ["long e-mail", input({ patient: { id: "test", fullName: "Test", email: `${"e".repeat(250)}@x.io`, relationship: "new" } })],
+  ["long notes", input({ notes: "n".repeat(2001) })],
+  ["long link", input({ meetingLink: `https://example.invalid/${"l".repeat(480)}` })],
 ];
 for (const [label, value] of invalidCreates) {
   test(`creation rejects ${label} at runtime with field errors`, () => {
@@ -112,6 +118,18 @@ for (const [label, value] of invalidCreates) {
     assert.ok(error.fieldErrors && Object.keys(error.fieldErrors).length > 0);
   });
 }
+
+test("text limits accept their exact bounds and also bound edits and cancellation reasons", () => {
+  success(createAppointment(input({
+    patient: { id: "p".repeat(128), fullName: "N".repeat(120), phone: "9".repeat(40), email: "e".repeat(254), relationship: "new" },
+    notes: "n".repeat(2000), meetingLink: `https://example.invalid/${"l".repeat(476)}`,
+  }), [], createContext));
+  const appointment = fixture();
+  const edit = failure(editAppointment({ ...operation(appointment), changes: { notes: "n".repeat(2001) } }, [appointment], context), "VALIDATION_ERROR");
+  assert.ok(edit.fieldErrors?.["changes.notes"]);
+  const cancel = failure(cancelAppointment({ ...operation(appointment), reason: "r".repeat(501) }, [appointment], context), "VALIDATION_ERROR");
+  assert.ok(cancel.fieldErrors?.reason);
+});
 
 test("civil date validation handles leap years and rejects normalization of impossible dates", () => {
   assert.equal(isValidCivilDate("2028-02-29"), true);

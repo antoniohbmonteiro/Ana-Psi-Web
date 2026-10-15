@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { ChevronLeft, ChevronRight, Plus } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { ButtonLink } from "@/components/ui/button-link";
 import type { Session } from "../types";
 import { MiniCalendarCard } from "@/features/agenda/components/mini-calendar-card";
 import { TodayAppointmentsCard } from "@/features/agenda/components/today-appointments-card";
@@ -58,13 +58,10 @@ export function AgendaCalendar({ todayIso, sessions }: Props) {
         </div>
 
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-          <div className="space-y-1">
-            <Button className="whitespace-nowrap rounded-xl" disabled aria-describedby="agenda-integration-note">
-              <Plus size={16} className="mr-2" />
-              Novo Agendamento
-            </Button>
-            <p id="agenda-integration-note" className="text-xs app-muted">Disponível após integração</p>
-          </div>
+          <ButtonLink href="/admin/agendamentos/novo" className="whitespace-nowrap rounded-xl">
+            <Plus size={16} className="mr-2" />
+            Novo Agendamento
+          </ButtonLink>
 
           <div className="flex items-center gap-2">
             <button

@@ -6,6 +6,7 @@ import { cookiePolicy, issueAdminSession, sessionCookieName, SESSION_DURATION_MS
 import { csrfCookieName } from "@/lib/auth/csrf.server";
 import { authErrorResponse, protectPost, PRIVATE_HEADERS } from "@/lib/auth/http.server";
 import { AdminAuthError } from "@/lib/auth/errors";
+import { readJsonBody } from "@/lib/http/json-body.server";
 
 export const runtime = "nodejs";
 
@@ -13,29 +14,7 @@ export async function POST(request: NextRequest) {
   try {
     const config = getAdminConfig();
     protectPost(request, config);
-    if (request.headers.get("content-type")?.split(";")[0].trim() !== "application/json") {
-      throw new AdminAuthError(400, "INVALID_BODY");
-    }
-    // Bound allocation before parsing an untrusted body, including chunked requests.
-    const reader = request.body?.getReader();
-    if (!reader) throw new AdminAuthError(400, "INVALID_BODY");
-    const chunks: Uint8Array[] = [];
-    let length = 0;
-    try {
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        length += value.byteLength;
-        if (length > 16_384) {
-          await reader.cancel();
-          throw new AdminAuthError(400, "INVALID_BODY");
-        }
-        chunks.push(value);
-      }
-    } finally { reader.releaseLock(); }
-    let body: unknown;
-    try { body = JSON.parse(Buffer.concat(chunks).toString("utf8")); }
-    catch { throw new AdminAuthError(400, "INVALID_BODY"); }
+    const body = await readJsonBody(request, 16_384);
     if (!body || typeof body !== "object" || Array.isArray(body)
       || Object.keys(body).length !== 1 || !("idToken" in body)
       || typeof body.idToken !== "string" || !body.idToken || body.idToken.length > 12_000) {

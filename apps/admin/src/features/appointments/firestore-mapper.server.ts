@@ -108,7 +108,7 @@ export function appointmentFromFirestore(id: string, value: unknown): Appointmen
   };
 }
 
-// Only fixture/seed tools serialize; the application repository exposes no writes.
+// Serialization re-validates by round trip; used by the transactional writer and local fixtures only.
 export function appointmentToFirestore(appointment: Appointment): RecordValue {
   function serialize(value: unknown, key = ""): unknown {
     if (key === "paidAt" || key === "occurredAt") {

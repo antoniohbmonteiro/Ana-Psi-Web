@@ -18,6 +18,8 @@
   --accent-foreground: #333333;
   --destructive: #e85d75;
   --destructive-foreground: #ffffff;
+  /* Text-safe --destructive (same hue): >= 4.5:1 on card, background, input and accent surfaces. */
+  --destructive-text: #b42d44;
   --border: #e0dce8;
   --input-background: #fafafe;
   --success: #22c55e;

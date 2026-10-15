@@ -13,10 +13,12 @@ const compilation = spawnSync(process.execPath, [require.resolve("typescript/bin
   cwd: appRoot, env: localEnvironment(), stdio: "inherit", windowsHide: true,
 });
 if (compilation.status !== 0) throw new Error("Compilação dos testes de persistência falhou.");
-const persistence = spawnSync(process.execPath, ["--conditions=react-server", "--test", "tests/firestore.integration.test.mjs"], {
+// Both suites reset the shared emulator, so they must not run concurrently.
+const persistence = spawnSync(process.execPath, ["--conditions=react-server", "--test", "--test-concurrency=1",
+  "tests/firestore.integration.test.mjs", "tests/appointments-write.integration.test.mjs"], {
   cwd: appRoot, env: localEnvironment(), stdio: "inherit", windowsHide: true,
 });
-if (persistence.status !== 0) throw new Error("Integração Firestore/Rules falhou.");
+if (persistence.status !== 0) throw new Error("Integração Firestore/Rules/escritas falhou.");
 const dev = process.argv.includes("--dev");
 if (!dev && !existsSync(new URL("../.next/BUILD_ID", import.meta.url))) {
   throw new Error("Execute npm run build:admin antes da integração, ou use --dev para validar o servidor de desenvolvimento.");
@@ -79,6 +81,7 @@ async function runSuite(file, overrides = {}, scenario = "auth") {
 
 for (const [file, overrides, scenario] of [
   ["tests/auth.integration.test.mjs", {}, "auth"],
+  ["tests/appointments-create.integration.test.mjs", {}, "appointments"],
   ["tests/config.integration.test.mjs", { FIRESTORE_EMULATOR_HOST: "", ADMIN_ENABLE_DEMO_APPOINTMENTS: "true" }, "firestore-config-incomplete"],
   ["tests/config.integration.test.mjs", { FIRESTORE_EMULATOR_HOST: "127.0.0.1:1" }, "firestore-unavailable"],
   ["tests/config.integration.test.mjs", { ADMIN_ALLOWED_UID: "" }, "config-incomplete"],

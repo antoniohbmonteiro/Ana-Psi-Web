@@ -2,7 +2,9 @@ import test, { after } from "node:test";
 import assert from "node:assert/strict";
 import { initializeApp, deleteApp } from "firebase-admin/app";
 import { getAuth } from "firebase-admin/auth";
+import { randomUUID } from "node:crypto";
 import { ADMIN_UID, ADMIN_EMAIL, LOCAL_PASSWORD, AUTH_HOST, DEMO_PROJECT_ID, assertLocalEmulatorEnvironment } from "../scripts/emulator-env.mjs";
+import { civilDate } from "./admin-http.mjs";
 
 assertLocalEmulatorEnvironment();
 const origin = process.env.ADMIN_TEST_ORIGIN;
@@ -34,17 +36,37 @@ function privateDataAbsent(html) {
   }
 }
 
+// A valid creation request: failures below must come from the environment, never from validation.
+async function createAppointment(cookies, csrfToken) {
+  const response = await request("/api/admin/agendamentos", {
+    method: "POST",
+    headers: { Origin: origin, "Content-Type": "application/json", Cookie: cookies.join("; "), "X-CSRF-Token": csrfToken },
+    body: JSON.stringify({
+      requestId: randomUUID(), patient: { mode: "new", fullName: "Paciente Falha Fictício", phone: "(31) 94444-3333" },
+      date: civilDate(5), time: "10:00", duration: 50, modality: "online", sessionType: "initial",
+      status: "confirmed", amount: 15000, method: "pix",
+    }),
+  });
+  const body = await response.text();
+  assert.equal(response.status, 503);
+  assert.match(response.headers.get("cache-control"), /no-store/);
+  assert.ok(!body.includes("Paciente Falha"));
+  return body;
+}
+
 test(`server fails closed with ${scenario}`, async () => {
   if (scenario === "config-incomplete") {
     const login = await request("/admin/entrar");
     const html = await login.text();
     assert.match(html, /Verifique a configuração do ambiente/);
     assert.ok(!html.includes('name="password"'));
-    for (const [path, method] of [["csrf", "GET"], ["sessao", "POST"], ["sair", "POST"]]) {
-      const response = await request(`/api/admin/auth/${path}`, { method });
+    for (const path of ["/api/admin/auth/csrf", "/api/admin/auth/sessao", "/api/admin/auth/sair", "/api/admin/agendamentos"]) {
+      const response = await request(path, { method: path.endsWith("csrf") ? "GET" : "POST" });
       assert.equal(response.status, 503);
       assert.match(response.headers.get("cache-control"), /no-store/);
     }
+    const page = await request("/admin/agendamentos/novo", { headers: { Cookie: "ana-admin-session=invalid" } });
+    privateDataAbsent(await page.text());
     const protectedPage = await request("/admin/inicio", { headers: { Cookie: "ana-admin-session=invalid" } });
     privateDataAbsent(await protectedPage.text());
     return;
@@ -69,6 +91,8 @@ test(`server fails closed with ${scenario}`, async () => {
     const body = await page.text();
     privateDataAbsent(body);
     assert.ok((page.headers.get("location") ?? body).includes("motivo=indisponivel"));
+    assert.deepEqual(JSON.parse(await createAppointment([csrfCookie, `ana-admin-session=${cookie}`], csrfToken)),
+      { message: "Acesso administrativo temporariamente indisponível." });
     return;
   }
 
@@ -84,4 +108,13 @@ test(`server fails closed with ${scenario}`, async () => {
     assert.ok(!body.includes("Demonstração — consultas ainda sem persistência"));
     assert.match(response.headers.get("cache-control"), /no-store/);
   }
+  const form = await request("/admin/agendamentos/novo", { headers: { Cookie: cookie } });
+  const formBody = await form.text();
+  privateDataAbsent(formBody);
+  assert.match(formBody, scenario === "firestore-config-incomplete" ? /Consultas indisponíveis neste ambiente/ : /Consultas temporariamente indisponíveis/);
+  const fresh = await request("/api/admin/auth/csrf");
+  const freshCookie = fresh.headers.getSetCookie()[0].split(";")[0];
+  const { csrfToken: freshToken } = await fresh.json();
+  const failure = JSON.parse(await createAppointment([freshCookie, cookie], freshToken));
+  assert.equal(failure.code, scenario === "firestore-config-incomplete" ? "CONFIG_INVALID" : "UNAVAILABLE");
 });

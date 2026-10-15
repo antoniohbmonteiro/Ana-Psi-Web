@@ -8,6 +8,16 @@ service cloud.firestore {
     match /appointments/{document=**} {
       allow read, write: if false;
     }
+    // Administrative writes use the Admin SDK on the server; clients never touch these collections.
+    match /patients/{document=**} {
+      allow read, write: if false;
+    }
+    match /appointmentDays/{document=**} {
+      allow read, write: if false;
+    }
+    match /idempotencyKeys/{document=**} {
+      allow read, write: if false;
+    }
     match /{document=**} {
       allow read, write: if false;
     }

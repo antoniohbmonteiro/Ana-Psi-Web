@@ -5,10 +5,11 @@ import type { Appointment } from "./types";
 import { appointmentFromFirestore } from "./firestore-mapper.server";
 import { AppointmentsReadError } from "./read-errors";
 
-export async function readWithDeadline<T>(read: () => Promise<T>, milliseconds = 10_000): Promise<T> {
+// Bounds the wait, not the SDK work: a late result is discarded and never reported as success.
+export async function withDeadline<T>(operation: () => Promise<T>, milliseconds = 10_000): Promise<T> {
   let timer: ReturnType<typeof setTimeout> | undefined;
   try {
-    return await Promise.race([read(), new Promise<never>((_, reject) => {
+    return await Promise.race([operation(), new Promise<never>((_, reject) => {
       timer = setTimeout(() => reject(new AppointmentsReadError("UNAVAILABLE")), milliseconds);
     })]);
   } catch (error) {
@@ -16,6 +17,7 @@ export async function readWithDeadline<T>(read: () => Promise<T>, milliseconds =
     throw new AppointmentsReadError("UNAVAILABLE");
   } finally { clearTimeout(timer); }
 }
+export const readWithDeadline = withDeadline;
 
 // Infrastructure constructor. Application flows must enter through application.server.
 export function createFirestoreAppointmentsRepository(db: Firestore): AppointmentsRepository {

@@ -7,7 +7,7 @@ import { getFirestore } from "firebase-admin/firestore";
 import { initializeTestEnvironment, assertFails, assertSucceeds } from "@firebase/rules-unit-testing";
 import { collection, doc, getDoc, getDocs, setDoc, updateDoc, deleteDoc, setLogLevel } from "firebase/firestore";
 import { ADMIN_UID, DEMO_PROJECT_ID, assertLocalFirestoreEnvironment, localEnvironment } from "../scripts/emulator-env.mjs";
-import { fictitiousAppointments, putFictitiousAppointments } from "../scripts/appointment-fixtures.mjs";
+import { fictitiousAppointments, fictitiousPatients, putFictitiousAppointments, putFictitiousPatients } from "../scripts/appointment-fixtures.mjs";
 
 assertLocalFirestoreEnvironment();
 // Permission errors are expected and asserted below; do not flood CI with SDK warnings.
@@ -28,6 +28,9 @@ before(async () => {
   await putFictitiousAppointments(db, fixtures);
   for (const id of ["site_public_profile", "site_public_landing", "private_settings"]) await db.doc(`settings/${id}`).set({ label: "Fixture institucional" });
   await db.doc("appointments/apt-002/private/nested").set({ value: "privado" });
+  await putFictitiousPatients(db, fictitiousPatients(fixtures));
+  await db.doc("appointmentDays/2026-11-02").set({ date: "2026-11-02", revision: 1 });
+  await db.doc("idempotencyKeys/fixture-key").set({ operation: "appointment.create" });
 });
 after(async () => { await rules?.cleanup(); await db.terminate(); await deleteApp(app); });
 
@@ -58,6 +61,16 @@ for (const [label, context] of [
     await assertFails(setDoc(doc(client, "appointments/new"), { value: "new" }));
     await assertFails(getDocs(collection(client, "appointments")));
     await assertFails(getDocs(collection(client, "appointments/apt-002/private")));
+  });
+  test(`client ${label} cannot read or write patients, day locks or idempotency records`, async () => {
+    const client = context().firestore();
+    for (const path of ["patients/mock-patient-002", "appointmentDays/2026-11-02", "idempotencyKeys/fixture-key"]) {
+      const ref = doc(client, path);
+      await assertFails(getDoc(ref)); await assertFails(setDoc(ref, { value: "changed" }));
+      await assertFails(updateDoc(ref, { value: "changed" })); await assertFails(deleteDoc(ref));
+      await assertFails(getDocs(collection(client, path.split("/")[0])));
+      await assertFails(setDoc(doc(client, `${path}/private/nested`), { value: "new" }));
+    }
   });
   test(`client ${label} can only get the two public settings documents`, async () => {
     const client = context().firestore();

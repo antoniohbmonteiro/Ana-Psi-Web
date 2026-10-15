@@ -65,6 +65,13 @@ function optionalText(value: unknown, errors: FieldErrors, key: string, nullable
     errors[key] = "Informe um texto válido.";
   }
 }
+// Bounds keep one appointment, including its embedded history, far below Firestore's document limit.
+export const APPOINTMENT_TEXT_LIMITS = {
+  patientId: 128, fullName: 120, phone: 40, email: 254, meetingLink: 500, notes: 2000, reason: 500,
+} as const;
+function maxLength(value: unknown, errors: FieldErrors, key: string, limit: number) {
+  if (typeof value === "string" && value.length > limit && !errors[key]) errors[key] = `Use no máximo ${limit} caracteres.`;
+}
 function linkError(value: unknown, errors: FieldErrors, key: string, nullable = false) {
   if (value === undefined || (nullable && value === null)) return;
   try {
@@ -101,6 +108,10 @@ export function validateCreateAppointmentInput(input: unknown): ValidationResult
     if (!allowed(value.patient.relationship, ["new", "returning"])) errors["patient.relationship"] = "Informe o vínculo do paciente.";
     optionalText(value.patient.phone, errors, "patient.phone");
     optionalText(value.patient.email, errors, "patient.email");
+    maxLength(value.patient.id, errors, "patient.id", APPOINTMENT_TEXT_LIMITS.patientId);
+    maxLength(value.patient.fullName, errors, "patient.fullName", APPOINTMENT_TEXT_LIMITS.fullName);
+    maxLength(value.patient.phone, errors, "patient.phone", APPOINTMENT_TEXT_LIMITS.phone);
+    maxLength(value.patient.email, errors, "patient.email", APPOINTMENT_TEXT_LIMITS.email);
   }
   if (!allowed(value.modality, ["online", "in_person"])) errors.modality = "Informe a modalidade.";
   if (!allowed(value.sessionType, ["initial", "follow_up"])) errors.sessionType = "Informe o tipo de sessão.";
@@ -110,6 +121,8 @@ export function validateCreateAppointmentInput(input: unknown): ValidationResult
   linkError(value.meetingLink, errors, "meetingLink");
   if (value.modality === "in_person" && value.meetingLink !== undefined) errors.meetingLink = "Atendimentos presenciais não usam link de sessão.";
   optionalText(value.notes, errors, "notes");
+  maxLength(value.meetingLink, errors, "meetingLink", APPOINTMENT_TEXT_LIMITS.meetingLink);
+  maxLength(value.notes, errors, "notes", APPOINTMENT_TEXT_LIMITS.notes);
   return result(input, errors);
 }
 
@@ -130,6 +143,8 @@ export function validateEditAppointmentInput(input: unknown): ValidationResult<E
     if (changes.method !== undefined && !allowed(changes.method, ["pix", "payment_link", "cash"])) errors["changes.method"] = "Método inválido.";
     linkError(changes.meetingLink, errors, "changes.meetingLink", true);
     optionalText(changes.notes, errors, "changes.notes", true);
+    maxLength(changes.meetingLink, errors, "changes.meetingLink", APPOINTMENT_TEXT_LIMITS.meetingLink);
+    maxLength(changes.notes, errors, "changes.notes", APPOINTMENT_TEXT_LIMITS.notes);
   }
   return result(input, errors);
 }
@@ -160,6 +175,7 @@ export function validateCancelAppointmentInput(input: unknown): ValidationResult
   unknownFields(parsed.value, ["id", "expectedVersion", "reason"], errors);
   operationErrors(parsed.value, errors);
   optionalText(parsed.value.reason, errors, "reason");
+  maxLength(parsed.value.reason, errors, "reason", APPOINTMENT_TEXT_LIMITS.reason);
   return result(input, errors);
 }
 

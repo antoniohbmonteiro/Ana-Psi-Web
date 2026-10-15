@@ -8,6 +8,12 @@ import { createFirestoreAppointmentsRepository, readWithDeadline } from "../fire
 import { createAppointmentsService } from "../service";
 import { AppointmentsReadError } from "../read-errors";
 import { requireFirestoreConfig } from "../../../lib/firebase/config.server";
+import { patientFromFirestore, patientToFirestore } from "../../patients/firestore-mapper.server";
+import { createFirestorePatientsRepository } from "../../patients/firestore-repository.server";
+import type { Patient } from "../../patients/types";
+import { createFirestoreAppointmentsWriter } from "../firestore-writer.server";
+import { parseCreateAppointmentRequest } from "../create-request";
+import { appointmentWriteStatus } from "../write-errors";
 import type { Appointment } from "../types";
 
 const now = new Date("2026-10-13T18:20:30.123Z");
@@ -119,4 +125,67 @@ test("missing local Firestore host fails before connection while auth remains in
     NEXT_PUBLIC_FIREBASE_USE_EMULATORS: "true", NEXT_PUBLIC_FIREBASE_AUTH_EMULATOR_URL: "http://127.0.0.1:9099" };
   assert.throws(() => requireFirestoreConfig(env), failure("CONFIG_INVALID"));
   assert.equal(requireFirestoreConfig({ ...env, FIRESTORE_EMULATOR_HOST: "127.0.0.1:8080" }).projectId, "demo-ana-psi");
+});
+
+const patient: Patient = {
+  id: "patient-1", version: 1, fullName: "Paciente Fictício", phone: "(31) 99999-0000", email: "paciente@example.invalid",
+  createdAt: "2026-10-13T18:20:30.123Z", createdBy: "local-admin-ana", updatedAt: "2026-10-13T18:20:30.123Z",
+};
+
+test("patient mapper round-trips timestamps, drops unknown fields and keeps the document ID authoritative", () => {
+  const stored = patientToFirestore(patient);
+  assert.ok(!("id" in stored));
+  assert.ok(stored.createdAt instanceof Timestamp && stored.updatedAt instanceof Timestamp);
+  assert.deepEqual(patientFromFirestore(patient.id, stored), patient);
+  const withoutEmail: Patient = { ...patient };
+  delete withoutEmail.email;
+  assert.deepEqual(patientFromFirestore(patient.id, patientToFirestore(withoutEmail)), withoutEmail);
+  const domain = patientFromFirestore("actual", { ...stored, id: "forged", privateExtra: "hidden" });
+  assert.equal(domain.id, "actual");
+  assert.ok(!JSON.stringify(domain).includes("hidden"));
+});
+
+for (const [key, value] of [
+  ["version", 0], ["version", "1"], ["fullName", ""], ["phone", null], ["email", 1],
+  ["createdAt", "2026-10-13T18:20:30.123Z"], ["updatedAt", undefined], ["createdBy", " "],
+] as const) {
+  test(`patient mapper rejects malformed persisted ${key}: ${String(value)}`, () => {
+    const data: Record<string, unknown> = { ...patientToFirestore(patient), [key]: value };
+    if (value === undefined) delete data[key];
+    assert.throws(() => patientFromFirestore(patient.id, data), failure("DATA_INVALID"));
+  });
+}
+
+test("patients listing sorts by Portuguese collation and fails on invalid or unavailable data", async () => {
+  const docs = [{ ...patient, id: "p3", fullName: "Érica" }, { ...patient, id: "p1", fullName: "beatriz" }, { ...patient, id: "p2", fullName: "Álvaro" }];
+  const db = { collection: () => ({ get: async () => ({ docs: docs.map((item) => ({ id: item.id, data: () => patientToFirestore(item) })) }) }) } as unknown as Firestore;
+  assert.deepEqual((await createFirestorePatientsRepository(db).listPatients()).map((item) => item.fullName), ["Álvaro", "beatriz", "Érica"]);
+  const corrupt = { collection: () => ({ get: async () => ({ docs: [{ id: "x", data: () => ({}) }] }) }) } as unknown as Firestore;
+  await assert.rejects(createFirestorePatientsRepository(corrupt).listPatients(), failure("DATA_INVALID"));
+  const unavailable = { collection: () => ({ get: async () => { throw new Error("private SDK error"); } }) } as unknown as Firestore;
+  await assert.rejects(createFirestorePatientsRepository(unavailable).listPatients(), failure("UNAVAILABLE"));
+});
+
+test("writer reports SDK failures and timeouts as UNAVAILABLE without exposing SDK messages", async () => {
+  const parsed = parseCreateAppointmentRequest({
+    requestId: "3f0e2b7c-58a4-4d6e-9b1a-2c7d8e9f0a1b", patient: { mode: "new", fullName: "Paciente Fictício", phone: "31999990000" },
+    date: "2026-11-02", time: "10:00", duration: 50, modality: "online", sessionType: "initial", status: "confirmed", amount: 15000, method: "pix",
+  });
+  assert.ok(parsed.ok);
+  const reference = { doc: () => ({}), where: () => ({}) };
+  const context = { now, actorId: "local-admin-ana", appointmentId: "a1", patientId: "p1" };
+  for (const runTransaction of [async () => { throw new Error("private SDK error"); }, () => new Promise(() => {})]) {
+    const db = { collection: () => reference, runTransaction } as unknown as Firestore;
+    const result = await createFirestoreAppointmentsWriter(db, 20).createAppointment(parsed.value, context);
+    assert.deepEqual(result.ok ? undefined : result.error.code, "UNAVAILABLE");
+    assert.ok(!JSON.stringify(result).includes("private"));
+  }
+  assert.equal(appointmentWriteStatus("SCHEDULE_CONFLICT"), 409);
+  assert.equal(appointmentWriteStatus("IDEMPOTENCY_KEY_REUSED"), 409);
+  assert.equal(appointmentWriteStatus("VALIDATION_ERROR"), 422);
+  assert.equal(appointmentWriteStatus("PATIENT_NOT_FOUND"), 422);
+  assert.equal(appointmentWriteStatus("INVALID_OPERATION_TIME"), 422);
+  assert.equal(appointmentWriteStatus("INVALID_BODY"), 400);
+  assert.equal(appointmentWriteStatus("UNAVAILABLE"), 503);
+  assert.equal(appointmentWriteStatus("DATA_INVALID"), 503);
 });

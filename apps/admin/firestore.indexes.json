@@ -5,6 +5,10 @@
     { "collectionGroup": "appointments", "fieldPath": "payment", "indexes": [] },
     { "collectionGroup": "appointments", "fieldPath": "activityTimeline", "indexes": [] },
     { "collectionGroup": "appointments", "fieldPath": "notes", "indexes": [] },
-    { "collectionGroup": "appointments", "fieldPath": "meetingLink", "indexes": [] }
+    { "collectionGroup": "appointments", "fieldPath": "meetingLink", "indexes": [] },
+    { "collectionGroup": "patients", "fieldPath": "fullName", "indexes": [] },
+    { "collectionGroup": "patients", "fieldPath": "phone", "indexes": [] },
+    { "collectionGroup": "patients", "fieldPath": "email", "indexes": [] },
+    { "collectionGroup": "idempotencyKeys", "fieldPath": "requestHash", "indexes": [] }
   ]
 }

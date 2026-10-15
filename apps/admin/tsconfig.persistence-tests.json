@@ -1,5 +1,9 @@
 {
   "extends": "./tsconfig.tests.json",
   "compilerOptions": { "outDir": "./.next/persistence-tests" },
-  "include": ["src/features/appointments/__tests__/persistence.test.ts"]
+  "include": [
+    "src/features/appointments/__tests__/persistence.test.ts",
+    "src/features/appointments/firestore-writer.server.ts",
+    "src/features/patients/firestore-mapper.server.ts"
+  ]
 }

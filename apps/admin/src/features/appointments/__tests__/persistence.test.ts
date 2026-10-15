@@ -1,5 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { createHash } from "node:crypto";
 import type { Firestore } from "firebase-admin/firestore";
 import { Timestamp } from "firebase-admin/firestore";
 import { createMockAppointments } from "../mock";
@@ -12,7 +13,7 @@ import { patientFromFirestore, patientToFirestore } from "../../patients/firesto
 import { createFirestorePatientsRepository } from "../../patients/firestore-repository.server";
 import type { Patient } from "../../patients/types";
 import { createFirestoreAppointmentsWriter } from "../firestore-writer.server";
-import { parseCreateAppointmentRequest } from "../create-request";
+import { canonicalCreateAppointmentRequest, parseCreateAppointmentRequest } from "../create-request";
 import { appointmentWriteStatus } from "../write-errors";
 import type { Appointment } from "../types";
 
@@ -188,4 +189,46 @@ test("writer reports SDK failures and timeouts as UNAVAILABLE without exposing S
   assert.equal(appointmentWriteStatus("INVALID_BODY"), 400);
   assert.equal(appointmentWriteStatus("UNAVAILABLE"), 503);
   assert.equal(appointmentWriteStatus("DATA_INVALID"), 503);
+});
+
+test("an existing idempotency key replays or explains reuse only to its own actor", async () => {
+  const parsed = parseCreateAppointmentRequest({
+    requestId: "3f0e2b7c-58a4-4d6e-9b1a-2c7d8e9f0a1b", patient: { mode: "new", fullName: "Paciente Fictício", phone: "31999990000" },
+    date: "2026-11-02", time: "10:00", duration: 50, modality: "online", sessionType: "initial", status: "confirmed", amount: 15000, method: "pix",
+  });
+  if (!parsed.ok) throw new Error("Invalid fixture request");
+  const request = parsed.value;
+  const hash = createHash("sha256").update(canonicalCreateAppointmentRequest(request)).digest("hex");
+  const owner = "local-admin-ana";
+  const stored = { operation: "appointment.create", actorId: owner, requestHash: hash, appointmentId: "earlier-appointment" };
+  async function attempt(record: Record<string, unknown>, actorId = owner) {
+    let reads = 0;
+    const reference = { doc: () => ({}), where: () => ({}) };
+    const transaction = { get: async () => { reads++; return { exists: true, data: () => record }; } };
+    const db = { collection: () => reference, runTransaction: (run: (value: unknown) => unknown) => run(transaction) } as unknown as Firestore;
+    const result = await createFirestoreAppointmentsWriter(db).createAppointment(request,
+      { now, actorId, appointmentId: "new-appointment", patientId: "new-patient" });
+    assert.equal(reads, 1, "An existing key must be decided before any other read");
+    return result;
+  }
+
+  assert.deepEqual(await attempt(stored), { ok: true, appointmentId: "earlier-appointment", replayed: true });
+  const reused = await attempt({ ...stored, requestHash: "0".repeat(64) });
+  assert.equal(reused.ok ? undefined : reused.error.code, "IDEMPOTENCY_KEY_REUSED");
+  assert.equal(reused.ok ? undefined : reused.error.appointmentId, "earlier-appointment");
+  for (const [record, actorId] of [
+    [stored, "another-admin"], [{ ...stored, requestHash: "0".repeat(64) }, "another-admin"],
+    [{ ...stored, operation: "appointment.reschedule" }, owner],
+  ] as const) {
+    const refused = await attempt(record, actorId);
+    assert.equal(refused.ok ? undefined : refused.error.code, "IDEMPOTENCY_KEY_CONFLICT");
+    assert.equal(appointmentWriteStatus("IDEMPOTENCY_KEY_CONFLICT"), 409);
+    assert.ok(!JSON.stringify(refused).includes("earlier-appointment"), "Another actor must not learn the earlier result");
+    assert.ok(!JSON.stringify(refused).includes(owner));
+    assert.ok(refused.ok ? false : !("appointmentId" in refused.error));
+  }
+  for (const record of [{ ...stored, actorId: undefined }, { ...stored, operation: 1 }, { ...stored, appointmentId: null }]) {
+    const invalid = await attempt(record);
+    assert.equal(invalid.ok ? undefined : invalid.error.code, "DATA_INVALID");
+  }
 });

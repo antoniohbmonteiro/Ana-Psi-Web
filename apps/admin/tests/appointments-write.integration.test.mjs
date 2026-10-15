@@ -158,6 +158,33 @@ test("the same request ID replays sequentially and in parallel; a different payl
   assert.equal(await count("patients"), 2);
 });
 
+test("a request ID owned by another actor or operation is refused generically and writes nothing", async () => {
+  const value = request();
+  const first = await create(value);
+  assert.equal(code(first), "OK");
+  for (const candidate of [value, { ...value, time: "15:00" }]) {
+    const refused = await create(candidate, { actorId: "another-admin" });
+    assert.equal(code(refused), "IDEMPOTENCY_KEY_CONFLICT");
+    assert.equal(refused.error.appointmentId, undefined);
+    const text = JSON.stringify(refused);
+    assert.ok(!text.includes(first.appointmentId) && !text.includes(ADMIN_UID) && !text.includes("Paciente"));
+  }
+  const foreign = request({ time: "16:00" });
+  await db.doc(`idempotencyKeys/${foreign.requestId}`).set({
+    operation: "appointment.reschedule", actorId: ADMIN_UID, requestHash: "0".repeat(64), appointmentId: first.appointmentId,
+  });
+  const otherOperation = await create(foreign);
+  assert.equal(code(otherOperation), "IDEMPOTENCY_KEY_CONFLICT");
+  assert.ok(!JSON.stringify(otherOperation).includes(first.appointmentId));
+  // The owner keeps replaying and still learns which appointment a reused key created.
+  assert.equal((await create(value)).replayed, true);
+  assert.equal((await create({ ...value, time: "15:00" })).error.appointmentId, first.appointmentId);
+  assert.equal(await count("appointments"), 1);
+  assert.equal(await count("patients"), 1);
+  assert.equal(await count("idempotencyKeys"), 2);
+  assert.equal(await revision(), 1);
+});
+
 test("a refused attempt does not consume its request ID", async () => {
   assert.equal(code(await create(request())), "OK");
   const retry = request({ time: "10:30" });

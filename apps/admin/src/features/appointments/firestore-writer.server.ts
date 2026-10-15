@@ -46,10 +46,11 @@ export function createFirestoreAppointmentsWriter(db: Firestore, deadlineMs = 10
           const previous = await transaction.get(idempotencyRef);
           if (previous.exists) {
             const data = previous.data() ?? {};
-            if (typeof data.appointmentId !== "string" || typeof data.requestHash !== "string") return appointmentWriteFailure("DATA_INVALID");
-            if (data.operation === CREATE_OPERATION && data.actorId === context.actorId && data.requestHash === hash) {
-              return { ok: true, appointmentId: data.appointmentId, replayed: true };
-            }
+            if (typeof data.operation !== "string" || typeof data.actorId !== "string"
+              || typeof data.appointmentId !== "string" || typeof data.requestHash !== "string") return appointmentWriteFailure("DATA_INVALID");
+            // Only the actor who created the key may learn its result; anyone else gets a generic refusal.
+            if (data.actorId !== context.actorId || data.operation !== CREATE_OPERATION) return appointmentWriteFailure("IDEMPOTENCY_KEY_CONFLICT");
+            if (data.requestHash === hash) return { ok: true, appointmentId: data.appointmentId, replayed: true };
             const failure = appointmentWriteFailure("IDEMPOTENCY_KEY_REUSED");
             return { ...failure, error: { ...failure.error, appointmentId: data.appointmentId } };
           }

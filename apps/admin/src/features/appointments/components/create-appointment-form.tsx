@@ -146,6 +146,8 @@ export function CreateAppointmentForm({ todayIso, patients }: Props) {
         if (body.code === "INVALID_OPERATION_TIME") serverErrors.time = "Escolha um horário no futuro.";
         if (body.code === "PATIENT_NOT_FOUND") serverErrors.patientId = "Paciente não encontrado.";
         if (body.code === "IDEMPOTENCY_KEY_REUSED" && typeof body.appointmentId === "string") setExistingAppointmentId(body.appointmentId);
+        // The key is unusable for this session and wrote nothing here, so the next attempt gets a fresh one.
+        if (body.code === "IDEMPOTENCY_KEY_CONFLICT") requestId.current = undefined;
         showErrors(form, serverErrors, typeof body.message === "string" ? body.message : "Não foi possível salvar o agendamento.");
       }
     } catch {

@@ -140,6 +140,23 @@ test("a valid creation persists, appears in Detail and Agenda, and replays, conf
   assert.equal((await missing.json()).code, "PATIENT_NOT_FOUND");
 });
 
+test("a request ID owned by another actor is refused without revealing its appointment", async () => {
+  const body = payload({ time: "17:00" });
+  await db.doc(`idempotencyKeys/${body.requestId}`).set({
+    operation: "appointment.create", actorId: "another-admin", requestHash: "0".repeat(64), appointmentId: "foreign-appointment-marker",
+  });
+  try {
+    const before = await appointmentsCount();
+    const response = await postJson(ENDPOINT, admin, body);
+    assert.equal(response.status, 409);
+    assertPrivate(response);
+    const text = await response.text();
+    assert.deepEqual(JSON.parse(text), { code: "IDEMPOTENCY_KEY_CONFLICT", message: "Não foi possível usar este envio. Tente salvar novamente." });
+    assert.ok(!text.includes("foreign-appointment-marker") && !text.includes("another-admin"));
+    assert.equal(await appointmentsCount(), before);
+  } finally { await db.doc(`idempotencyKeys/${body.requestId}`).delete(); }
+});
+
 test("Home reflects a newly created appointment as the next session and a pending payment", async () => {
   const documents = await db.collection("appointments").get();
   let createdId;

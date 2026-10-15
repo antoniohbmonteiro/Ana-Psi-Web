@@ -167,13 +167,17 @@ dia, inclusive vazio, conflitar; a consulta sozinha não impediria inserções
 simultâneas. Um documento inválido no mesmo dia falha a escrita.
 
 O navegador gera um `requestId` (UUID v4) por agendamento pretendido e o
-reaproveita em reenvios. A chave só é gravada junto com o sucesso: o mesmo
-payload devolve o mesmo agendamento (200, `replayed: true`); outro payload com
-a mesma chave é recusado. Se o prazo expirar após um commit, reenviar é seguro.
+reaproveita em reenvios. A chave só é gravada junto com o sucesso e pertence
+ao ator que a criou: o mesmo ator com o mesmo payload recebe o mesmo agendamento
+(200, `replayed: true`); com outro payload, `IDEMPOTENCY_KEY_REUSED` e o ID do
+agendamento já criado. Chave de outro ator ou de outra operação recebe
+`IDEMPOTENCY_KEY_CONFLICT`, genérico, sem revelar o resultado anterior. Se o
+prazo expirar após um commit, reenviar é seguro.
 
 Respostas, todas `no-store` e sem conteúdo de SDK ou dados enviados: 201 com
 `Location`; 200 no replay; 400 para corpo malformado; 401/403 para sessão,
-UID, origem ou CSRF; 409 para `SCHEDULE_CONFLICT` e `IDEMPOTENCY_KEY_REUSED`;
+UID, origem ou CSRF; 409 para `SCHEDULE_CONFLICT`, `IDEMPOTENCY_KEY_REUSED` e
+`IDEMPOTENCY_KEY_CONFLICT`;
 422 para validação, horário não futuro e `PATIENT_NOT_FOUND`; 503 para
 configuração, indisponibilidade ou dados inconsistentes. Após o sucesso, o
 navegador abre o Detalhe com `?criado=1`; Home e Agenda leem o Firestore a cada

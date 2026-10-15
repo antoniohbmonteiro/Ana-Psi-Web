@@ -1,6 +1,7 @@
 import { AppointmentsReadError } from "@/features/appointments/read-errors";
 import { AppointmentsReadFailure } from "@/features/appointments/components/read-error";
 import { notFound } from "next/navigation";
+import { CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { appointmentQuickActions, toAppointmentDetailPresentation } from "@/features/appointments/presentation";
 import { ActivityTimelineCard } from "@/features/appointments/components/activity-timeline-card";
@@ -18,10 +19,12 @@ type Props = {
   params: Promise<{
     id: string;
   }>;
+  searchParams: Promise<{ criado?: string | string[] }>;
 };
 
-async function renderPage({ params }: Props) {
+async function renderPage({ params, searchParams }: Props) {
   const { id } = await params;
+  const { criado } = await searchParams;
   const service = await getAppointmentsService();
   const appointment = await service.getAppointmentById(id);
 
@@ -33,6 +36,17 @@ async function renderPage({ params }: Props) {
 
   return (
     <div className="space-y-6">
+      {criado === "1" ? (
+        <p
+          role="status"
+          className="flex items-center gap-2 rounded-xl border px-4 py-3 text-sm"
+          style={{ backgroundColor: "rgba(34,197,94,0.08)", borderColor: "rgba(34,197,94,0.30)", color: "var(--foreground)" }}
+        >
+          <CheckCircle2 size={18} color="var(--success)" aria-hidden="true" />
+          Agendamento criado com sucesso.
+        </p>
+      ) : null}
+
       <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
         <div>
           <h1 className="text-page-title">Detalhes do Agendamento</h1>

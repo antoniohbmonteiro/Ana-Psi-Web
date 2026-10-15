@@ -37,6 +37,26 @@ const styleMap: Record<ButtonVariant, React.CSSProperties> = {
   },
 };
 
+export type ButtonStyleOptions = {
+  variant?: ButtonVariant;
+  size?: ButtonSize;
+  className?: string;
+  style?: React.CSSProperties;
+};
+
+// Shared with ButtonLink so navigation keeps the approved button appearance.
+export function buttonAppearance({ variant = "primary", size = "md", className, style }: ButtonStyleOptions) {
+  return {
+    className: cn(
+      "inline-flex items-center justify-center rounded-2xl font-medium transition disabled:cursor-not-allowed disabled:opacity-60",
+      variantClasses[variant],
+      sizeClasses[size],
+      className
+    ),
+    style: { ...styleMap[variant], ...style },
+  };
+}
+
 export function Button({
   className,
   variant = "primary",
@@ -44,16 +64,5 @@ export function Button({
   style,
   ...props
 }: ButtonProps) {
-  return (
-    <button
-      className={cn(
-        "inline-flex items-center justify-center rounded-2xl font-medium transition disabled:cursor-not-allowed disabled:opacity-60",
-        variantClasses[variant],
-        sizeClasses[size],
-        className
-      )}
-      style={{ ...styleMap[variant], ...style }}
-      {...props}
-    />
-  );
+  return <button {...buttonAppearance({ variant, size, className, style })} {...props} />;
 }

@@ -81,6 +81,7 @@ async function runSuite(file, overrides = {}, scenario = "auth") {
 
 for (const [file, overrides, scenario] of [
   ["tests/auth.integration.test.mjs", {}, "auth"],
+  ["tests/appointments-create.integration.test.mjs", {}, "appointments"],
   ["tests/config.integration.test.mjs", { FIRESTORE_EMULATOR_HOST: "", ADMIN_ENABLE_DEMO_APPOINTMENTS: "true" }, "firestore-config-incomplete"],
   ["tests/config.integration.test.mjs", { FIRESTORE_EMULATOR_HOST: "127.0.0.1:1" }, "firestore-unavailable"],
   ["tests/config.integration.test.mjs", { ADMIN_ALLOWED_UID: "" }, "config-incomplete"],

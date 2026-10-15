@@ -171,14 +171,16 @@ test("valid login issues an eight-hour HttpOnly session and authorized pages use
 });
 
 
-test("Home, Agenda and Detail share Firestore fixtures and preserve read-only actions", async () => {
+test("Home, Agenda and Detail share Firestore fixtures and keep non-integrated actions disabled", async () => {
   const jar = await login();
   for (const route of ["/admin/inicio", "/admin/agenda", "/admin/agendamentos/local-minute-0"]) {
     const response = await request(route, jar); const html = await response.text();
     assert.equal(response.status, 200);
     assert.ok(html.includes("Paciente fictício 1"), `Missing persisted fixture on ${route}`);
     assert.ok(html.includes("10:17"), `Missing exact start on ${route}`);
-    assert.match(html, /disabled/);
+    // Creation is integrated; the remaining actions stay disabled until their own PRs.
+    assert.ok(html.includes('href="/admin/agendamentos/novo"') || route.startsWith("/admin/agendamentos/"));
+    if (route !== "/admin/agenda") assert.match(html, /disabled=""/);
     assert.ok(!html.includes("Dados demonstrativos"));
     assert.ok(!html.includes("Bloqueio Pessoal"));
     if (route === "/admin/inicio") assert.ok(html.includes("Ainda não integrado"));

@@ -11,7 +11,7 @@
     "test:integration": "node scripts/run-emulators.mjs test",
     "lint": "eslint . --max-warnings=0",
     "typecheck": "next typegen && tsc --noEmit",
-    "test:appointments": "tsc -p tsconfig.tests.json && node --test .next/domain-tests/features/appointments/__tests__/core.test.js .next/domain-tests/features/appointments/__tests__/commands.test.js .next/domain-tests/features/appointments/__tests__/conflicts.test.js .next/domain-tests/features/agenda/__tests__/adapter.test.js",
+    "test:appointments": "tsc -p tsconfig.tests.json && node --test .next/domain-tests/features/appointments/__tests__/core.test.js .next/domain-tests/features/appointments/__tests__/commands.test.js .next/domain-tests/features/appointments/__tests__/conflicts.test.js .next/domain-tests/features/appointments/__tests__/create-request.test.js .next/domain-tests/features/agenda/__tests__/adapter.test.js",
     "compile:persistence": "tsc -p tsconfig.persistence-tests.json",
     "test:persistence": "npm run compile:persistence && node --conditions=react-server --test .next/persistence-tests/features/appointments/__tests__/persistence.test.js",
     "seed": "npm run compile:persistence && node scripts/seed-auth.mjs && node --conditions=react-server scripts/seed-appointments.mjs"

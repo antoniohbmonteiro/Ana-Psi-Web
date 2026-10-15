@@ -24,6 +24,7 @@
     "src/features/appointments/__tests__/core.test.ts",
     "src/features/appointments/__tests__/commands.test.ts",
     "src/features/appointments/__tests__/conflicts.test.ts",
+    "src/features/appointments/__tests__/create-request.test.ts",
     "src/features/agenda/__tests__/adapter.test.ts"
   ],
   "exclude": [

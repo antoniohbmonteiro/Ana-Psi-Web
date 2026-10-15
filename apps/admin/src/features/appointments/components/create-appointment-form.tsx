@@ -132,6 +132,8 @@ export function CreateAppointmentForm({ todayIso, patients }: Props) {
       const body: ResponseBody = response && typeof response === "object" ? response : {};
       if ((status === 201 || status === 200) && typeof body.id === "string") {
         requestId.current = undefined;
+        // Full navigation on purpose: the detail is rendered by a fresh server request after the write.
+        // eslint-disable-next-line @next/next/no-location-assign-relative-destination
         window.location.assign(`/admin/agendamentos/${encodeURIComponent(body.id)}?criado=1`);
         return; // Stay pending while the browser navigates.
       }

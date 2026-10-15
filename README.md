@@ -35,4 +35,5 @@ npm run dev:admin
 
 Configuração e testes do admin: [apps/admin/README.md](apps/admin/README.md).
 Resultados e ressalvas da migração: [docs/node24-validation.md](docs/node24-validation.md).
+Atualização de segurança das dependências: [docs/security-dependency-updates.md](docs/security-dependency-updates.md).
 

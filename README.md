@@ -5,6 +5,7 @@ Base inicial do projeto em Next + Tailwind.
 ## Rotas iniciais
 - /admin/inicio
 - /admin/agenda
+- /admin/agendamentos/novo
 - /admin/agendamentos/1
 - /admin/disponibilidade
 - /admin/bloqueios

@@ -108,11 +108,19 @@ Navegador ─► https://admin-pr-N-<NUM>.us-central1.run.app
   - o serviço está pronto e roda o digest enviado;
   - o IAP está ligado e a verificação de IAM do invoker continua ativa;
   - a política de IAM do serviço não tem `allUsers`/`allAuthenticatedUsers`;
-  - uma requisição anônima é barrada (302 para o login Google ou 401/403).
+  - uma requisição anônima é barrada **pelo próprio IAP**. A resposta precisa trazer o cabeçalho
+    `X-Goog-IAP-Generated-Response`, que o IAP adiciona às respostas que ele mesmo gera. Se for um
+    redirecionamento (302), ele precisa levar ao login do Google com o retorno do IAP
+    (`https://iap.googleapis.com/v1/oauth/clientIds/…:handleRedirect`). Redirecionamentos e erros
+    gerados pela aplicação (302/307, 401/403) não contam.
 
-  Se o IAP não estiver ativo, se o invoker estiver desligado, se a política for pública, se a SA de
-  runtime estiver errada ou se a requisição anônima receber 200, **o serviço é removido** e o job
-  falha.
+  **O serviço é removido** e o job falha se:
+  - o IAP não estiver ativo;
+  - o invoker estiver desligado;
+  - a política de IAM for pública;
+  - a SA de runtime estiver errada;
+  - o bloqueio anônimo não puder ser atribuído ao IAP: resposta da aplicação, inclusive 302 ou 403,
+    ou nenhuma confirmação depois das novas tentativas.
 - **Deploy sem chave.** O GitHub Actions troca um token OIDC por credenciais temporárias via Workload
   Identity Federation, restrito a este repositório, a estes dois workflows e aos eventos esperados
   (ver [condição](#workload-identity-federation)).

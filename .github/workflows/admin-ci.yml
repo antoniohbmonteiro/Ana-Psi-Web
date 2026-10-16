@@ -242,6 +242,29 @@ jobs:
               gh api -X POST "repos/$GH_REPO/issues/$PR_NUMBER/comments" --input - <<< "$payload" > /dev/null
             fi
           }
+          # is_iap_signin_redirect LOCATION: true only for IAP's redirect to Google sign-in, that is
+          # accounts.google.com with redirect_uri https://iap.googleapis.com/v1/oauth/clientIds/<id>:handleRedirect
+          # (directly or inside a nested continue= URL that is also on accounts.google.com).
+          is_iap_signin_redirect() {
+            python3 -I - "$1" <<'PY'
+          import re
+          import sys
+          from urllib.parse import parse_qs, urlsplit
+
+          IAP_REDIRECT = re.compile(r"https://iap\.googleapis\.com/v1/oauth/clientIds/[A-Za-z0-9._-]+:handleRedirect")
+
+          def is_signin(url, depth=0):
+              parts = urlsplit(url)
+              if parts.scheme != "https" or parts.hostname != "accounts.google.com":
+                  return False
+              query = parse_qs(parts.query)
+              if any(IAP_REDIRECT.fullmatch(value) for value in query.get("redirect_uri", [])):
+                  return True
+              return depth < 2 and any(is_signin(value, depth + 1) for value in query.get("continue", []))
+
+          sys.exit(0 if is_signin(sys.argv[1]) else 1)
+          PY
+          }
           EOF
 
       - name: Download image
@@ -350,17 +373,40 @@ jobs:
           gcloud run services get-iam-policy "$SERVICE" --project "$PROJECT_ID" --region "$REGION" --format=json \
             | jq -e '[.bindings[]?.members[]?] | any(. == "allUsers" or . == "allAuthenticatedUsers") | not' > /dev/null \
             || reject "The service grants public access."
-          # An anonymous request must be stopped by IAP (redirect to Google sign-in or 401/403).
+          # An anonymous request must be stopped by IAP itself. The application can also answer with
+          # 302/307 or 401/403, so a status code alone proves nothing: IAP marks every response it
+          # generates with X-Goog-IAP-Generated-Response, and its 302 leads to Google sign-in with
+          # IAP's own redirect URI. Anything that is not attributable to IAP removes the preview.
+          headers="$RUNNER_TEMP/anonymous-response-headers"
+          verdict="no response"
           for _ in $(seq 1 12); do
-            code=$(curl -sS -o /dev/null -w '%{http_code}' --max-time 20 "$PREVIEW_URL/admin/entrar" || true)
+            : > "$headers"
+            code=$(curl -sS -o /dev/null -D "$headers" -w '%{http_code}' --max-time 20 "$PREVIEW_URL/admin/entrar" || true)
+            iap=no
+            if grep -qi '^x-goog-iap-generated-response:' "$headers"; then iap=yes; fi
+            location=$(sed -n 's/^location:[[:space:]]*//Ip' "$headers" | tr -d '\r')
+            location_host=${location#*://}
+            location_host=${location_host%%[/?#]*}
+            # Only the status, the IAP marker and the redirect host are logged (logs are public).
+            verdict="HTTP $code, IAP header: $iap, redirect host: ${location_host:-none}"
             case "$code" in
-              200) reject "The preview answered an anonymous request." ;;
-              302|401|403) echo "Anonymous access is blocked (HTTP $code)."; exit 0 ;;
-              *) sleep 5 ;;
+              302)
+                if [ "$iap" = yes ] && is_iap_signin_redirect "$location"; then
+                  echo "Anonymous access is redirected to Google sign-in by IAP."
+                  exit 0
+                fi
+                reject "An anonymous request was redirected, but not to IAP's Google sign-in ($verdict)." ;;
+              401|403)
+                if [ "$iap" = yes ]; then
+                  echo "Anonymous access is denied by IAP (HTTP $code)."
+                  exit 0
+                fi
+                reject "An anonymous request was refused, but not by IAP ($verdict)." ;;
+              000|404|429|5??) sleep 5 ;;
+              *) reject "The preview answered an anonymous request ($verdict)." ;;
             esac
           done
-          echo "::error::Could not confirm that anonymous access is blocked."
-          exit 1
+          reject "Could not confirm that IAP blocks anonymous access (last: $verdict)."
 
       - name: Re-check pull request state
         id: final

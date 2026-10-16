@@ -1,0 +1,186 @@
+name: Admin Preview Cleanup
+
+# Removes admin PR previews (Cloud Run service admin-pr-N and Artifact Registry package pr-N).
+# - On every closed or merged PR (no paths filter, so a PR whose diff stopped touching the admin
+#   is still cleaned up).
+# - Daily and on demand from main: sweeps resources whose PR is no longer open.
+# No job checks out or runs repository code. Removal shares the admin-preview-pr-N concurrency
+# group with the deploy job in admin-ci.yml, so it waits for a running deploy instead of racing it.
+
+on:
+  pull_request:
+    branches:
+      - main
+    types:
+      - closed
+  schedule:
+    - cron: '41 7 * * *'
+  workflow_dispatch:
+
+permissions: {}
+
+env:
+  PROJECT_ID: ${{ vars.ADMIN_PREVIEW_PROJECT_ID }}
+  REGION: ${{ vars.ADMIN_PREVIEW_REGION }}
+  GH_TOKEN: ${{ github.token }}
+  GH_REPO: ${{ github.repository }}
+
+jobs:
+  # Scheduled or manual runs only: finds previews whose PR is no longer open.
+  sweep-list:
+    if: github.event_name != 'pull_request' && vars.ADMIN_PREVIEW_PROJECT_ID != ''
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      id-token: write # GitHub OIDC token exchanged through Workload Identity Federation
+      pull-requests: read # check whether each preview's PR is still open
+    concurrency:
+      group: admin-preview-sweep
+      cancel-in-progress: false
+    outputs:
+      prs: ${{ steps.list.outputs.prs }}
+
+    steps:
+      - name: Validate preview configuration
+        run: |
+          set -euo pipefail
+          [ "$PROJECT_ID" != "ana-psi" ] || { echo "::error::Refusing the production project."; exit 1; }
+          [[ "$PROJECT_ID" =~ ^[a-z][a-z0-9-]{4,28}[a-z0-9]$ ]] || { echo "::error::Invalid project ID."; exit 1; }
+          [[ "$REGION" =~ ^[a-z]+-[a-z]+[0-9]+$ ]] || { echo "::error::Invalid region."; exit 1; }
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3.0.0
+        with:
+          workload_identity_provider: ${{ vars.ADMIN_PREVIEW_WIF_PROVIDER }}
+          service_account: ${{ vars.ADMIN_PREVIEW_DEPLOYER_SA }}
+          project_id: ${{ vars.ADMIN_PREVIEW_PROJECT_ID }}
+
+      - name: Setup gcloud
+        uses: google-github-actions/setup-gcloud@aa5489c8933f4cc7a4f7d45035b3b1440c9c10db # v3.0.1
+
+      - name: List previews of pull requests that are not open
+        id: list
+        run: |
+          set -euo pipefail
+          # Service descriptions include environment values, so they are parsed and never printed.
+          from_services=$(gcloud run services list --project "$PROJECT_ID" --region "$REGION" --format=json \
+            | jq -r '.[] | select(.metadata.labels["managed-by"] == "admin-preview")
+                | .metadata.name | capture("^admin-pr-(?<n>[0-9]{1,6})$").n')
+          from_packages=$(gcloud artifacts packages list --project "$PROJECT_ID" --location "$REGION" \
+            --repository admin-preview --format='value(name)' \
+            | sed -n 's|.*/packages/pr-\([0-9]\{1,6\}\)$|\1|p')
+          stale=()
+          for pr in $(printf '%s\n%s\n' "$from_services" "$from_packages" | sort -un); do
+            # Fail closed: an API error stops the sweep instead of deleting anything.
+            state=$(gh api "repos/$GH_REPO/pulls/$pr" --jq '.state')
+            if [ "$state" != "open" ]; then stale+=("$pr"); fi
+          done
+          prs=$(printf '%s\n' "${stale[@]}" | jq -R 'select(length > 0) | tonumber' | jq -cs '.')
+          echo "Previews to remove: $prs"
+          echo "prs=$prs" >> "$GITHUB_OUTPUT"
+
+  # Removes one PR's preview. For a closed PR it runs once; for a sweep, once per stale PR.
+  remove:
+    needs: sweep-list
+    if: >-
+      always() && !cancelled()
+      && (
+        (github.event_name == 'pull_request'
+          && github.event.pull_request.head.repo.full_name == github.repository
+          && vars.ADMIN_PREVIEW_PROJECT_ID != '')
+        || (github.event_name != 'pull_request'
+          && needs.sweep-list.result == 'success'
+          && needs.sweep-list.outputs.prs != '[]')
+      )
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      id-token: write # GitHub OIDC token exchanged through Workload Identity Federation
+      pull-requests: write # read the PR state and update the preview comment
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        pr: ${{ fromJSON(github.event_name == 'pull_request' && format('[{0}]', github.event.pull_request.number) || needs.sweep-list.outputs.prs) }}
+    concurrency:
+      group: admin-preview-pr-${{ matrix.pr }}
+      cancel-in-progress: false
+    env:
+      PR_NUMBER: ${{ matrix.pr }}
+
+    steps:
+      - name: Validate preview configuration
+        run: |
+          set -euo pipefail
+          fail() { echo "::error::$1"; exit 1; }
+          [ "$PROJECT_ID" != "ana-psi" ] || fail "Refusing the production project."
+          [[ "$PROJECT_ID" =~ ^[a-z][a-z0-9-]{4,28}[a-z0-9]$ ]] || fail "Invalid project ID."
+          [[ "$REGION" =~ ^[a-z]+-[a-z]+[0-9]+$ ]] || fail "Invalid region."
+          [[ "$PR_NUMBER" =~ ^[0-9]{1,6}$ ]] || fail "Invalid pull request number."
+          echo "SERVICE=admin-pr-$PR_NUMBER" >> "$GITHUB_ENV"
+
+      - name: Read pull request state
+        id: state
+        run: |
+          set -euo pipefail
+          state=$(gh api "repos/$GH_REPO/pulls/$PR_NUMBER" --jq '.state')
+          case "$state" in open|closed) ;; *) echo "::error::Unexpected pull request state."; exit 1;; esac
+          # Reopened meanwhile: the reopen run publishes the preview again, so nothing is removed.
+          echo "state=$state" >> "$GITHUB_OUTPUT"
+          echo "Pull request #$PR_NUMBER is $state."
+
+      - name: Authenticate to Google Cloud
+        if: steps.state.outputs.state != 'open'
+        uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3.0.0
+        with:
+          workload_identity_provider: ${{ vars.ADMIN_PREVIEW_WIF_PROVIDER }}
+          service_account: ${{ vars.ADMIN_PREVIEW_DEPLOYER_SA }}
+          project_id: ${{ vars.ADMIN_PREVIEW_PROJECT_ID }}
+
+      - name: Setup gcloud
+        if: steps.state.outputs.state != 'open'
+        uses: google-github-actions/setup-gcloud@aa5489c8933f4cc7a4f7d45035b3b1440c9c10db # v3.0.1
+
+      - name: Remove preview
+        if: steps.state.outputs.state != 'open'
+        run: |
+          set -euo pipefail
+          service_exists() {
+            local found
+            found=$(gcloud run services list --project "$PROJECT_ID" --region "$REGION" \
+              --filter="metadata.name=$SERVICE" --format='value(metadata.name)')
+            [ -n "$found" ]
+          }
+          # Absent resources are not an error; a deletion blocked by an operation in progress is retried.
+          for _ in 1 2 3 4 5; do
+            service_exists || break
+            gcloud run services delete "$SERVICE" --project "$PROJECT_ID" --region "$REGION" --quiet && break
+            sleep 20
+          done
+          if service_exists; then echo "::error::Could not remove $SERVICE."; exit 1; fi
+          packages=$(gcloud artifacts packages list --project "$PROJECT_ID" --location "$REGION" \
+            --repository admin-preview --format='value(name)')
+          if printf '%s\n' "$packages" | grep -q "/packages/pr-$PR_NUMBER\$"; then
+            gcloud artifacts packages delete "pr-$PR_NUMBER" --project "$PROJECT_ID" --location "$REGION" \
+              --repository admin-preview --quiet
+          fi
+          echo "Preview of pull request #$PR_NUMBER removed."
+
+      - name: Update pull request comment
+        if: steps.state.outputs.state != 'open'
+        run: |
+          set -euo pipefail
+          # Only an existing preview comment is updated; PRs that never had a preview get none.
+          ids=$(gh api --paginate "repos/$GH_REPO/issues/$PR_NUMBER/comments" \
+            --jq '.[] | select(.user.login == "github-actions[bot]" and (.body | startswith("<!-- admin-preview -->"))) | .id')
+          id=${ids%%$'\n'*}
+          [ -n "$id" ] || exit 0
+          body=$(cat <<'EOF'
+          <!-- admin-preview -->
+          ### Preview do admin
+
+          Preview removido: o PR não está mais aberto.
+          EOF
+          )
+          jq -n --arg body "$body" '{body: $body}' \
+            | gh api -X PATCH "repos/$GH_REPO/issues/comments/$id" --input - > /dev/null

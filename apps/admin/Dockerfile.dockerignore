@@ -1,0 +1,23 @@
+# Build context is the repository root. BuildKit reads this file because it sits next to
+# apps/admin/Dockerfile. Allow only what the admin image needs; never send apps/public sources,
+# local environment files, credentials or build output.
+*
+!package.json
+!package-lock.json
+!tsconfig.base.json
+!apps/public/package.json
+!apps/admin
+
+apps/admin/node_modules
+apps/admin/.next
+apps/admin/.firebase
+apps/admin/.env*
+apps/admin/**/*.log
+apps/admin/**/*.pem
+apps/admin/**/service-account.json
+apps/admin/**/*.service-account.json
+apps/admin/**/firebase-admin-*.json
+apps/admin/**/google-service-account*.json
+apps/admin/**/*gcp-key*.json
+apps/admin/**/*.tsbuildinfo
+apps/admin/next-env.d.ts

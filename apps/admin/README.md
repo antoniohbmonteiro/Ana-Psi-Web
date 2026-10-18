@@ -94,9 +94,25 @@ A antiga flag `ADMIN_ENABLE_DEMO_APPOINTMENTS` não seleciona mais dados em mem�
 remova-a da configuração local. Valores legados inválidos ou demonstração remota
 continuam rejeitados. Todas as consultas usam Firestore.
 
-Configuração pública é incorporada ao build: a ativação remota exige um novo
-build com valores daquele ambiente. Não promover um bundle configurado para
-emuladores. Este PR não cria projetos, publica Rules nem configura deploy.
+A configuração pública (`NEXT_PUBLIC_FIREBASE_*`) é lida em runtime no servidor por
+`config.server.ts`, com acesso dinâmico que o Next não incorpora ao bundle, e chega
+ao navegador como props. O build não depende do ambiente, e a mesma imagem serve a
+qualquer ambiente. Não use `process.env.NEXT_PUBLIC_*` literal em componentes
+cliente: o Next fixaria no bundle o valor do momento do build.
+
+## Preview por PR
+
+Cada PR que altera o admin é publicado no Cloud Run, protegido por IAP, num projeto
+Firebase de desenvolvimento com dados fictícios. O endereço aparece num comentário do
+PR, é atualizado a cada commit e o ambiente é removido ao fechar ou integrar o PR.
+
+- A imagem é gerada por `Dockerfile` em modo `standalone`, ativado só por
+  `ADMIN_NEXT_OUTPUT=standalone`. CI e desenvolvimento local seguem com `next start`.
+- O preview roda com `ADMIN_ENV=development` e `ADMIN_ORIGIN` igual à URL do PR.
+- O Admin SDK usa a service account do Cloud Run por `applicationDefault()`, sem chave.
+
+Arquitetura, segurança, IAM, configuração inicial, custos e testes de aceite:
+[docs/admin-preview.md](../../docs/admin-preview.md).
 
 ## Modelo e leitura
 
@@ -268,8 +284,8 @@ pagamentos online nesta etapa.
 As vulnerabilidades de dependências foram tratadas na atualização de segurança
 (Next 16.4.1, Firebase 13, Admin SDK 14.5.0 e CLI 15.34.0); os riscos residuais
 estão justificados em `docs/security-dependency-updates.md`. Não executar
-`npm audit fix --force`. Antes da ativação remota, validar no ambiente hospedado
-o caminho de credenciais `applicationDefault()`, que os emuladores não cobrem.
-Depois das operações essenciais e atualização de segurança,
-configurar ambientes/IAM/hospedagem, validar com dados fictícios e liberar o
-piloto privado para Ana. `apps/public` permanece independente, com comportamento preservado.
+`npm audit fix --force`. O caminho de credenciais `applicationDefault()`, que os
+emuladores não cobrem, é exercitado pelo preview por PR no Cloud Run com a service
+account de runtime. A produção do admin (projeto, IAM e hospedagem próprios) ainda
+será configurada; depois, validar com dados fictícios e liberar o piloto privado
+para Ana. `apps/public` permanece independente, com comportamento preservado.

@@ -36,4 +36,6 @@ npm run dev:admin
 Configuração e testes do admin: [apps/admin/README.md](apps/admin/README.md).
 Resultados e ressalvas da migração: [docs/node24-validation.md](docs/node24-validation.md).
 Atualização de segurança das dependências: [docs/security-dependency-updates.md](docs/security-dependency-updates.md).
+Preview do admin por Pull Request (Cloud Run + IAP): [docs/admin-preview.md](docs/admin-preview.md).
+Risco conhecido no preview da landing: [docs/security-public-preview-credential.md](docs/security-public-preview-credential.md).
 
